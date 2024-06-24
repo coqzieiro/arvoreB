@@ -1,0 +1,10 @@
+.vscode
+programaTrab.exe
+programaTrab
+*.csv
+*.zip
+*.txt
+eb.bin
+ev.bin
+ieb.bin
+iev.bin
