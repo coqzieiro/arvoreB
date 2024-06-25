@@ -111,9 +111,25 @@ int main(void){
 
             break;
         case 7: // Funcionalidade 7 (Cria um arquivo de índice árvore-B)
-            scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex);
-            criarIndiceArvoreB(nomeArquivoCSV, nomeArquivoBinario);
-            binarioNaTela(nomeArquivoBinario);
+            // Define file names and open modes (replace with your actual file paths and modes)
+            const char* bTreeIndexFileName = "btree_index.data";
+            const char* indexOpenType = "rb+";  // Read-write binary mode
+            const char* registersFileName = NULL; // Not used in this case
+            const char* registerOpenType = NULL;  // Not used in this case
+
+            // Call BTreeMetadata_Create to create/initialize the BTree
+            ARVORE_B* arvoreB = BTreeMetadata_Create(bTreeIndexFileName, indexOpenType, registersFileName, registerOpenType);
+
+            if (arvoreB != NULL) {
+                // Successfully created/initialized the BTree
+                printf("BTree created/initialized successfully!\n");
+            } else {
+                // Error creating/initializing the BTree
+                printf("Error creating BTree!\n");
+            }
+
+            // Free the allocated memory for arvoreB even on error
+            free(arvoreB);
             break;
         case 8: // Funcionalidade 8 (Recuperação de dados usando índice árvore-B)
 
