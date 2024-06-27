@@ -10,6 +10,7 @@ INTEGRANTES DO GRUPO:
 #include "funcionalidades.h"
 #include "definicoesTipos.h"
 #include "funcoes_fornecidas.h"
+#include "escreveBin.h" // mudarrrrrrr
 
 int main(void){
     int opcao, numBuscas, numRemocoes, numInsercoes;
@@ -111,25 +112,14 @@ int main(void){
 
             break;
         case 7: // Funcionalidade 7 (Cria um arquivo de índice árvore-B)
-            // Define file names and open modes (replace with your actual file paths and modes)
-            const char* bTreeIndexFileName = "btree_index.data";
-            const char* indexOpenType = "rb+";  // Read-write binary mode
-            const char* registersFileName = NULL; // Not used in this case
-            const char* registerOpenType = NULL;  // Not used in this case
+            char arquivoBin[50];
+            scanf("%s", arquivoBin);
 
-            // Call BTreeMetadata_Create to create/initialize the BTree
-            ARVORE_B* arvoreB = BTreeMetadata_Create(bTreeIndexFileName, indexOpenType, registersFileName, registerOpenType);
+            char arquivoArvB[50];
+            scanf("%s", arquivoArvB);
 
-            if (arvoreB != NULL) {
-                // Successfully created/initialized the BTree
-                printf("BTree created/initialized successfully!\n");
-            } else {
-                // Error creating/initializing the BTree
-                printf("Error creating BTree!\n");
-            }
-
-            // Free the allocated memory for arvoreB even on error
-            free(arvoreB);
+            if(criarArquivoArvoreB(arquivoBin, arquivoArvB))
+                binarioNaTela(arquivoArvB);
             break;
         case 8: // Funcionalidade 8 (Recuperação de dados usando índice árvore-B)
 
