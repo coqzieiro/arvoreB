@@ -214,3 +214,56 @@ int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB){
 
     return 1;
 }
+
+void imprimeRegistrosBuscados(char *nomeArquivoBinario, char *nomeArquivoArvoreB, int buscaId) {
+    // Open the binary data file for reading
+    FILE *fileBin = fopen(nomeArquivoBinario, "rb");
+    if (fileBin == NULL) {
+        printf("Erro ao abrir o arquivo de dados: %s\n", nomeArquivoBinario);
+        return;
+    }
+
+    // Open the B-tree index file for reading
+    FILE *fileArvoreB = fopen(nomeArquivoArvoreB, "rb");
+    if (fileArvoreB == NULL) {
+        printf("Erro ao abrir o arquivo de índice B-tree: %s\n", nomeArquivoArvoreB);
+        fclose(fileBin);  // Ensure the data file is closed before exiting
+        return;
+    }
+
+    // Call the function to print the record by ID using the B-tree index
+    imprimirIdArvoreB(buscaId, fileBin, nomeArquivoArvoreB, 0, 0); // Assuming parameters are correctly set
+
+    // Close both files after the operation
+    fclose(fileBin);
+    fclose(fileArvoreB);
+}
+
+bool inserirNovoDadoArvoreB(char* nomeArquivoBinario, char* nomeArquivoIndex, DADOS* novoRegistro) {
+    FILE *dataFile = fopen(nomeArquivoBinario, "rb+");
+    FILE *indexFile = fopen(nomeArquivoIndex, "rb+");
+
+    if (dataFile == NULL || indexFile == NULL) {
+        if (dataFile) fclose(dataFile);
+        if (indexFile) fclose(indexFile);
+        return false; // Cannot open file
+    }
+
+    // Seek to the end of the binary data file to append the new record
+    fseek(dataFile, 0, SEEK_END);
+    long long dataOffset = ftell(dataFile); // Get the current byte offset
+
+    // Write the new data record to the binary data file
+    fwrite(novoRegistro, sizeof(DADOS), 1, dataFile);
+
+    // Update B-tree index
+    if (!adicionarNoArvoreB(novoRegistro->id, dataOffset, indexFile)) {
+        fclose(dataFile);
+        fclose(indexFile);
+        return false; // Failed to update B-tree
+    }
+
+    fclose(dataFile);
+    fclose(indexFile);
+    return true;
+}

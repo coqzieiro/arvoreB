@@ -16,7 +16,7 @@ int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz)
     }
 
     int maxAltura = -1;
-    int minAltura = -1;
+    // int minAltura = -1;
 
     if(nroDescendentes == 0) // eh folha
     {
@@ -520,7 +520,7 @@ void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset)
 
     REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **) malloc(sizeof(REGISTRO_ARVORE_B *) * 1);
     long long int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalho);
-    long long int proxRrn = getProxRRNCabecalhoArvoreB(cabecalho);
+    //long long int proxRrn = getProxRRNCabecalhoArvoreB(cabecalho);
     int tamCaminho = 0; // variavel para guardar o tamanho do caminho (necessario para liberar memoria)
 
     //insercaoArvoreBRecursiva(arquivo, rrnAtual, chave, 0, proxRrn, caminho, byteOffset, cabecalho);

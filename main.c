@@ -1,3 +1,4 @@
+
 /*
 INTEGRANTES DO GRUPO:
                     Felipe da Costa Coqueiro,   NºUSP: 11781361
@@ -8,17 +9,19 @@ INTEGRANTES DO GRUPO:
 #include <stdlib.h>
 #include <string.h>
 #include "funcionalidades.h"
-#include "interpretaBin.h"
 #include "definicoesTipos.h"
 #include "funcoes_fornecidas.h"
-#include "escreveBin.h" // mudarrrrrrr
+#include "interpretaBin.h"
+#include "cabecalho.h"
+#include "arvoreB.h"
+#include "escreveBin.h"
+#include "escreveBin.h" // mudarrrrrrr -> onde tem as funcionalidades
 
 int main(void){
     int opcao, numBuscas, numRemocoes, numInsercoes;
     char nomeArquivoCSV[50];
     char nomeArquivoBinario[50];
     char nomeArquivoIndex[50];
-    char arquivoArvB[50];
 
     scanf("%d", &opcao); // Determina qual funcionalidade irá executar
 
@@ -76,7 +79,7 @@ int main(void){
 
             break;
         }
-        case 6: // Funcionalidade 6 (inserção de novos registros)
+        case 6: {// Funcionalidade 6 (inserção de novos registros)
             scanf("%s %s %d", nomeArquivoBinario, nomeArquivoIndex, &numInsercoes);
             // Abertura do arquivo
             FILE* arquivoBinario = fopen(nomeArquivoBinario, "rb+");
@@ -113,17 +116,17 @@ int main(void){
             binarioNaTela(nomeArquivoIndex);
 
             break;
-        case 7: // Funcionalidade 7 (Cria um arquivo de índice árvore-B)
-            char nomeArquivoBinario[50];
-            scanf("%s", nomeArquivoBinario);
+        }
+        case 7: { // Funcionalidade 7 (Cria um arquivo de índice árvore-B)
+            scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex);
 
-            scanf("%s", arquivoArvB);
-
-            if(criarArquivoArvoreB(nomeArquivoBinario, arquivoArvB))
-                binarioNaTela(arquivoArvB);
+            if(criarArquivoArvoreB(nomeArquivoBinario, nomeArquivoIndex)){
+                binarioNaTela(nomeArquivoIndex);
+            }
             break;
-        case 8: // Funcionalidade 8 (Recuperação de dados usando índice árvore-B)
-            scanf("%s", nomeArquivoBinario); // Lê o nome do arquivo binário
+        }
+        case 8: { // Funcionalidade 8 (Recuperação de dados usando índice árvore-B)
+            scanf("%s %s %d", nomeArquivoBinario, nomeArquivoIndex, &numBuscas); // Lê o nome do arquivo binário
 
             FILE *fileBin = fopen(nomeArquivoBinario, "rb"); // Abre o arquivo binário no modo leitura
             if(fileBin == NULL) {
@@ -141,25 +144,34 @@ int main(void){
 
             apagarCabecalho(cabecalhoBin); // Libera a memória do cabeçalho
 
-            scanf("%s", arquivoArvB); // Lê o nome do arquivo da árvore B
-
-            int quantidadeBuscas;
-            scanf("%d", &quantidadeBuscas); // Lê a quantidade de buscas
-
-            for(int i=0; i<quantidadeBuscas; i++) {
+            for(int i=0; i<numBuscas; i++) {
                 int id;
                 scanf("\nid %d", &id); // Lê o id a ser buscado
 
-                imprimirIdArvoreB(id, fileBin, arquivoArvB, i, 0); // Chama a função para imprimir o registro correspondente ao id na árvore B
+                imprimirIdArvoreB(id, fileBin, nomeArquivoBinario, i, 0); // Chama a função para imprimir o registro correspondente ao id na árvore B
             }
             fclose(fileBin); // Fecha o arquivo binário
             break;
-        case 9: // Funcionalidade 9 (Recuperação de dados usando qualquer campo de busca)
+        }
+        case 9: { // Funcionalidade 9 (Recuperação de dados usando qualquer campo de busca)
+            scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex); // Lê o nome do arquivo binário
 
+            //imprimeRegistrosBuscados(nomeArquivoBinario, nomeArquivoIndex, 1); // Chama a função para imprimir registros buscados com a árvore B
             break;
-        case 10: // Funcionalidade 10 (Inserção de novos registros usando índice árvore-B)
+        }
+        case 10: { // Funcionalidade 10 (Inserção de novos registros usando índice árvore-B)
+            scanf("%s %s %d", nomeArquivoBinario, nomeArquivoIndex, &numBuscas); // Lê o nome do arquivo binário
 
-            break;
+            // faz as insercoes dos registros no arquivo de dados e no arquivo da arvore b
+            //bool inseriu = inserirNovoDadoArvoreB(nomeArquivoBinario, nomeArquivoIndex, numBuscas);
+
+            // se o registro foi inserido, imprime o binario na tela dos arquivos de dados e da arvore b
+            /*if(inseriu) {
+                binarioNaTela(nomeArquivoBinario);
+                binarioNaTela(nomeArquivoIndex);
+            }
+            break;*/
+        }
         default: 
             printf("Opção inválida.\n");
             return(1);

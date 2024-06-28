@@ -1,11 +1,11 @@
 #ifndef ESCREVE_BIN_H
     #define ESCREVE_BIN_H
     #include "definicoesTipos.h"
-
+    #include <stdbool.h>
 
     // void imprimeRegistrosFromBin(char *filePath);
     int imprimeRegistro(DADOS *registro);
-    // void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
+    void imprimeRegistrosBuscados(char *nomeArquivoBinario, char *nomeArquivoArvoreB, int buscaId);
     // void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i);
     long long int buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual);
     // void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice);
@@ -14,4 +14,7 @@
 
     void imprimirIdArvoreB(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula);
     int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB);
+    bool inserirNovoDadoArvoreB(char *nomeArquivoBinario, char *nomeArquivoArvoreB, DADOS *novoRegistro);
+    bool adicionarNoArvoreB(int id, long long byteOffset, FILE* fileArvoreB);
+
 #endif
