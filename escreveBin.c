@@ -267,3 +267,54 @@ bool inserirNovoDadoArvoreB(char* nomeArquivoBinario, char* nomeArquivoIndex, DA
     fclose(indexFile);
     return true;
 }
+
+bool adicionarNoArvoreB(int chave, long long int byteOffset, FILE *arquivoArvoreB) {
+    // Read the B-tree header
+    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivoArvoreB);
+    if (getStatusCabecalhoArvoreB(cabecalho) == '0') {
+        // If the header indicates the tree is inconsistent, return false
+        printf("Falha no processamento do arquivo.\n");
+        apagarCabecalhoArvoreB(cabecalho);
+        return false;
+    }
+
+    int rrnRaiz = getNoRaizCabecalhoArvoreB(cabecalho);
+    if (rrnRaiz == -1) {
+        // If the tree is empty, create a new root node
+        REGISTRO_ARVORE_B *novoRegistro = criarRegistroArvoreBVazio();
+        setAlturaNoRegistroArvoreB(novoRegistro, 0);
+        inserirChaveRegistroArvoreB(novoRegistro, chave, byteOffset);
+        setRRNRegistroArvoreB(novoRegistro, 0);
+
+        escreverRegistroArvoreB(novoRegistro, arquivoArvoreB, 0);
+        apagarRegistroArvoreB(novoRegistro);
+
+        setNoRaizCabecalhoArvoreB(cabecalho, 0);
+        setProxRRNCabecalhoArvoreB(cabecalho, 1);
+        setNroChavesCabecalhoArvoreB(cabecalho, 1);
+        setStatusCabecalhoArvoreB(cabecalho, '1');
+        escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
+        apagarCabecalhoArvoreB(cabecalho);
+        return true;
+    }
+
+    // Initialize path array to track the path taken in the tree
+    REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **)malloc(sizeof(REGISTRO_ARVORE_B *));
+    int tamCaminho = 0;
+
+    // Call the recursive insertion function
+    insercaoArvoreBRecursiva(arquivoArvoreB, cabecalho, chave, byteOffset, rrnRaiz, caminho, 0, &tamCaminho);
+
+    // Update and write the header back
+    setStatusCabecalhoArvoreB(cabecalho, '1');
+    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
+    apagarCabecalhoArvoreB(cabecalho);
+
+    // Clean up
+    for (int i = 0; i < tamCaminho; i++) {
+        apagarRegistroArvoreB(caminho[i]);
+    }
+    free(caminho);
+
+    return true;
+}
