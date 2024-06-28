@@ -78,7 +78,7 @@ void setNroRem(CABECALHO *cabecalho, int nroRem)
 }
 
 // Libera a memória do cabeçalho
-void apagarCabecalho(CABECALHO *cabecalho)
+void limpaCabecalho(CABECALHO *cabecalho)
 {
     free(cabecalho);
 }

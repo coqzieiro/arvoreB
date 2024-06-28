@@ -191,7 +191,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             apagarRegistroArvoreB(registroEsquerdo);
             apagarRegistroArvoreB(registroDireito);
             apagarRegistroArvoreB(novaRaiz);
-            apagarCabecalhoArvoreB(cabecalho);
+            limpaCabecalhoArvoreB(cabecalho);
         } else {
             REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
 
@@ -297,7 +297,7 @@ void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset) {
         setNroChavesCabecalhoArvoreB(cabecalho, 1);
 
         escreverCabecalhoArvoreB(arquivo, cabecalho);
-        apagarCabecalhoArvoreB(cabecalho);
+        limpaCabecalhoArvoreB(cabecalho);
 
         return;
     }
@@ -309,5 +309,5 @@ void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset) {
 
     insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnAtual, caminho, 0, &tamCaminho);
 
-    apagarCabecalhoArvoreB(cabecalho);
+    limpaCabecalhoArvoreB(cabecalho);
 }

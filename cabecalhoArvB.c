@@ -124,7 +124,7 @@ int escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho) {
 }
 
 // Libera a memória alocada para o cabeçalho da árvore B
-int apagarCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
+int limpaCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
     if (cabecalho == NULL){
         return(0);
     }

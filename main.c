@@ -14,7 +14,7 @@ INTEGRANTES DO GRUPO:
 #include "funcoesAuxiliares.h"
 
 int main(void){
-    int opcao, numBuscas, numRemocoes, numInsercoes;
+    int opcao, numBuscas, numRemocoes, numInsercoes, id;
     char nomeArquivoCSV[50];
     char nomeArquivoBinario[50];
     char nomeArquivoIndex[50];
@@ -122,34 +122,32 @@ int main(void){
             break;
         }
         case 8: { // Funcionalidade 8 (Recuperação de dados usando índice árvore-B)
-            scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex); // Lê o nome do arquivo binário
+            scanf("%s %s %d", nomeArquivoBinario, nomeArquivoIndex, &numBuscas); // Lê o nome do arquivo binário
 
-            FILE *fileBin = fopen(nomeArquivoBinario, "rb"); // Abre o arquivo binário no modo leitura
-            if(fileBin == NULL) {
+            FILE *arquivoBinario = fopen(nomeArquivoBinario, "rb"); // Abre o arquivo binário no modo leitura
+
+            if(arquivoBinario == NULL) {
                 printf("Falha no processamento do arquivo.\n"); // Verifica se ocorreu um erro ao abrir o arquivo
                 return 0;
             }
 
-            CABECALHO *cabecalhoBin = getCabecalhoFromBin(fileBin); // Lê o cabeçalho do arquivo binário
+            CABECALHO *cabecalhoBin = retornaCabecalhoBinario(arquivoBinario); // Lê o cabeçalho do arquivo binário
+
             if(getStatus(cabecalhoBin) == '0') {
                 printf("Falha no processamento do arquivo.\n"); // Verifica se o status do cabeçalho é inválido
-                apagarCabecalho(cabecalhoBin); // Libera a memória do cabeçalho
-                fclose(fileBin); // Fecha o arquivo
-                return 0;
+                limpaCabecalho(cabecalhoBin); // Libera a memória do cabeçalho
+                fclose(arquivoBinario); // Fecha o arquivo
+                return(0);
             }
 
-            apagarCabecalho(cabecalhoBin); // Libera a memória do cabeçalho
+            limpaCabecalho(cabecalhoBin); // Libera a memória do cabeçalho
 
-            int quantidadeBuscas;
-            scanf("%d", &quantidadeBuscas); // Lê a quantidade de buscas
-
-            for(int i=0; i<quantidadeBuscas; i++) {
-                int id;
+            for(int i=0; i<numBuscas; i++) {
                 scanf("\nid %d", &id); // Lê o id a ser buscado
 
-                imprimirIdArvoreB(id, fileBin, nomeArquivoIndex, i, 0); // Chama a função para imprimir o registro correspondente ao id na árvore B
+                buscaIdArvore(id, arquivoBinario, nomeArquivoIndex, i, 0); // Chama a função para imprimir o registro correspondente ao id na árvore B
             }
-            fclose(fileBin); // Fecha o arquivo binário
+            fclose(arquivoBinario); // Fecha o arquivo binário
             break;
         }
         case 9: { // Funcionalidade 9 (Recuperação de dados usando qualquer campo de busca)

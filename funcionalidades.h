@@ -29,6 +29,12 @@ INTEGRANTES DO GRUPO:
     // Funcionalidade 6
     void inserir(FILE* nomeArquivoBinario);
 
+    // Funcionalidade 7
+    int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB);
+
+    // Funcionalidade 8
+    void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula);
+
     // Funcionalidade 10
     void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset);
     void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho);

@@ -133,8 +133,7 @@ DADOS *criarRegistro(char removido, int tamanhoRegistro, long prox, int id, int 
 
 // Funções get para que seja possível acessar os atributos dos registros em outras partes do código
 
-char retornaRemovido(DADOS *registro)
-{
+char retornaRemovido(DADOS *registro) {
     return registro->removido;
 }
 
@@ -143,28 +142,23 @@ DADOS *buscaOfsset(long long offset, FILE *file) {
     return registro;
 }
 
-int retornaTamanhoRegistro(DADOS *registro)
-{
+int retornaTamanhoRegistro(DADOS *registro) {
     return registro->tamanhoRegistro;
 }
 
-long long int retornaProx(DADOS *registro)
-{
+long long int retornaProx(DADOS *registro) {
     return registro->prox;
 }
 
-int retornaId(DADOS *registro)
-{
+int retornaId(DADOS *registro) {
     return registro->id;
 }
 
-int retornaIdade(DADOS *registro)
-{
+int retornaIdade(DADOS *registro) {
     return registro->idade;
 }
 
-int RetornaTamNomeJogador(DADOS *registro)
-{
+int RetornaTamNomeJogador(DADOS *registro) {
     return registro->tamNomeJog;
 }
 
@@ -176,13 +170,11 @@ char *retornaNomeJogador(DADOS *registro) {
     return registro->nomeJogador;
 }
 
-int retornaTamNacionalidade(DADOS *registro)
-{
+int retornaTamNacionalidade(DADOS *registro) {
     return registro->tamNacionalidade;
 }
 
-char *retornaNacionalidade(DADOS *registro)
-{
+char *retornaNacionalidade(DADOS *registro) {
     if (registro->nacionalidade == NULL || strcmp(registro->nacionalidade, "") == 0) // Check for NULL and empty string
     {
         return "SEM DADO";
@@ -190,8 +182,7 @@ char *retornaNacionalidade(DADOS *registro)
     return registro->nacionalidade;
 }
 
-int retornaTamNomeClube(DADOS *registro)
-{
+int retornaTamNomeClube(DADOS *registro) {
     return registro->tamNomeClube;
 }
 
@@ -206,28 +197,23 @@ char *retornaNomeClube(DADOS *registro) {
 
 // Funções set para que seja possível alterar o valor de um atributo de um registro em outras partes do código
 
-void setaRemovido(DADOS *registro, int removido)
-{
+void setaRemovido(DADOS *registro, int removido) {
     registro->removido = removido;
 }
 
-void setaTamanhoRegistro(DADOS *registro, int tamanhoRegistro)
-{
+void setaTamanhoRegistro(DADOS *registro, int tamanhoRegistro) {
     registro->tamanhoRegistro = tamanhoRegistro;
 }
 
-void setaProx(DADOS *registro, long long int prox)
-{
+void setaProx(DADOS *registro, long long int prox) {
     registro->prox = prox;
 }
 
-void setaId(DADOS *registro, int id)
-{
+void setaId(DADOS *registro, int id) {
     registro->id = id;
 }
 
-void setaIdade(DADOS *registro, int idade)
-{
+void setaIdade(DADOS *registro, int idade) {
     if(idade == 0) // se idade for igual a 0, muda o valor do atributo idade do registro para -1 para indicar que é uma idade inválida
     {
         registro->idade = -1;
@@ -236,33 +222,27 @@ void setaIdade(DADOS *registro, int idade)
     registro->idade = idade;
 }
 
-void setaTamNomeJogador(DADOS *registro, int tamNomeJogador)
-{
+void setaTamNomeJogador(DADOS *registro, int tamNomeJogador) {
     registro->tamNomeJog = tamNomeJogador;
 }
 
-void setaNomeJogador(DADOS *registro, char *nomeJogador)
-{
+void setaNomeJogador(DADOS *registro, char *nomeJogador) {
     registro->nomeJogador = nomeJogador;
 }
 
-void setaTamNacionalidade(DADOS *registro, int tamNacionalidade)
-{
+void setaTamNacionalidade(DADOS *registro, int tamNacionalidade) {
     registro->tamNacionalidade = tamNacionalidade;
 }
 
-void setaNacionalidade(DADOS *registro, char *nacionalidade)
-{
+void setaNacionalidade(DADOS *registro, char *nacionalidade) {
     registro->nacionalidade = nacionalidade;
 }
 
-void setaTamNomeClube(DADOS *registro, int tamNomeClube)
-{
+void setaTamNomeClube(DADOS *registro, int tamNomeClube) {
     registro->tamNomeClube = tamNomeClube;
 }
 
-void setaNomeClube(DADOS *registro, char *nomeClube)
-{
+void setaNomeClube(DADOS *registro, char *nomeClube) {
     registro->nomeClube = nomeClube;
 }
 
@@ -306,15 +286,13 @@ DADOS *lerRegistroFromBin(int posicao, FILE *arquivoBin) {
     fread(&tamNomeJogador, sizeof(int), 1, arquivoBin); // lê o tamanho do nome do jogador de um registro do arquivo e salva na variável tamNomeJogador
     setaTamNomeJogador(registro, tamNomeJogador);
 
-    if (tamNomeJogador > 0)
-    {
+    if (tamNomeJogador > 0) {
         char *nomeJogador = (char *)malloc(tamNomeJogador + 1);
         fread(nomeJogador, sizeof(char), tamNomeJogador, arquivoBin);
         nomeJogador[tamNomeJogador] = '\0'; // Ensure null-termination
         setaNomeJogador(registro, nomeJogador);
     }
-    else
-    {
+    else {
         setaNomeJogador(registro, NULL);
     }
 
@@ -322,15 +300,13 @@ DADOS *lerRegistroFromBin(int posicao, FILE *arquivoBin) {
     fread(&tamNacionalidade, sizeof(int), 1, arquivoBin); // lê o tamanho da string nacionalidade de um registro do arquivo e salva na variável tamNacionalidade
     setaTamNacionalidade(registro, tamNacionalidade);
 
-    if (tamNacionalidade > 0)
-    {
+    if (tamNacionalidade > 0) {
         char *nacionalidade = (char *)malloc(tamNacionalidade + 1);
         fread(nacionalidade, sizeof(char), tamNacionalidade, arquivoBin);
         nacionalidade[tamNacionalidade] = '\0'; // Ensure null-termination
         setaNacionalidade(registro, nacionalidade);
     }
-    else
-    {
+    else {
         setaNacionalidade(registro, NULL);
     }
 
@@ -338,15 +314,13 @@ DADOS *lerRegistroFromBin(int posicao, FILE *arquivoBin) {
     fread(&tamNomeClube, sizeof(int), 1, arquivoBin); // lê o tamanho do nome do clube de um registro do arquivo e salva na variável tamNomeClube
     setaTamNomeClube(registro, tamNomeClube);
 
-    if (tamNomeClube > 0)
-    {
+    if (tamNomeClube > 0) {
         char *nomeClube = (char *)malloc(tamNomeClube + 1);
         fread(nomeClube, sizeof(char), tamNomeClube, arquivoBin);
         nomeClube[tamNomeClube] = '\0'; // Ensure null-termination
         setaNomeClube(registro, nomeClube);
     }
-    else
-    {
+    else {
         setaNomeClube(registro, NULL);
     }
 

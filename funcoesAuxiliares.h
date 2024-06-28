@@ -67,13 +67,13 @@ INTEGRANTES DO GRUPO:
     void setProxByteOffset(CABECALHO *cabecalho, long long int proxByteOffset);
     void setNroRegArq(CABECALHO *cabecalho, int nroRegArq);
     void setNroRem(CABECALHO *cabecalho, int nroRem);
-    void apagarCabecalho(CABECALHO *cabecalho);
+    void limpaCabecalho(CABECALHO *cabecalho);
     void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
     void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
     void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
     void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
     void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
-    CABECALHO *getCabecalhoFromBin(FILE *file);
+    CABECALHO *retornaCabecalhoBinario(FILE *file);
     CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio();
     char getStatusCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
     int getNoRaizCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
@@ -85,7 +85,7 @@ INTEGRANTES DO GRUPO:
     int setNroChavesCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int nroChaves);
     CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file);
     int escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho);
-    int apagarCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
+    int limpaCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
 
     // Funções auxiliares manipulação de registros árvore-B
     REGISTRO_ARVORE_B *criarRegistroArvoreBVazio();
@@ -143,8 +143,6 @@ INTEGRANTES DO GRUPO:
     void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i);
     long long int buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual);
     REMOVIDOS *criarListaRemovidos(FILE *file);
-    void imprimirIdArvoreB(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula);
-    int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB);
     bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
     bool adicionarNoArvoreB(int chave, long long int byteOffset, FILE *arquivoArvoreB);
     REMOVIDOS *criarListaRemovidosVazia();

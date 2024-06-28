@@ -36,7 +36,7 @@ void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho) {
 }
 
 // Função para obter o cabeçalho do arquivo binário e salvar em uma estrutura do tipo 'CABECALHO'
-CABECALHO *getCabecalhoFromBin(FILE *file) {
+CABECALHO *retornaCabecalhoBinario(FILE *file) {
     // Cria uma estrutura de cabeçalho e lê os valores do arquivo binário para ela
     CABECALHO *cabecalho = criarCabecalho();
     fseek(file, 0, SEEK_SET);

@@ -12,7 +12,7 @@ INTEGRANTES DO GRUPO:
 #include <stdlib.h>
 
 // Função para imprimir um registro de ID específico na árvore B
-void imprimirIdArvoreB(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula) {
+void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula) {
     FILE *fileArvoreB = fopen(nomeArquivoArvoreB, "rb"); // Abre o arquivo da árvore B no modo leitura
     if(fileArvoreB == NULL) {
         printf("Falha no processamento do arquivo.\n"); // Verifica se ocorreu um erro ao abrir o arquivo
@@ -22,13 +22,13 @@ void imprimirIdArvoreB(int id, FILE *file, char *nomeArquivoArvoreB, int i, int 
     CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB); // Lê o cabeçalho da árvore B
     if(getStatusCabecalhoArvoreB(cabecalhoArvoreB) == '0') {
         printf("Falha no processamento do arquivo.\n"); // Verifica se o status do cabeçalho é inválido
-        apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
+        limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
         fclose(fileArvoreB); // Fecha o arquivo
         return;
     }
 
     int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB); // Obtém o RRN da raiz da árvore B
-    apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
+    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
 
     printf(buscaMinuscula ? "Busca %d\n\n" : "BUSCA %d\n\n", i + 1); // Imprime o número da busca
 
@@ -186,13 +186,13 @@ int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB) {
         return 0;
     }
 
-    CABECALHO *cabecalho = getCabecalhoFromBin(arquivoBinario); // Lê o cabeçalho do arquivo binário
+    CABECALHO *cabecalho = retornaCabecalhoBinario(arquivoBinario); // Lê o cabeçalho do arquivo binário
 
     if(getStatus(cabecalho) == '0') {
         printf("Falha no processamento do arquivo.\n");
         fclose(arquivoBinario);
         fclose(arquivoArvoreB);
-        apagarCabecalho(cabecalho);
+        limpaCabecalho(cabecalho);
         return 0;
     }
 
@@ -204,7 +204,7 @@ int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB) {
 
     int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho); // Quantidade total de registros
 
-    apagarCabecalho(cabecalho);
+    limpaCabecalho(cabecalho);
 
     for(int i = 0; i < quantidade; i++) {
         DADOS *registro = lerRegistroFromBin(posicao, arquivoBinario); // Lê um registro do arquivo binário
@@ -223,11 +223,11 @@ int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB) {
         liberarRegistro(registro); // Libera a memória do registro
     }
 
-    apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
+    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
     cabecalhoArvoreB = lerCabecalhoArvoreB(arquivoArvoreB); // Lê o cabeçalho atualizado da árvore B
     setStatusCabecalhoArvoreB(cabecalhoArvoreB, '1'); // Define o status do cabeçalho como consistente
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
-    apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
+    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
 
     fclose(arquivoBinario); // Fecha o arquivo binário
     fclose(arquivoArvoreB); // Fecha o arquivo de índices
@@ -247,12 +247,12 @@ void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvor
             return;
         }
 
-        CABECALHO *cabecalho = getCabecalhoFromBin(file); // Cria um cabeçalho e atribui os valores a ele
+        CABECALHO *cabecalho = retornaCabecalhoBinario(file); // Cria um cabeçalho e atribui os valores a ele
 
         imprimirRegistrosPorCampos(file, cabecalho, buscaId, nomeArquivoArvoreB, i); // Chama a função para imprimir registros
         
         fclose(file); // Fecha o arquivo
-        apagarCabecalho(cabecalho); // Libera a memória do cabeçalho
+        limpaCabecalho(cabecalho); // Libera a memória do cabeçalho
     }
 }
 
@@ -283,7 +283,7 @@ void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, c
             scanf("%i", &id); // Lê o id da busca
             snprintf(parametros[j], 50, "%i", id);
             if(buscaId == 1 && id != -1) { // Verifica se a busca pelo índice vai ser feita com o arquivo da árvore B
-                imprimirIdArvoreB(id, file, nomeArquivoArvoreB, i, 1); // Chama a função para buscar o id na árvore B
+                buscaIdArvore(id, file, nomeArquivoArvoreB, i, 1); // Chama a função para buscar o id na árvore B
                 return;
             }
         } else if (strcmp(campos[j], "nomeJogador") == 0) {
@@ -351,7 +351,7 @@ void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, c
 
 // Função para criar uma lista de registros removidos a partir de um arquivo binário
 REMOVIDOS *criarListaRemovidos(FILE *file) {
-    CABECALHO *cabecalho = getCabecalhoFromBin(file); // Obtém o cabeçalho do arquivo
+    CABECALHO *cabecalho = retornaCabecalhoBinario(file); // Obtém o cabeçalho do arquivo
     REMOVIDOS *removidos = criarListaRemovidosVazia(); // Cria uma lista vazia de registros removidos
 
     fseek(file, 0, SEEK_END);
@@ -398,7 +398,7 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
         liberarRegistro(proxRegistro);
     }
 
-    apagarCabecalho(cabecalho); // Libera a memória do cabeçalho
+    limpaCabecalho(cabecalho); // Libera a memória do cabeçalho
 
     return removidos;
 }
@@ -422,7 +422,7 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
 
     int tamanhoLista = getTamanhoListaIndice(removidos->lista);
     const int byteProx = 5;
-    CABECALHO *cabecalho = getCabecalhoFromBin(file);
+    CABECALHO *cabecalho = retornaCabecalhoBinario(file);
 
     setStatus(cabecalho, '0');
 
@@ -462,7 +462,7 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     }
 
     liberarRegistro(registro);
-    apagarCabecalho(cabecalho);
+    limpaCabecalho(cabecalho);
 
     removerRegistroRemovidoPosicao(removidos, posicao);
 }
@@ -641,7 +641,7 @@ long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros,
     long long int *byteOffsets = malloc(sizeof(long long int) * quantidade);
 
     if(getTamanhoListaRemovidos(removidos) == 0) { // Se não há registros removidos
-        CABECALHO *cabecalho = getCabecalhoFromBin(file);
+        CABECALHO *cabecalho = retornaCabecalhoBinario(file);
 
         setNroRegArq(cabecalho, getNroRegArq(cabecalho) + quantidade);
         writeNroRegArqCabecalho(cabecalho, file);
@@ -650,7 +650,7 @@ long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros,
             byteOffsets[i] = -1;
         }
 
-        apagarCabecalho(cabecalho);
+        limpaCabecalho(cabecalho);
 
         free(tamanhos);
 
@@ -700,13 +700,13 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         if(fileArvoreB != NULL) fclose(fileArvoreB);
         return false;
     }
-    CABECALHO *cabecalho = getCabecalhoFromBin(arquivoBin);
+    CABECALHO *cabecalho = retornaCabecalhoBinario(arquivoBin);
     CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB); // Lê o cabeçalho da árvore B
 
     if(getStatus(cabecalho) == '0' || getStatusCabecalhoArvoreB(cabecalhoArvoreB) == '0') {
         printf("Falha no processamento do arquivo.\n");
-        apagarCabecalho(cabecalho);
-        apagarCabecalhoArvoreB(cabecalhoArvoreB);
+        limpaCabecalho(cabecalho);
+        limpaCabecalhoArvoreB(cabecalhoArvoreB);
         fclose(arquivoBin);
         fclose(fileArvoreB);
         return false;
@@ -755,7 +755,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         registros[i] = criarRegistro('0', 33 + strlen(nomeJogador[i]) + strlen(nomeClube[i]) + strlen(nacionalidade[i]), -1, id, idade, strlen(nomeJogador[i]), nomeJogador[i], strlen(nacionalidade[i]), nacionalidade[i], strlen(nomeClube[i]), nomeClube[i]);
     }
 
-    apagarCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
+    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
 
     // Obtém o byteOffset do best fit de cada registro
     long long int *byteOffsets = getBestFitArrayRegistros(removidos, registros, numOperacoes, arquivoBin);
@@ -808,7 +808,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
     free(nacionalidade);
     free(nomeClube);
 
-    apagarCabecalho(cabecalho);
+    limpaCabecalho(cabecalho);
     apagarListaRemovidos(removidos);
 
     fclose(arquivoBin);
@@ -866,7 +866,7 @@ bool adicionarNoArvoreB(int chave, long long int byteOffset, FILE *arquivoArvore
     if (getStatusCabecalhoArvoreB(cabecalho) == '0') {
         // Se o cabeçalho indica que a árvore está inconsistente, retorna false
         printf("Falha no processamento do arquivo.\n");
-        apagarCabecalhoArvoreB(cabecalho);
+        limpaCabecalhoArvoreB(cabecalho);
         return false;
     }
 
@@ -886,7 +886,7 @@ bool adicionarNoArvoreB(int chave, long long int byteOffset, FILE *arquivoArvore
         setNroChavesCabecalhoArvoreB(cabecalho, 1);
         setStatusCabecalhoArvoreB(cabecalho, '1');
         escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
-        apagarCabecalhoArvoreB(cabecalho);
+        limpaCabecalhoArvoreB(cabecalho);
         return true;
     }
 
@@ -900,7 +900,7 @@ bool adicionarNoArvoreB(int chave, long long int byteOffset, FILE *arquivoArvore
     // Atualiza e escreve o cabeçalho de volta
     setStatusCabecalhoArvoreB(cabecalho, '1');
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
-    apagarCabecalhoArvoreB(cabecalho);
+    limpaCabecalhoArvoreB(cabecalho);
 
     // Limpa a memória
     for (int i = 0; i < tamCaminho; i++) {
