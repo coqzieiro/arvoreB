@@ -109,8 +109,7 @@ DADOS *criarRegistroNulo()
 }
 
 // Função que cria um registro com os valores passados por parâmetro na função
-DADOS *criarRegistro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube)
-{
+DADOS *criarRegistro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube) {
     DADOS *registro = (DADOS *)malloc(sizeof(DADOS));
     registro->removido = removido;
     registro->tamanhoRegistro = tamanhoRegistro;
@@ -118,13 +117,14 @@ DADOS *criarRegistro(char removido, int tamanhoRegistro, long prox, int id, int 
     registro->id = id;
     registro->idade = idade;
     registro->tamNomeJog = tamNomeJogador;
-    registro->nomeJogador = nomeJogador;
+    registro->nomeJogador = (nomeJogador != NULL) ? strdup(nomeJogador) : NULL;
     registro->tamNacionalidade = tamNacionalidade;
-    registro->nacionalidade = nacionalidade;
+    registro->nacionalidade = (nacionalidade != NULL) ? strdup(nacionalidade) : NULL;
     registro->tamNomeClube = tamNomeClube;
-    registro->nomeClube = nomeClube;
+    registro->nomeClube = (nomeClube != NULL) ? strdup(nomeClube) : NULL;
     return registro;
 }
+
 
 // Funções get para que seja possível acessar os atributos dos registros em outras partes do código
 
@@ -163,9 +163,8 @@ int get_tamNomeJogador(DADOS *registro)
     return registro->tamNomeJog;
 }
 
-char *get_nomeJogador(DADOS *registro)
-{
-    if (strcmp(registro->nomeJogador, "") == 0) // se a string do nome do jogador estiver vazia, retorna "SEM DADO"
+char *get_nomeJogador(DADOS *registro) {
+    if (registro->nomeJogador == NULL || strcmp(registro->nomeJogador, "") == 0) // Check for NULL and empty string
     {
         return "SEM DADO";
     }
@@ -179,7 +178,7 @@ int get_tamNacionalidade(DADOS *registro)
 
 char *get_nacionalidade(DADOS *registro)
 {
-    if (strcmp(registro->nacionalidade, "") == 0) // se a string da nacionalidade estiver vazia, retorna "SEM DADO"
+    if (registro->nacionalidade == NULL || strcmp(registro->nacionalidade, "") == 0) // Check for NULL and empty string
     {
         return "SEM DADO";
     }
@@ -191,14 +190,14 @@ int get_tamNomeClube(DADOS *registro)
     return registro->tamNomeClube;
 }
 
-char *get_nomeClube(DADOS *registro)
-{
-    if (strcmp(registro->nomeClube, "") == 0) // se a string do nome do clube estiver vazia, retorna "SEM DADO"
+char *get_nomeClube(DADOS *registro) {
+    if (registro->nomeClube == NULL || strcmp(registro->nomeClube, "") == 0) // Check for NULL and empty string
     {
         return "SEM DADO";
     }
     return registro->nomeClube;
 }
+
 
 // Funções set para que seja possível alterar o valor de um atributo de um registro em outras partes do código
 
@@ -263,16 +262,17 @@ void set_nomeClube(DADOS *registro, char *nomeClube)
 }
 
 // Função que libera o espaço de memória do registro e de seus atributos
-void liberarRegistro(DADOS *registro)
-{
-    free(registro->nomeJogador);
-    free(registro->nacionalidade);
-    free(registro->nomeClube);
+void liberarRegistro(DADOS *registro) {
+    if (registro->nomeJogador)
+        free(registro->nomeJogador);
+    if (registro->nacionalidade)
+        free(registro->nacionalidade);
+    if (registro->nomeClube)
+        free(registro->nomeClube);
     free(registro);
 }
 
-DADOS *lerRegistroFromBin(int posicao, FILE *arquivoBin)
-{
+DADOS *lerRegistroFromBin(int posicao, FILE *arquivoBin) {
     fseek(arquivoBin, posicao, SEEK_SET);
 
     DADOS *registro = criarRegistroNulo();
@@ -301,37 +301,49 @@ DADOS *lerRegistroFromBin(int posicao, FILE *arquivoBin)
     fread(&tamNomeJogador, sizeof(int), 1, arquivoBin); // lê o tamanho do nome do jogador de um registro do arquivo e salva na variável tamNomeJogador
     set_tamNomeJogador(registro, tamNomeJogador);
 
-    char *nomeJogador = (char *)malloc(tamNomeJogador);
-    // lê cada caractere do nome do jogador de um registro no arquivo e salva na variavel nomeJogador
-    for(int i = 0; i < tamNomeJogador; i++)
+    if (tamNomeJogador > 0)
     {
-        fread(&nomeJogador[i], sizeof(char), 1, arquivoBin);
+        char *nomeJogador = (char *)malloc(tamNomeJogador + 1);
+        fread(nomeJogador, sizeof(char), tamNomeJogador, arquivoBin);
+        nomeJogador[tamNomeJogador] = '\0'; // Ensure null-termination
+        set_nomeJogador(registro, nomeJogador);
     }
-    set_nomeJogador(registro, nomeJogador);
+    else
+    {
+        set_nomeJogador(registro, NULL);
+    }
 
     int tamNacionalidade;
     fread(&tamNacionalidade, sizeof(int), 1, arquivoBin); // lê o tamanho da string nacionalidade de um registro do arquivo e salva na variável tamNacionalidade
     set_tamNacionalidade(registro, tamNacionalidade);
 
-    char *nacionalidade = (char *)malloc(tamNacionalidade);
-    // lê cada caractere da string nacionalidade um registro no arquivo e salva na variavel nacionalidade
-    for(int i = 0; i < tamNacionalidade; i++)
+    if (tamNacionalidade > 0)
     {
-        fread(&nacionalidade[i], sizeof(char), 1, arquivoBin);
+        char *nacionalidade = (char *)malloc(tamNacionalidade + 1);
+        fread(nacionalidade, sizeof(char), tamNacionalidade, arquivoBin);
+        nacionalidade[tamNacionalidade] = '\0'; // Ensure null-termination
+        set_nacionalidade(registro, nacionalidade);
     }
-    set_nacionalidade(registro, nacionalidade);
+    else
+    {
+        set_nacionalidade(registro, NULL);
+    }
 
     int tamNomeClube;
     fread(&tamNomeClube, sizeof(int), 1, arquivoBin); // lê o tamanho do nome do clube de um registro do arquivo e salva na variável tamNomeClube
     set_tamNomeClube(registro, tamNomeClube);
 
-    char *nomeClube = (char *)malloc(tamNomeClube);
-    // lê cada caractere do nome do clube um registro no arquivo e salva na variavel nomeClube
-    for(int i = 0; i < tamNomeClube; i++)
+    if (tamNomeClube > 0)
     {
-        fread(&nomeClube[i], sizeof(char), 1, arquivoBin);
+        char *nomeClube = (char *)malloc(tamNomeClube + 1);
+        fread(nomeClube, sizeof(char), tamNomeClube, arquivoBin);
+        nomeClube[tamNomeClube] = '\0'; // Ensure null-termination
+        set_nomeClube(registro, nomeClube);
     }
-    set_nomeClube(registro, nomeClube);
+    else
+    {
+        set_nomeClube(registro, NULL);
+    }
 
     return registro;
 }
