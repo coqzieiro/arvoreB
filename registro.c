@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "registro.h"
+#include "funcoesAuxiliares.h"
 
 // Função que imprime os registros de acordo com os parâmetros de busca
 void imprimirRegistros(DADOS **registros)

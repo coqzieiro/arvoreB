@@ -1,10 +1,6 @@
-#include "escreveBin.h"
-#include "arvoreB.h"
-#include "interpretaBin.h"
 #include "definicoesTipos.h"
-#include "cabecalho.h"
-#include "cabecalhoArvB.h"
-#include "registroArvB.h"
+#include "funcoes_fornecidas.h"
+#include "funcoesAuxiliares.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -247,8 +243,6 @@ int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB){
         posicao += get_tamanhoRegistro(registro); // muda o byteOffset para a posição do próximo registro
         liberarRegistro(registro); // libera a memória do registro
     }
-
-    //imprimirArvoreBGraphviz(arquivoArvoreB); // imprime a árvore B
 
     apagarCabecalhoArvoreB(cabecalhoArvoreB); // libera a memória do cabeçalho da árvore B
     cabecalhoArvoreB = lerCabecalhoArvoreB(arquivoArvoreB); // lê o cabeçalho da árvore B

@@ -11,11 +11,7 @@ INTEGRANTES DO GRUPO:
 #include "funcionalidades.h"
 #include "definicoesTipos.h"
 #include "funcoes_fornecidas.h"
-#include "interpretaBin.h"
-#include "cabecalho.h"
-#include "arvoreB.h"
-#include "escreveBin.h"
-#include "escreveBin.h" // mudarrrrrrr -> onde tem as funcionalidades
+#include "funcoesAuxiliares.h"
 
 int main(void){
     int opcao, numBuscas, numRemocoes, numInsercoes;

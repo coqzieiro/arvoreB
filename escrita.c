@@ -53,3 +53,47 @@ void EscritaRegistroFixo(DADOS_FIXOS* registro, FILE* arquivoBinario){
     fwrite(&registro->tamNomeClube,      sizeof(registro->tamNomeClube),     1,                         arquivoBinario);
     fwrite(&registro->nomeClube,         sizeof(char),                      registro->tamNomeClube,     arquivoBinario);
 }
+
+// Função que escreve o status do cabeçalho no arquivo binário
+void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
+{
+    const int statusByte = 0;
+    fseek(arquivoBin, statusByte, SEEK_SET);
+    char status = getStatus(cabecalho);
+    fwrite(&status, sizeof(char), 1, arquivoBin);
+}
+
+// Função que escreve o topo do cabeçalho no arquivo binário
+void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
+{
+    const int topoByte = 1;
+    fseek(arquivoBin, topoByte, SEEK_SET);
+    long long int topo = getTopo(cabecalho);
+    fwrite(&topo, sizeof(long long int), 1, arquivoBin);
+}
+
+// Função que escreve o próximo byte offset do cabeçalho no arquivo binário
+void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
+{
+    const int proxByteOffsetByte = 9;
+    fseek(arquivoBin, proxByteOffsetByte, SEEK_SET);
+    long long int proxByteOffset = getProxByteOffset(cabecalho);
+    fwrite(&proxByteOffset, sizeof(long long int), 1, arquivoBin);
+}
+
+void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
+{
+    const int nroRegArqByte = 17;
+    fseek(arquivoBin, nroRegArqByte, SEEK_SET);
+    int nroRegArq = getNroRegArq(cabecalho);
+    fwrite(&nroRegArq, sizeof(int), 1, arquivoBin);
+}
+
+// Função que escreve o número de registros removidos no cabeçalho do arquivo binário
+void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
+{
+    const int nroRegRemByte = 21;
+    fseek(arquivoBin, nroRegRemByte, SEEK_SET);
+    int nroRem = getNroRem(cabecalho);
+    fwrite(&nroRem, sizeof(int), 1, arquivoBin);
+}

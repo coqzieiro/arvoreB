@@ -1,5 +1,4 @@
-#include "registroArvB.h"
-
+#include "funcoesAuxiliares.h"
 
 // cria um registro de árvore B com os valores padrao
 REGISTRO_ARVORE_B *criarRegistroArvoreBVazio()
@@ -273,39 +272,6 @@ int apagarRegistroArvoreB(REGISTRO_ARVORE_B *registro)
     else
     {
         free(registro);
-    }
-
-    return 1;
-}
-
-int imprimirRegistroArvoreB(REGISTRO_ARVORE_B *registro)
-{
-    if (registro == NULL)
-    {
-        return 0;
-    }
-    else
-    {
-        printf("RRN: %d\n", registro->rrn);
-        printf("Altura: %d\n", registro->alturaNo);
-        printf("Nro chaves: %d\n", registro->nroChaves);
-        printf("Chaves: ");
-        for (int i = 0; i < registro->nroChaves; i++)
-        {
-            printf("%d ", registro->chaves[i]);
-        }
-        printf("\n");
-        printf("Byte offsets: ");
-        for (int i = 0; i < registro->nroChaves; i++)
-        {
-            printf("%lld ", registro->byteOffsets[i]);
-        }
-        printf("Descendentes: ");
-        for (int i = 0; i < registro->nroChaves + 1; i++)
-        {
-            printf("%d ", registro->descendentes[i]);
-        }
-        printf("\n");
     }
 
     return 1;

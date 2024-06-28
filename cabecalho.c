@@ -1,5 +1,5 @@
-#include "cabecalho.h"
 #include "definicoesTipos.h"
+#include "funcoesAuxiliares.h"
 
 // Função que cria o cabeçalho e define os valores iniciais de seus campos
 CABECALHO *criarCabecalho(void)
@@ -75,57 +75,4 @@ void setNroRem(CABECALHO *cabecalho, int nroRem)
 void apagarCabecalho(CABECALHO *cabecalho)
 {
     free(cabecalho);
-}
-
-// Função que escreve o status do cabeçalho no arquivo binário
-void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
-    const int statusByte = 0;
-    fseek(arquivoBin, statusByte, SEEK_SET);
-    char status = getStatus(cabecalho);
-    fwrite(&status, sizeof(char), 1, arquivoBin);
-}
-
-// Função que escreve o topo do cabeçalho no arquivo binário
-void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
-    const int topoByte = 1;
-    fseek(arquivoBin, topoByte, SEEK_SET);
-    long long int topo = getTopo(cabecalho);
-    fwrite(&topo, sizeof(long long int), 1, arquivoBin);
-}
-
-// Função que escreve o próximo byte offset do cabeçalho no arquivo binário
-void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
-    const int proxByteOffsetByte = 9;
-    fseek(arquivoBin, proxByteOffsetByte, SEEK_SET);
-    long long int proxByteOffset = getProxByteOffset(cabecalho);
-    fwrite(&proxByteOffset, sizeof(long long int), 1, arquivoBin);
-}
-
-void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
-    const int nroRegArqByte = 17;
-    fseek(arquivoBin, nroRegArqByte, SEEK_SET);
-    int nroRegArq = getNroRegArq(cabecalho);
-    fwrite(&nroRegArq, sizeof(int), 1, arquivoBin);
-}
-
-// Função que escreve o número de registros removidos no cabeçalho do arquivo binário
-void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
-    const int nroRegRemByte = 21;
-    fseek(arquivoBin, nroRegRemByte, SEEK_SET);
-    int nroRem = getNroRem(cabecalho);
-    fwrite(&nroRem, sizeof(int), 1, arquivoBin);
-}
-
-void imprimirCabecalho(CABECALHO *cabecalho)
-{
-    printf("Status: %c\n", getStatus(cabecalho));
-    printf("Topo: %lld\n", getTopo(cabecalho));
-    printf("ProxByteOffset: %lld\n", getProxByteOffset(cabecalho));
-    printf("NroRegArq: %d\n", getNroRegArq(cabecalho));
-    printf("NroRegRem: %d\n\n", getNroRem(cabecalho));
 }

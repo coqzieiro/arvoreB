@@ -1,5 +1,4 @@
-#include "interpretaBin.h"
-#include "cabecalho.h"
+#include "funcoesAuxiliares.h"
 
 // Função que lê os valores do cabeçalho do arquivo binário e salva na struct cabeçalho
 void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho){

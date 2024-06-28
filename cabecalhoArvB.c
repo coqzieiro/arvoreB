@@ -1,5 +1,4 @@
-#include "cabecalhoArvB.h"
-#include "registroArvB.h"
+#include "funcoesAuxiliares.h"
 
 // cria um cabecalho da arvore B com os valores padrao
 CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio()

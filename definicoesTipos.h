@@ -11,6 +11,7 @@ INTEGRANTES DO GRUPO:
     #define MAX_CAMPO 50
     #define TAM_INICIAL_BYTEOFFSET 25
     #define ORDEM_ARVORE_B 4
+    #define TAMANHO_REGISTRO_ARVORE_B 60
 
     #include <stdint.h>
     #include <stdio.h>
@@ -80,7 +81,7 @@ INTEGRANTES DO GRUPO:
         int64_t byteOffset;
     } LISTA;
 
-    typedef struct _cabecalhoArvoreB {
+    typedef struct CABECALHO_ARVORE_B {
         char status;
         int noRaiz;
         int proxRRN;
@@ -95,5 +96,21 @@ INTEGRANTES DO GRUPO:
         long long int byteOffsets[ORDEM_ARVORE_B - 1];
         int descendentes[ORDEM_ARVORE_B];
     } REGISTRO_ARVORE_B;
+
+        typedef struct REGISTRO_INDICE {
+        int index;
+        long long int byteOffset;
+    } REGISTRO_INDICE;
+
+    typedef struct LISTA_INDICE {
+        int tamanho;
+        int max_tamanho;
+        REGISTRO_INDICE **registros; // a lista possui um vetor de endereços de registros
+    } LISTA_INDICE;
+
+    typedef struct REMOVIDOS {
+        LISTA_INDICE *lista;
+        int *tamanhos;
+    } REMOVIDOS;
 
 #endif
