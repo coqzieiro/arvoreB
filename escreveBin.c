@@ -1,3 +1,9 @@
+/*
+INTEGRANTES DO GRUPO:
+                    Felipe da Costa Coqueiro,   NºUSP: 11781361
+                    Fernando Alee Suaiden,      NºUSP: 12680836
+*/
+
 #include "definicoesTipos.h"
 #include "funcoes_fornecidas.h"
 #include "funcoesAuxiliares.h"
@@ -30,7 +36,7 @@ void imprimirIdArvoreB(int id, FILE *file, char *nomeArquivoArvoreB, int i, int 
         long long int byteOffsetRegistroBuscado = buscarRegistroIdRec(fileArvoreB, id, rrnAtual); // Busca o byte offset do registro na árvore B
 
         if(byteOffsetRegistroBuscado != -1) { // Se o registro foi encontrado
-            DADOS *registro = buscarRegistroOffset(byteOffsetRegistroBuscado, file); // Busca o registro no arquivo binário
+            DADOS *registro = buscaOfsset(byteOffsetRegistroBuscado, file); // Busca o registro no arquivo binário
             imprimeRegistro(registro); // Imprime o registro
             liberarRegistro(registro); // Libera a memória do registro
         } else {
@@ -84,23 +90,23 @@ bool escreverRegistro(DADOS *registro, int byteOffset, int tamRegistroAtual, FIL
         return false;
     }
 
-    char removido = get_removido(registro);
-    int tamRegistroOriginal = get_tamanhoRegistro(registro);
+    char removido = retornaRemovido(registro);
+    int tamRegistroOriginal = retornaTamanhoRegistro(registro);
     int tamanhoRegistro = tamRegistroOriginal;
-    long long int prox = get_prox(registro);
-    int id = get_id(registro);
-    int idade = get_idade(registro);
-    int tamNomeJogador = get_tamNomeJogador(registro);
-    char *nomeJogador = get_nomeJogador(registro);
-    int tamNacionalidade = get_tamNacionalidade(registro);
-    char *nacionalidade = get_nacionalidade(registro);
-    int tamNomeClube = get_tamNomeClube(registro);
-    char *nomeClube = get_nomeClube(registro);
+    long long int prox = retornaProx(registro);
+    int id = retornaId(registro);
+    int idade = retornaIdade(registro);
+    int tamNomeJogador = RetornaTamNomeJogador(registro);
+    char *nomeJogador = retornaNomeJogador(registro);
+    int tamNacionalidade = retornaTamNacionalidade(registro);
+    char *nacionalidade = retornaNacionalidade(registro);
+    int tamNomeClube = retornaTamNomeClube(registro);
+    char *nomeClube = retornaNomeClube(registro);
 
     fseek(arquivoBin, byteOffset, SEEK_SET); // Move o ponteiro do arquivo para a posição do registro
 
     if(tamRegistroAtual != 0) {
-        set_tamanhoRegistro(registro, tamRegistroAtual);
+        setaTamanhoRegistro(registro, tamRegistroAtual);
         tamanhoRegistro = tamRegistroAtual;
     }
 
@@ -125,18 +131,18 @@ bool escreverRegistro(DADOS *registro, int byteOffset, int tamRegistroAtual, FIL
 
 // Função para imprimir um registro
 int imprimeRegistro(DADOS *registro) {
-    if (get_removido(registro) == '0') { // Se o registro não foi removido, imprime seus dados na tela
+    if (retornaRemovido(registro) == '0') { // Se o registro não foi removido, imprime seus dados na tela
 
         // Recebe o valor dos atributos do registro
-        char *nomeClube = get_nomeClube(registro);
-        char *nacionalidade = get_nacionalidade(registro);
-        char *nomeJogador = get_nomeJogador(registro);
+        char *nomeClube = retornaNomeClube(registro);
+        char *nacionalidade = retornaNacionalidade(registro);
+        char *nomeJogador = retornaNomeJogador(registro);
 
         printf("Nome do Jogador: ");
         if (strcmp(nomeJogador, "SEM DADO") == 0) { // Se o nome do jogador for "SEM DADO", imprime "SEM DADO"
             printf("SEM DADO\n");
         } else { // Se não, imprime cada caractere do nome do jogador
-            for (int j = 0; j < get_tamNomeJogador(registro); j++) {
+            for (int j = 0; j < RetornaTamNomeJogador(registro); j++) {
                 printf("%c", nomeJogador[j]);
             }
             printf("\n");
@@ -146,7 +152,7 @@ int imprimeRegistro(DADOS *registro) {
         if (strcmp(nacionalidade, "SEM DADO") == 0) { // Se a nacionalidade for "SEM DADO", imprime "SEM DADO"
             printf("SEM DADO\n");
         } else { // Se não, imprime cada caractere da nacionalidade
-            for (int j = 0; j < get_tamNacionalidade(registro); j++) {
+            for (int j = 0; j < retornaTamNacionalidade(registro); j++) {
                 printf("%c", nacionalidade[j]);
             }
             printf("\n");
@@ -156,7 +162,7 @@ int imprimeRegistro(DADOS *registro) {
         if (strcmp(nomeClube, "SEM DADO") == 0) { // Se o nome do clube for "SEM DADO", imprime "SEM DADO"
             printf("SEM DADO\n");
         } else { // Se não, imprime cada caractere do nome do clube
-            for (int j = 0; j < get_tamNomeClube(registro); j++) {
+            for (int j = 0; j < retornaTamNomeClube(registro); j++) {
                 printf("%c", nomeClube[j]);
             }
             printf("\n");
@@ -203,17 +209,17 @@ int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB) {
     for(int i = 0; i < quantidade; i++) {
         DADOS *registro = lerRegistroFromBin(posicao, arquivoBinario); // Lê um registro do arquivo binário
 
-        if(get_removido(registro) == '1') { // Pula o registro removido
-            posicao += get_tamanhoRegistro(registro);
+        if(retornaRemovido(registro) == '1') { // Pula o registro removido
+            posicao += retornaTamanhoRegistro(registro);
             continue;
         }
 
-        int chave = get_id(registro); // Obtém a chave do registro
+        int chave = retornaId(registro); // Obtém a chave do registro
         long long int byteOffset = posicao; // Obtém o byteOffset do registro
         
         inserirArvoreB(arquivoArvoreB, chave, byteOffset); // Insere o registro na árvore B
 
-        posicao += get_tamanhoRegistro(registro); // Atualiza a posição para o próximo registro
+        posicao += retornaTamanhoRegistro(registro); // Atualiza a posição para o próximo registro
         liberarRegistro(registro); // Libera a memória do registro
     }
 
@@ -301,31 +307,31 @@ void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, c
 
     for (int j = 0; j < numRegistros; j++) {
         DADOS *registro = lerRegistroFromBin(byteOffset, file); // Lê um registro do arquivo binário
-        byteOffset += get_tamanhoRegistro(registro); // Atualiza o byteOffset para a posição do próximo registro
+        byteOffset += retornaTamanhoRegistro(registro); // Atualiza o byteOffset para a posição do próximo registro
 
         int imprimir = 1; // Flag para determinar se o registro deve ser impresso
-        if (get_removido(registro) == '1') { // Verifica se o registro está marcado como removido
+        if (retornaRemovido(registro) == '1') { // Verifica se o registro está marcado como removido
             imprimir = 0;
         } else {
             for (int k = 0; k < m; k++) {
                 if (strcmp(campos[k], "id") == 0) { // Verifica se o parâmetro da busca é o id
-                    if (id != get_id(registro)) {
+                    if (id != retornaId(registro)) {
                         imprimir = 0;
                     }
                 } else if (strcmp(campos[k], "nomeJogador") == 0) {
-                    if (strcmp(nome, get_nomeJogador(registro)) != 0) {
+                    if (strcmp(nome, retornaNomeJogador(registro)) != 0) {
                         imprimir = 0;
                     }
                 } else if (strcmp(campos[k], "idade") == 0) {
-                    if (idade != get_idade(registro)) {
+                    if (idade != retornaIdade(registro)) {
                         imprimir = 0;
                     }
                 } else if (strcmp(campos[k], "nomeClube") == 0) {
-                    if (strcmp(nomeClube, get_nomeClube(registro)) != 0) {
+                    if (strcmp(nomeClube, retornaNomeClube(registro)) != 0) {
                         imprimir = 0;
                     }
                 } else if (strcmp(campos[k], "nacionalidade") == 0) {
-                    if (strcmp(nacionalidade, get_nacionalidade(registro)) != 0) {
+                    if (strcmp(nacionalidade, retornaNacionalidade(registro)) != 0) {
                         imprimir = 0;
                     }
                 }
@@ -361,15 +367,15 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
 
         count++;
 
-        if(get_removido(registro) == '1') {
+        if(retornaRemovido(registro) == '1') {
             REGISTRO_INDICE *registroIndice = criarRegistroIndice();
-            setIndexRegistroIndice(registroIndice, get_id(registro));
+            setIndexRegistroIndice(registroIndice, retornaId(registro));
             setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
 
-            adicionarRegistroRemovido(removidos, registroIndice, get_tamanhoRegistro(registro));
+            adicionarRegistroRemovido(removidos, registroIndice, retornaTamanhoRegistro(registro));
         }
 
-        proxByteOffset = get_prox(registro);
+        proxByteOffset = retornaProx(registro);
 
         liberarRegistro(registro);
 
@@ -379,12 +385,12 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
             proxRegistro = lerRegistroFromBin(proxByteOffset, file);
 
         // Anota o último registro removido
-        if(get_prox(proxRegistro) == -1 && get_removido(proxRegistro) == '1') {
+        if(retornaProx(proxRegistro) == -1 && retornaRemovido(proxRegistro) == '1') {
             REGISTRO_INDICE *registroIndice = criarRegistroIndice();
-            setIndexRegistroIndice(registroIndice, get_id(proxRegistro));
+            setIndexRegistroIndice(registroIndice, retornaId(proxRegistro));
             setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
 
-            adicionarRegistroRemovido(removidos, registroIndice, get_tamanhoRegistro(proxRegistro));
+            adicionarRegistroRemovido(removidos, registroIndice, retornaTamanhoRegistro(proxRegistro));
             liberarRegistro(proxRegistro);
             break;
         }
@@ -408,7 +414,7 @@ REMOVIDOS *criarListaRemovidosVazia() {
 
 // Função para remover um registro da lista de removidos e atualizar o arquivo
 void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao, FILE *file) {
-    DADOS *registro = buscarRegistroOffset(getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, posicao)), file);
+    DADOS *registro = buscaOfsset(getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, posicao)), file);
 
     if(posicao == -1) {
         return;
@@ -652,12 +658,12 @@ long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros,
     }
 
     for(int i = 0; i < quantidade; i++) {
-        if(get_tamanhoRegistro(registros[i]) == 0) {
+        if(retornaTamanhoRegistro(registros[i]) == 0) {
             tamanhos[i] = -1;
             byteOffsets[i] = 0;
             continue;
         }
-        tamanhos[i] = get_tamanhoRegistro(registros[i]);
+        tamanhos[i] = retornaTamanhoRegistro(registros[i]);
     }
 
     // Obtém o best fit na ordem do maior para o menor
@@ -761,15 +767,15 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
             tamanhoRegistroAtual = 0;
             fseek(arquivoBin, 0, SEEK_END);
             byteOffsets[i] = ftell(arquivoBin);
-            setProxByteOffset(cabecalho, byteOffsets[i] + get_tamanhoRegistro(registros[i]));
+            setProxByteOffset(cabecalho, byteOffsets[i] + retornaTamanhoRegistro(registros[i]));
             writeProxByteOffsetCabecalho(cabecalho, arquivoBin);
         } else {
             DADOS *registro = lerRegistroFromBin(byteOffsets[i], arquivoBin);
-            tamanhoRegistroAtual = get_tamanhoRegistro(registro);
+            tamanhoRegistroAtual = retornaTamanhoRegistro(registro);
             liberarRegistro(registro);
         }
 
-        set_prox(registros[i], -1);
+        setaProx(registros[i], -1);
 
         // Escrevendo o registro no arquivo binário
         setStatus(cabecalho, '0');
@@ -784,7 +790,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         fwrite(&statusArquivoArvoreB, sizeof(char), 1, fileArvoreB);
 
         // Insere a chave e o byteOffset no arquivo da árvore B
-        inserirArvoreB(fileArvoreB, get_id(registros[i]), byteOffsets[i]);
+        inserirArvoreB(fileArvoreB, retornaId(registros[i]), byteOffsets[i]);
 
         // Atualiza o status do arquivo da árvore B para '1'
         fseek(fileArvoreB, 0, SEEK_SET);
@@ -843,9 +849,9 @@ long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *r
 
     if(middle + 1 < getTamanhoListaIndice(removidos->lista)) { // Tem um registro removido depois
         long long int proxByteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle + 1));
-        set_prox(registro, proxByteOffset);
+        setaProx(registro, proxByteOffset);
     } else { // Não tem registro removido depois
-        set_prox(registro, -1);
+        setaProx(registro, -1);
     }
 
     removerRegistroRemovidoEAtualizarArquivo(removidos, middle, file);

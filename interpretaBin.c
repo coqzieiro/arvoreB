@@ -1,3 +1,10 @@
+
+/*
+INTEGRANTES DO GRUPO:
+                    Felipe da Costa Coqueiro,   NºUSP: 11781361
+                    Fernando Alee Suaiden,      NºUSP: 12680836
+*/
+
 #include "funcoesAuxiliares.h"
 
 // Função para ler os valores do cabeçalho do arquivo binário e salvar na estrutura 'cabecalho'
