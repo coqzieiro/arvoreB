@@ -167,16 +167,23 @@ int main(void){
             break;
         }
         case 10: { // Funcionalidade 10 (Inserção de novos registros usando índice árvore-B)
-            scanf("%s %s %d", nomeArquivoBinario, nomeArquivoIndex, &numBuscas); // Lê o nome do arquivo binário
+            char arquivoBin[50];
+            scanf("%s", arquivoBin); // Lê o nome do arquivo binário
+
+            char arquivoArvB[50];
+            scanf("%s", arquivoArvB); // Lê o nome do arquivo da árvore B
+            
+            int numOperacoes;
+            scanf("%d", &numOperacoes);
 
             // faz as insercoes dos registros no arquivo de dados e no arquivo da arvore b
-            //bool inseriu = inserirNovoDadoArvoreB(nomeArquivoBinario, nomeArquivoIndex, numBuscas);
+            bool inseriu = inserirNovoDadoArvoreB(arquivoBin, arquivoArvB, numOperacoes);
 
             // se o registro foi inserido, imprime o binario na tela dos arquivos de dados e da arvore b
-            /*if(inseriu) {
-                binarioNaTela(nomeArquivoBinario);
-                binarioNaTela(nomeArquivoIndex);
-            }*/
+            if(inseriu) {
+                binarioNaTela(arquivoBin);
+                binarioNaTela(arquivoArvB);
+            }
             break;
         }
         default: 

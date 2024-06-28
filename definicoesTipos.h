@@ -87,7 +87,6 @@ INTEGRANTES DO GRUPO:
         int nroChaves;
     }CABECALHO_ARVORE_B;
 
-
     typedef struct _registroArvoreB {
         int rrn;
         int alturaNo;
