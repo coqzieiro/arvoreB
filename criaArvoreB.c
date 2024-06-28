@@ -34,6 +34,7 @@ int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB) {
 
     CABECALHO_ARVORE_B *cabecalhoArvoreB = criarCabecalhoArvoreBVazio(); // Cria um cabeçalho vazio para a árvore B
     setStatusCabecalhoArvoreB(cabecalhoArvoreB, '0');
+    
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
 
     int64_t posicao = 25; // Posição inicial do primeiro registro
