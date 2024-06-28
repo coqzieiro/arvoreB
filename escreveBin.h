@@ -1,20 +1,21 @@
 #ifndef ESCREVE_BIN_H
     #define ESCREVE_BIN_H
     #include "definicoesTipos.h"
+    #include "funcoes_fornecidas.h"
     #include <stdbool.h>
 
     // void imprimeRegistrosFromBin(char *filePath);
     int imprimeRegistro(DADOS *registro);
-    void imprimeRegistrosBuscados(char *nomeArquivoBinario, char *nomeArquivoArvoreB, int buscaId);
-    // void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i);
+    void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
+    void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i);
     long long int buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual);
     // void removerRegistrosBuscados(char *arquivoBin, char *arquivoIndice);
     // void removeById(int id, LISTA_INDICE *listaIndices, FILE *file, FILE *fileIndices, REMOVIDOS *listaRemovidos, CABECALHO *cabecalho, char* arquivoIndice);
     // bool escreverRegistro(REGISTRO *registro, int byteOffset, int tamRegistroAtual, FILE *arquivoBin);
-
+    
     void imprimirIdArvoreB(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula);
     int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB);
     bool inserirNovoDadoArvoreB(char *nomeArquivoBinario, char *nomeArquivoArvoreB, DADOS *novoRegistro);
-    bool adicionarNoArvoreB(int id, long long byteOffset, FILE* fileArvoreB);
+    bool adicionarNoArvoreB(int chave, long long int byteOffset, FILE *arquivoArvoreB);
 
 #endif

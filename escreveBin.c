@@ -215,28 +215,152 @@ int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB){
     return 1;
 }
 
-void imprimeRegistrosBuscados(char *nomeArquivoBinario, char *nomeArquivoArvoreB, int buscaId) {
-    // Open the binary data file for reading
-    FILE *fileBin = fopen(nomeArquivoBinario, "rb");
-    if (fileBin == NULL) {
-        printf("Erro ao abrir o arquivo de dados: %s\n", nomeArquivoBinario);
+void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB) {
+    int numOperacoes;
+    scanf("%d", &numOperacoes); // Lê o número de buscas a serem feitas
+
+    for (int i = 0; i < numOperacoes; i++)
+    {
+        FILE *file = fopen(arquivo, "rb"); // Abre o arquivo binário no modo leitura
+        if (file == NULL)
+        {
+            printf("Falha no processamento do arquivo."); // Verifica se ocorreu um erro ao abrir o arquivo
+            return;
+        }
+
+        // Cria um cabeçalho e chama a função getCabecalhoFromBin para atribuir os valores a ele
+        CABECALHO *cabecalho = getCabecalhoFromBin(file);
+
+        imprimirRegistrosPorCampos(file, cabecalho, buscaId, nomeArquivoArvoreB, i); // Chama a função para imprimir registros
+        
+        fclose(file); // Fecha o arquivo
+        apagarCabecalho(cabecalho); // Libera a memória do cabeçalho
+    }
+}
+
+void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
+    long long int byteOffset = getProxByteOffset(cabecalho);
+    int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // Número total de registros (incluindo removidos)
+    byteOffset = 25; // Posição inicial do byteOffset
+
+    if (numRegistros == 0) // Verifica se o arquivo não possui registros
+    {
+        printf("Registro inexistente.\n\n");
+        fclose(file); // Fecha o arquivo
         return;
     }
 
-    // Open the B-tree index file for reading
-    FILE *fileArvoreB = fopen(nomeArquivoArvoreB, "rb");
-    if (fileArvoreB == NULL) {
-        printf("Erro ao abrir o arquivo de índice B-tree: %s\n", nomeArquivoArvoreB);
-        fclose(fileBin);  // Ensure the data file is closed before exiting
-        return;
+    char campos[5][50]; // Armazena os nomes dos campos a serem buscados
+    char parametros[5][50]; // Armazena os valores dos parâmetros a serem buscados
+    int id = -1, idade;
+    char nome[50], nomeClube[50], nacionalidade[50]; // Variáveis para armazenar os valores dos campos
+
+    int impressoes = 0; // Contador de impressões de registros
+    int m;
+    scanf("%i", &m); // Lê o número de parâmetros da busca
+
+    for (int j = 0; j < m; j++)
+    {
+        scanf("%s", campos[j]); // Lê um parâmetro da busca
+        if (strcmp(campos[j], "id") == 0)
+        {
+            scanf("%i", &id); // Lê o id da busca
+            snprintf(parametros[j], 50, "%i", id);
+            if(buscaId == 1 && id != -1) { // Verifica se a busca pelo índice vai ser feita com o arquivo da árvore B
+                imprimirIdArvoreB(id, file, nomeArquivoArvoreB, i, 1); // Chama a função para buscar o id na árvore B
+                return;
+            }
+        }
+        else if (strcmp(campos[j], "nomeJogador") == 0)
+        {
+            scan_quote_string(nome); // Lê o nome do jogador
+            strcpy(parametros[j], nome);
+        }
+        else if (strcmp(campos[j], "idade") == 0)
+        {
+            scanf("%i", &idade); // Lê a idade
+            snprintf(parametros[j], 50, "%i", idade);
+        }
+        else if (strcmp(campos[j], "nomeClube") == 0)
+        {
+            scan_quote_string(nomeClube); // Lê o nome do clube
+            strcpy(parametros[j], nomeClube);
+        }
+        else if (strcmp(campos[j], "nacionalidade") == 0)
+        {
+            scan_quote_string(nacionalidade); // Lê a nacionalidade
+            strcpy(parametros[j], nacionalidade);
+        }
+        else
+        {
+            printf("Campo invalido\n"); // Parâmetro inválido
+        }
     }
 
-    // Call the function to print the record by ID using the B-tree index
-    imprimirIdArvoreB(buscaId, fileBin, nomeArquivoArvoreB, 0, 0); // Assuming parameters are correctly set
+    printf("Busca %d\n\n", i+1); // Imprime o número da busca
 
-    // Close both files after the operation
-    fclose(fileBin);
-    fclose(fileArvoreB);
+    for (int j = 0; j < numRegistros; j++)
+    {
+        DADOS *registro = lerRegistroFromBin(byteOffset, file); // Lê um registro do arquivo binário
+        byteOffset += get_tamanhoRegistro(registro); // Atualiza o byteOffset para a posição do próximo registro
+
+        int imprimir = 1; // Flag para determinar se o registro deve ser impresso
+        if (get_removido(registro) == '1') // Verifica se o registro está marcado como removido
+        {
+            imprimir = 0;
+        }
+        else
+        {
+            for (int k = 0; k < m; k++)
+            {
+                if (strcmp(campos[k], "id") == 0)
+                { // Verifica se o parâmetro da busca é o id
+                    if (id != get_id(registro))
+                    {
+                        imprimir = 0;
+                    }
+                }
+                else if (strcmp(campos[k], "nomeJogador") == 0)
+                {
+                    if (strcmp(nome, get_nomeJogador(registro)) != 0)
+                    {
+                        imprimir = 0;
+                    }
+                }
+                else if (strcmp(campos[k], "idade") == 0)
+                {
+                    if (idade != get_idade(registro))
+                    {
+                        imprimir = 0;
+                    }
+                }
+                else if (strcmp(campos[k], "nomeClube") == 0)
+                {
+                    if (strcmp(nomeClube, get_nomeClube(registro)) != 0)
+                    {
+                        imprimir = 0;
+                    }
+                }
+                else if (strcmp(campos[k], "nacionalidade") == 0)
+                {
+                    if (strcmp(nacionalidade, get_nacionalidade(registro)) != 0)
+                    {
+                        imprimir = 0;
+                    }
+                }
+            }
+        }
+        
+        if (imprimir == 1) // Se todos os parâmetros coincidem, imprime o registro
+        {
+            imprimeRegistro(registro); // Chama a função para imprimir o registro
+            impressoes++;
+        }
+        liberarRegistro(registro); // Libera a memória do registro
+    }
+    if(impressoes == 0) { // Se nenhum registro foi impresso
+        printf("Registro inexistente.\n\n");
+    }
 }
 
 bool inserirNovoDadoArvoreB(char* nomeArquivoBinario, char* nomeArquivoIndex, DADOS* novoRegistro) {

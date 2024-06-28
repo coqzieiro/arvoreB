@@ -157,9 +157,13 @@ int main(void){
             break;
         }
         case 9: { // Funcionalidade 9 (Recuperação de dados usando qualquer campo de busca)
-            scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex); // Lê o nome do arquivo binário
+            char arquivoBin[50];
+            scanf("%s", arquivoBin); // Lê o nome do arquivo binário
 
-            imprimeRegistrosBuscados(nomeArquivoBinario, nomeArquivoIndex, 1); // Chama a função para imprimir registros buscados com a árvore B
+            char arquivoArvB[50];
+            scanf("%s", arquivoArvB); // Lê o nome do arquivo da árvore B
+
+            imprimeRegistrosBuscados(arquivoBin, 1, arquivoArvB); // Chama a função para imprimir registros buscados com a árvore B
             break;
         }
         case 10: { // Funcionalidade 10 (Inserção de novos registros usando índice árvore-B)
