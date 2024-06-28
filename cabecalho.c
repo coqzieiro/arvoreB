@@ -27,13 +27,13 @@ char getStatus(CABECALHO *cabecalho)
 }
 
 // retorna o valor do topo do cabeçalho
-long long int getTopo(CABECALHO *cabecalho)
+int64_t getTopo(CABECALHO *cabecalho)
 {
     return cabecalho->topo;
 }
 
 // retorna o valor do proxByteOffset do cabeçalho
-long long int getProxByteOffset(CABECALHO *cabecalho)
+int64_t getProxByteOffset(CABECALHO *cabecalho)
 {
     return cabecalho->proxByteOffset;
 }
@@ -57,12 +57,12 @@ void setStatus(CABECALHO *cabecalho, char status)
     cabecalho->status = status;
 }
 
-void setTopo(CABECALHO *cabecalho, long long int topo)
+void setTopo(CABECALHO *cabecalho, int64_t topo)
 {
     cabecalho->topo = topo;
 }
 
-void setProxByteOffset(CABECALHO *cabecalho, long long int proxByteOffset)
+void setProxByteOffset(CABECALHO *cabecalho, int64_t proxByteOffset)
 {
     cabecalho->proxByteOffset = proxByteOffset;
 }

@@ -14,14 +14,14 @@ void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho) {
     fread(&status, sizeof(char), 1, file);
     setStatus(cabecalho, status);
 
-    long long int topo;
+    int64_t topo;
     // Lê o topo da lista de registros removidos do cabeçalho do arquivo
-    fread(&topo, sizeof(long long int), 1, file);
+    fread(&topo, sizeof(int64_t), 1, file);
     setTopo(cabecalho, topo);
 
-    long long int proxByteOffset;
+    int64_t proxByteOffset;
     // Lê o próximo byte offset do cabeçalho do arquivo
-    fread(&proxByteOffset, sizeof(long long int), 1, file);
+    fread(&proxByteOffset, sizeof(int64_t), 1, file);
     setProxByteOffset(cabecalho, proxByteOffset);
 
     int nroRegArq;

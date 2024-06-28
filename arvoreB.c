@@ -101,7 +101,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
         int rrnFilhoEsq = getRRNRegistroArvoreB(filhoEsq);
         int rrnFilhoDir = getRRNRegistroArvoreB(filhoDir);
 
-        long long int descendentes[ORDEM_ARVORE_B + 1];
+        int64_t descendentes[ORDEM_ARVORE_B + 1];
 
         index = 0;
         for (int i = 0; i < ORDEM_ARVORE_B; i++) {
@@ -278,7 +278,7 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
     free(caminho);
 }
 
-void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset) {
+void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
     CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
 
     int nroChaves = getNroChavesCabecalhoArvoreB(cabecalho);
@@ -303,7 +303,7 @@ void inserirArvoreB(FILE *arquivo, int chave, long long int byteOffset) {
     }
 
     REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **) malloc(sizeof(REGISTRO_ARVORE_B *) * 1);
-    long long int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalho);
+    int64_t rrnAtual = getNoRaizCabecalhoArvoreB(cabecalho);
 
     int tamCaminho = 0;
 

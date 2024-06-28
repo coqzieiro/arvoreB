@@ -146,7 +146,7 @@ int retornaTamanhoRegistro(DADOS *registro) {
     return registro->tamanhoRegistro;
 }
 
-long long int retornaProx(DADOS *registro) {
+int64_t retornaProx(DADOS *registro) {
     return registro->prox;
 }
 
@@ -205,7 +205,7 @@ void setaTamanhoRegistro(DADOS *registro, int tamanhoRegistro) {
     registro->tamanhoRegistro = tamanhoRegistro;
 }
 
-void setaProx(DADOS *registro, long long int prox) {
+void setaProx(DADOS *registro, int64_t prox) {
     registro->prox = prox;
 }
 
@@ -270,8 +270,8 @@ DADOS *lerRegistroFromBin(int posicao, FILE *arquivoBin) {
     fread(&tamanhoRegistro, sizeof(int), 1, arquivoBin); // lê o tamanho de um registro do arquivo e salva na variável tamanhoRegistro
     setaTamanhoRegistro(registro, tamanhoRegistro);
 
-    long long int prox;
-    fread(&prox, sizeof(long long int), 1, arquivoBin); // lê a posição do próximo registro removido do arquivo e salva na variável prox
+    int64_t prox;
+    fread(&prox, sizeof(int64_t), 1, arquivoBin); // lê a posição do próximo registro removido do arquivo e salva na variável prox
     setaProx(registro, prox);
 
     int id;

@@ -26,7 +26,7 @@ REGISTRO_ARVORE_B *criarRegistroArvoreBVazio() {
 }
 
 // Função para inserir uma chave em um registro de árvore B
-int inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, long long int byteOffset) {
+int inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, int64_t byteOffset) {
     if (registro->nroChaves == ORDEM_ARVORE_B - 1) {
         // Se o registro estiver cheio, não é possível inserir
         return 0;
@@ -95,7 +95,7 @@ int removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave) {
 }
 
 // Função para inserir um descendente em um registro de árvore B
-int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long int descendente, int chaveDescendente) {
+int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente, int chaveDescendente) {
     if (!registro || registro->nroChaves == 0) {
         return 0;
     }
@@ -124,7 +124,7 @@ int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long int
 }
 
 // Função para remover um descendente de um registro de árvore B
-int removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, long long int descendente) {
+int removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente) {
     if (registro->nroChaves == 0) {
         return 0;
     }
@@ -203,7 +203,7 @@ int getChave(REGISTRO_ARVORE_B *registro, int posicao) {
 }
 
 // Função para obter o byte offset de uma chave em uma posição específica de um registro de árvore B
-long long int getByteOffsetRegistroArvoreB(REGISTRO_ARVORE_B *registro, int posicao) {
+int64_t getByteOffsetRegistroArvoreB(REGISTRO_ARVORE_B *registro, int posicao) {
     if (registro == NULL || posicao < 0 || posicao >= ORDEM_ARVORE_B - 1) {
         return -1;
     }
@@ -237,7 +237,7 @@ REGISTRO_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn) {
         return NULL;
     }
     
-    long long int byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
+    int64_t byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
 
     fseek(arquivo, byteOffset, SEEK_SET);
 
@@ -245,7 +245,7 @@ REGISTRO_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn) {
     fread(&registro->nroChaves, sizeof(int), 1, arquivo);
     for (int i = 0; i < ORDEM_ARVORE_B - 1; i++) {
         fread(&registro->chaves[i], sizeof(int), 1, arquivo);
-        fread(&registro->byteOffsets[i], sizeof(long long int), 1, arquivo);
+        fread(&registro->byteOffsets[i], sizeof(int64_t), 1, arquivo);
     }
     fread(registro->descendentes, sizeof(int), ORDEM_ARVORE_B, arquivo);
 
@@ -258,7 +258,7 @@ int escreverRegistroArvoreB(REGISTRO_ARVORE_B *registro, FILE *arquivo, int rrn)
         return 0;
     }
     
-    long long int byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
+    int64_t byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
 
     fseek(arquivo, byteOffset, SEEK_SET);
 
@@ -266,7 +266,7 @@ int escreverRegistroArvoreB(REGISTRO_ARVORE_B *registro, FILE *arquivo, int rrn)
     fwrite(&registro->nroChaves, sizeof(int), 1, arquivo);
     for (int i = 0; i < ORDEM_ARVORE_B - 1; i++) {
         fwrite(&registro->chaves[i], sizeof(int), 1, arquivo);
-        fwrite(&registro->byteOffsets[i], sizeof(long long int), 1, arquivo);
+        fwrite(&registro->byteOffsets[i], sizeof(int64_t), 1, arquivo);
     }
     fwrite(registro->descendentes, sizeof(int), ORDEM_ARVORE_B, arquivo);
 

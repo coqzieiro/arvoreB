@@ -68,8 +68,8 @@ void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
 {
     const int topoByte = 1;
     fseek(arquivoBin, topoByte, SEEK_SET);
-    long long int topo = getTopo(cabecalho);
-    fwrite(&topo, sizeof(long long int), 1, arquivoBin);
+    int64_t topo = getTopo(cabecalho);
+    fwrite(&topo, sizeof(int64_t), 1, arquivoBin);
 }
 
 // Função que escreve o próximo byte offset do cabeçalho no arquivo binário
@@ -77,8 +77,8 @@ void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
 {
     const int proxByteOffsetByte = 9;
     fseek(arquivoBin, proxByteOffsetByte, SEEK_SET);
-    long long int proxByteOffset = getProxByteOffset(cabecalho);
-    fwrite(&proxByteOffset, sizeof(long long int), 1, arquivoBin);
+    int64_t proxByteOffset = getProxByteOffset(cabecalho);
+    fwrite(&proxByteOffset, sizeof(int64_t), 1, arquivoBin);
 }
 
 void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)

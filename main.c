@@ -116,7 +116,7 @@ int main(void){
         case 7: { // Funcionalidade 7 (Cria um arquivo de índice árvore-B)
             scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex);
 
-            if(criarArquivoArvoreB(nomeArquivoBinario, nomeArquivoIndex)){
+            if(criarArquivoArvoreB(nomeArquivoBinario, nomeArquivoIndex)) {
                 binarioNaTela(nomeArquivoIndex);
             }
             break;
@@ -144,7 +144,6 @@ int main(void){
 
             for(int i=0; i<numBuscas; i++) {
                 scanf("\nid %d", &id); // Lê o id a ser buscado
-
                 buscaIdArvore(id, arquivoBinario, nomeArquivoIndex, i, 0); // Chama a função para imprimir o registro correspondente ao id na árvore B
             }
             fclose(arquivoBinario); // Fecha o arquivo binário

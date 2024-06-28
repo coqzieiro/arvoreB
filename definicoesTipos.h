@@ -93,14 +93,14 @@ INTEGRANTES DO GRUPO:
         int alturaNo;                // Altura do nó
         int nroChaves;               // Número de chaves no nó
         int chaves[ORDEM_ARVORE_B - 1]; // Chaves do nó
-        long long int byteOffsets[ORDEM_ARVORE_B - 1]; // Byte offsets das chaves
+        int64_t byteOffsets[ORDEM_ARVORE_B - 1]; // Byte offsets das chaves
         int descendentes[ORDEM_ARVORE_B]; // Descendentes do nó
     } REGISTRO_ARVORE_B;
 
     // Estrutura para registros de índice
     typedef struct REGISTRO_INDICE {
         int index;                   // Índice do registro
-        long long int byteOffset;    // Byte offset do registro
+        int64_t byteOffset;    // Byte offset do registro
     } REGISTRO_INDICE;
 
     // Estrutura para listas de índices

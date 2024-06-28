@@ -33,7 +33,7 @@ void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int busc
     printf(buscaMinuscula ? "Busca %d\n\n" : "BUSCA %d\n\n", i + 1); // Imprime o número da busca
 
     if(rrnAtual != -1) {
-        long long int byteOffsetRegistroBuscado = buscarRegistroIdRec(fileArvoreB, id, rrnAtual); // Busca o byte offset do registro na árvore B
+        int64_t byteOffsetRegistroBuscado = buscarRegistroIdRec(fileArvoreB, id, rrnAtual); // Busca o byte offset do registro na árvore B
 
         if(byteOffsetRegistroBuscado != -1) { // Se o registro foi encontrado
             DADOS *registro = buscaOfsset(byteOffsetRegistroBuscado, file); // Busca o registro no arquivo binário
@@ -50,7 +50,7 @@ void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int busc
 }
 
 // Função recursiva para buscar um registro por ID na árvore B
-long long int buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
+int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
     REGISTRO_ARVORE_B *registroAtual = lerRegistroArvoreB(fileArvoreB, rrnAtual); // Lê o registro da árvore B no RRN atual
     
     int numerosChaves = getNroChavesRegistroArvoreB(registroAtual); // Obtém o número de chaves no registro
@@ -62,7 +62,7 @@ long long int buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
         descendente = getDescendente(registroAtual, i); // Obtém o descendente na posição i
 
         if(id == chave) {
-            long long int byteoffsetRegistro = getByteOffsetRegistroArvoreB(registroAtual, i); // Obtém o byte offset do registro
+            int64_t byteoffsetRegistro = getByteOffsetRegistroArvoreB(registroAtual, i); // Obtém o byte offset do registro
             apagarRegistroArvoreB(registroAtual); // Libera a memória do registro
             return byteoffsetRegistro; // Retorna o byte offset do registro
         } else if(id < chave) {
@@ -93,7 +93,7 @@ bool escreverRegistro(DADOS *registro, int byteOffset, int tamRegistroAtual, FIL
     char removido = retornaRemovido(registro);
     int tamRegistroOriginal = retornaTamanhoRegistro(registro);
     int tamanhoRegistro = tamRegistroOriginal;
-    long long int prox = retornaProx(registro);
+    int64_t prox = retornaProx(registro);
     int id = retornaId(registro);
     int idade = retornaIdade(registro);
     int tamNomeJogador = RetornaTamNomeJogador(registro);
@@ -112,7 +112,7 @@ bool escreverRegistro(DADOS *registro, int byteOffset, int tamRegistroAtual, FIL
 
     fwrite(&removido, sizeof(char), 1, arquivoBin); // Escreve o campo removido no arquivo
     fwrite(&tamanhoRegistro, sizeof(int), 1, arquivoBin); // Escreve o campo tamanhoRegistro no arquivo
-    fwrite(&prox, sizeof(long long int), 1, arquivoBin); // Escreve o campo prox no arquivo
+    fwrite(&prox, sizeof(int64_t), 1, arquivoBin); // Escreve o campo prox no arquivo
     fwrite(&id, sizeof(int), 1, arquivoBin); // Escreve o campo id no arquivo
     fwrite(&idade, sizeof(int), 1, arquivoBin); // Escreve o campo idade no arquivo
     fwrite(&tamNomeJogador, sizeof(int), 1, arquivoBin); // Escreve o campo tamNomeJogador no arquivo
@@ -174,67 +174,6 @@ int imprimeRegistro(DADOS *registro) {
     }
 }
 
-// Função para criar um arquivo de árvore B a partir de um arquivo binário
-int criarArquivoArvoreB(char *arquivoBin, char *arquivoArvB) {
-    FILE *arquivoBinario = fopen(arquivoBin, "rb"); // Abre o arquivo binário no modo leitura
-    FILE *arquivoArvoreB = fopen(arquivoArvB, "wb+"); // Abre o arquivo de índices no modo leitura e escrita
-
-    if(!arquivoBinario || !arquivoArvoreB) {
-        printf("Falha no processamento do arquivo.\n");
-        if(arquivoBinario) fclose(arquivoBinario);
-        if(arquivoArvoreB) fclose(arquivoArvoreB);
-        return 0;
-    }
-
-    CABECALHO *cabecalho = retornaCabecalhoBinario(arquivoBinario); // Lê o cabeçalho do arquivo binário
-
-    if(getStatus(cabecalho) == '0') {
-        printf("Falha no processamento do arquivo.\n");
-        fclose(arquivoBinario);
-        fclose(arquivoArvoreB);
-        limpaCabecalho(cabecalho);
-        return 0;
-    }
-
-    CABECALHO_ARVORE_B *cabecalhoArvoreB = criarCabecalhoArvoreBVazio(); // Cria um cabeçalho vazio para a árvore B
-    setStatusCabecalhoArvoreB(cabecalhoArvoreB, '0');
-    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
-
-    long long int posicao = 25; // Posição inicial do primeiro registro
-
-    int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho); // Quantidade total de registros
-
-    limpaCabecalho(cabecalho);
-
-    for(int i = 0; i < quantidade; i++) {
-        DADOS *registro = lerRegistroFromBin(posicao, arquivoBinario); // Lê um registro do arquivo binário
-
-        if(retornaRemovido(registro) == '1') { // Pula o registro removido
-            posicao += retornaTamanhoRegistro(registro);
-            continue;
-        }
-
-        int chave = retornaId(registro); // Obtém a chave do registro
-        long long int byteOffset = posicao; // Obtém o byteOffset do registro
-        
-        inserirArvoreB(arquivoArvoreB, chave, byteOffset); // Insere o registro na árvore B
-
-        posicao += retornaTamanhoRegistro(registro); // Atualiza a posição para o próximo registro
-        liberarRegistro(registro); // Libera a memória do registro
-    }
-
-    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
-    cabecalhoArvoreB = lerCabecalhoArvoreB(arquivoArvoreB); // Lê o cabeçalho atualizado da árvore B
-    setStatusCabecalhoArvoreB(cabecalhoArvoreB, '1'); // Define o status do cabeçalho como consistente
-    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
-    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
-
-    fclose(arquivoBinario); // Fecha o arquivo binário
-    fclose(arquivoArvoreB); // Fecha o arquivo de índices
-
-    return 1;
-}
-
 // Função para imprimir registros buscados
 void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB) {
     int numOperacoes;
@@ -258,7 +197,7 @@ void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvor
 
 // Função para imprimir registros por campos de busca
 void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
-    long long int byteOffset = getProxByteOffset(cabecalho);
+    int64_t byteOffset = getProxByteOffset(cabecalho);
     int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // Número total de registros (incluindo removidos)
     byteOffset = 25; // Posição inicial do byteOffset
 
@@ -436,13 +375,13 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
         writeTopoCabecalho(cabecalho, file);
     } else if(posicao == 0) { // Removendo o primeiro elemento
         REGISTRO_INDICE *registroIndice = getRegistroIndice(removidos->lista, 1);
-        long long int byteOffset = getByteOffsetRegistroIndice(registroIndice);
+        int64_t byteOffset = getByteOffsetRegistroIndice(registroIndice);
 
         setTopo(cabecalho, byteOffset);
         writeTopoCabecalho(cabecalho, file);
     } else if(posicao == tamanhoLista - 1) { // Removendo o último elemento
         REGISTRO_INDICE *registroIndice = getRegistroIndice(removidos->lista, posicao - 1);
-        long long int byteOffset = getByteOffsetRegistroIndice(registroIndice);
+        int64_t byteOffset = getByteOffsetRegistroIndice(registroIndice);
 
         int prox = -1;
         
@@ -453,8 +392,8 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
         REGISTRO_INDICE *registroIndiceAnterior = getRegistroIndice(removidos->lista, posicao - 1);
         REGISTRO_INDICE *registroIndiceProximo = getRegistroIndice(removidos->lista, posicao + 1);
 
-        long long int byteOffsetAnterior = getByteOffsetRegistroIndice(registroIndiceAnterior);
-        long long int byteOffsetProximo = getByteOffsetRegistroIndice(registroIndiceProximo);
+        int64_t byteOffsetAnterior = getByteOffsetRegistroIndice(registroIndiceAnterior);
+        int64_t byteOffsetProximo = getByteOffsetRegistroIndice(registroIndiceProximo);
 
         byteOffsetAnterior += byteProx;
         fseek(file, byteOffsetAnterior, SEEK_SET);
@@ -538,7 +477,7 @@ void setIndexRegistroIndice(REGISTRO_INDICE *registro, int index) {
 }
 
 // Função para definir o byte offset de um registro de índice
-void setByteOffsetRegistroIndice(REGISTRO_INDICE *registro, long long int byteOffset) {
+void setByteOffsetRegistroIndice(REGISTRO_INDICE *registro, int64_t byteOffset) {
     registro->byteOffset = byteOffset;
 }
 
@@ -605,7 +544,7 @@ void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
 }
 
 // Função para obter o maior byte offset menor que um ID específico
-long long int getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id) {
+int64_t getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id) {
     int posicao = buscarPosicaoRegistroIndiceLinear(removidos->lista, id); // Busca a posição do registro com o ID fornecido
     if(posicao <= 0) {
         return -1;
@@ -631,14 +570,14 @@ int getTamanhoListaRemovidos(REMOVIDOS *removidos) {
 }
 
 // Função para obter o byte offset de um registro de índice
-long long int getByteOffsetRegistroIndice(REGISTRO_INDICE *registro) {
+int64_t getByteOffsetRegistroIndice(REGISTRO_INDICE *registro) {
     return registro->byteOffset;
 }
 
 // Função para obter o byte offset do best fit para um array de registros
-long long int *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int quantidade, FILE *file) {
+int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int quantidade, FILE *file) {
     int *tamanhos = malloc(sizeof(int) * quantidade);
-    long long int *byteOffsets = malloc(sizeof(long long int) * quantidade);
+    int64_t *byteOffsets = malloc(sizeof(int64_t) * quantidade);
 
     if(getTamanhoListaRemovidos(removidos) == 0) { // Se não há registros removidos
         CABECALHO *cabecalho = retornaCabecalhoBinario(file);
@@ -736,7 +675,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         scan_quote_string(nomeClube[i]);
 
         int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB); // Obtém o RRN da raiz da árvore B
-        long long int byteoffsetRegistro = buscarRegistroIdRec(fileArvoreB, id, rrnAtual);
+        int64_t byteoffsetRegistro = buscarRegistroIdRec(fileArvoreB, id, rrnAtual);
 
         if(byteoffsetRegistro != -1) { // Registro já existe
             nomeJogador[i] = '\0';
@@ -758,7 +697,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
     limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
 
     // Obtém o byteOffset do best fit de cada registro
-    long long int *byteOffsets = getBestFitArrayRegistros(removidos, registros, numOperacoes, arquivoBin);
+    int64_t *byteOffsets = getBestFitArrayRegistros(removidos, registros, numOperacoes, arquivoBin);
     int tamanhoRegistroAtual = 0;
 
     for(int i = 0; i < numOperacoes; i++) {
@@ -818,7 +757,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
 }
 
 // Função para obter o melhor ajuste (best fit) e liberar o espaço correspondente
-long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registro, FILE *file) {
+int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registro, FILE *file) {
     int left = 0;
     int right = getTamanhoListaIndice(removidos->lista) - 1;
     int middle = (left + right) / 2;
@@ -835,20 +774,20 @@ long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *r
         middle = (left + right) / 2;
     }
 
-    long long int byteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle));
+    int64_t byteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle));
 
     // Retorna o primeiro elemento da lista com o tamanho desejado
     while(middle - 1 >= 0 && removidos->tamanhos[middle - 1] == tamanho) {
         if(removidos->tamanhos[middle] != removidos->tamanhos[middle - 1]) {
             break;
         }
-        long long int byteOffsetAnterior = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle - 1));
+        int64_t byteOffsetAnterior = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle - 1));
         byteOffset = byteOffsetAnterior;
         middle--;
     }
 
     if(middle + 1 < getTamanhoListaIndice(removidos->lista)) { // Tem um registro removido depois
-        long long int proxByteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle + 1));
+        int64_t proxByteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle + 1));
         setaProx(registro, proxByteOffset);
     } else { // Não tem registro removido depois
         setaProx(registro, -1);
@@ -860,7 +799,7 @@ long long int getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *r
 }
 
 // Função para adicionar um nó à árvore B
-bool adicionarNoArvoreB(int chave, long long int byteOffset, FILE *arquivoArvoreB) {
+bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
     // Lê o cabeçalho da árvore B
     CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivoArvoreB);
     if (getStatusCabecalhoArvoreB(cabecalho) == '0') {
