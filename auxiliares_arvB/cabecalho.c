@@ -8,16 +8,15 @@ INTEGRANTES DO GRUPO:
 #include "../bibliotecas/funcoesAuxiliares.h"
 
 // Função que cria o cabeçalho e define os valores iniciais de seus campos
-CABECALHO *criarCabecalho(void)
-{
-    CABECALHO *cabecalho = (CABECALHO *)malloc(sizeof(CABECALHO));
+CABECALHO *criarCabecalho(void){
+    CABECALHO *cabecalho = (CABECALHO*)malloc(sizeof(CABECALHO));
     cabecalho->status = '1';
     cabecalho->topo = -1;
     cabecalho->proxByteOffset = 0;
     cabecalho->nroRegArq = 0;
     cabecalho->nroRegRem = 0;
 
-    return cabecalho;
+    return(cabecalho);
 }
 
 // retorna o valor do status do cabeçalho

@@ -17,17 +17,22 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
 
     if (arquivoBin == NULL || fileArvoreB == NULL) {
         printf("Falha no processamento do arquivo.\n");
-        if(arquivoBin != NULL) fclose(arquivoBin);
-        if(fileArvoreB != NULL) fclose(fileArvoreB);
+        fclose(arquivoBin);
+        fclose(fileArvoreB);
         return false;
     }
     CABECALHO *cabecalho = retornaCabecalhoBinario(arquivoBin);
     CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB); // Lê o cabeçalho da árvore B
 
-    if(getStatus(cabecalho) == '0' || getStatusCabecalhoArvoreB(cabecalhoArvoreB) == '0') {
+    if (cabecalho == NULL || cabecalhoArvoreB == NULL) {
         printf("Falha no processamento do arquivo.\n");
-        limpaCabecalho(cabecalho);
-        limpaCabecalhoArvoreB(cabecalhoArvoreB);
+        return false;
+    }
+
+    if(cabecalho->status == '0' || cabecalhoArvoreB->status == '0') {
+        printf("Falha no processamento do arquivo.\n");
+        free(cabecalho);
+        free(cabecalhoArvoreB);
         fclose(arquivoBin);
         fclose(fileArvoreB);
         return false;

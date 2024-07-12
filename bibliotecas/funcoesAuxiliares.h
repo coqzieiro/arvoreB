@@ -56,6 +56,7 @@ INTEGRANTES DO GRUPO:
     void IniCabecalho(CABECALHO* cabecalho);
 
     // Funções auxiliares do cabeçalho árvore-B
+    void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho);
     int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int quantidade, FILE *file);
     void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset);
     void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho);

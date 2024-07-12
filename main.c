@@ -139,14 +139,14 @@ int main(void){
 
             CABECALHO *cabecalhoBin = retornaCabecalhoBinario(arquivoBinario); // Obtém o cabeçalho do arquivo
 
-            if(getStatus(cabecalhoBin) == '0') {
+            if(cabecalhoBin->status == '0') {
                 printf("Falha no processamento do arquivo.\n"); // Checa a validade do status do cabeçalho
-                limpaCabecalho(cabecalhoBin); // Libera recursos do cabeçalho
+                free(cabecalhoBin);
                 fclose(arquivoBinario); // Fecha o arquivo
                 return(0);
             }
 
-            limpaCabecalho(cabecalhoBin); // Libera recursos do cabeçalho
+            free(cabecalhoBin); // Libera recursos do cabeçalho
 
             for(int i=0; i<numBuscas; i++) {
                 scanf("\nid %d", &id); // Captura o id para busca

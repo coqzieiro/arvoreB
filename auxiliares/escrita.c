@@ -55,8 +55,7 @@ void EscritaRegistroFixo(DADOS_FIXOS* registro, FILE* arquivoBinario){
 }
 
 // Função que escreve o status do cabeçalho no arquivo binário
-void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
+void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int statusByte = 0;
     fseek(arquivoBin, statusByte, SEEK_SET);
     char status = getStatus(cabecalho);
@@ -64,8 +63,7 @@ void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
 }
 
 // Função que escreve o topo do cabeçalho no arquivo binário
-void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
+void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int topoByte = 1;
     fseek(arquivoBin, topoByte, SEEK_SET);
     int64_t topo = getTopo(cabecalho);
@@ -73,16 +71,14 @@ void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
 }
 
 // Função que escreve o próximo byte offset do cabeçalho no arquivo binário
-void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
+void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int proxByteOffsetByte = 9;
     fseek(arquivoBin, proxByteOffsetByte, SEEK_SET);
     int64_t proxByteOffset = getProxByteOffset(cabecalho);
     fwrite(&proxByteOffset, sizeof(int64_t), 1, arquivoBin);
 }
 
-void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
+void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int nroRegArqByte = 17;
     fseek(arquivoBin, nroRegArqByte, SEEK_SET);
     int nroRegArq = getNroRegArq(cabecalho);
@@ -90,8 +86,7 @@ void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
 }
 
 // Função que escreve o número de registros removidos no cabeçalho do arquivo binário
-void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin)
-{
+void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int nroRegRemByte = 21;
     fseek(arquivoBin, nroRegRemByte, SEEK_SET);
     int nroRem = getNroRem(cabecalho);

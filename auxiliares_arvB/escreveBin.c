@@ -615,8 +615,15 @@ int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registr
 bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
     // Lê o cabeçalho da árvore B
     CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivoArvoreB);
-    if (getStatusCabecalhoArvoreB(cabecalho) == '0') {
-        // Se o cabeçalho indica que a árvore está inconsistente, retorna false
+
+    // Verifica se cabeçalho é nulo
+    if (cabecalho == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return false;
+    }
+
+    // Se o cabeçalho indica que a árvore está inconsistente, retorna false
+    if (cabecalho->status == '0') {
         printf("Falha no processamento do arquivo.\n");
         limpaCabecalhoArvoreB(cabecalho);
         return false;
