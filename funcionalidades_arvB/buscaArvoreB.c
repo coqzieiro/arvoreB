@@ -41,8 +41,6 @@ void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int busc
         rrnAtual = cabecalhoArvoreB->noRaiz;
     }
 
-    //int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB); // Obtém o RRN da raiz da árvore B
-
     limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
 
     printf(buscaMinuscula ? "Busca %d\n\n" : "BUSCA %d\n\n", i + 1); // Imprime o número da busca

@@ -637,8 +637,6 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
         rrnRaiz = cabecalho->noRaiz;
     }
 
-    // int rrnRaiz = getNoRaizCabecalhoArvoreB(cabecalho);
-
     if (rrnRaiz == -1) {
         // Se a árvore está vazia, cria um novo nó raiz
         REGISTRO_ARVORE_B *novoRegistro = criarRegistroArvoreBVazio();
