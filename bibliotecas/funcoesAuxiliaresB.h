@@ -4,8 +4,8 @@ INTEGRANTES DO GRUPO:
                     Fernando Alee Suaiden,      NºUSP: 12680836
 */
 
-#ifndef FUNCOES_AUX_H
-    #define FUNCOES_AUX_H
+#ifndef FUNCOES_AUX_B_H
+    #define FUNCOES_AUX_B_H
 
     #include "funcionalidades.h"
     #include "definicoesTipos.h"

@@ -4,7 +4,7 @@ INTEGRANTES DO GRUPO:
                     Fernando Alee Suaiden,      NºUSP: 12680836
 */
 
-#include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Cria um cabeçalho de árvore B com valores padrão
 CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio() {

@@ -4,7 +4,7 @@ INTEGRANTES DO GRUPO:
                     Fernando Alee Suaiden,      NºUSP: 12680836
 */
 
-#include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Função que aumenta a altura dos nós recursivamente
 int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz) {

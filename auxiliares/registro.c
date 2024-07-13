@@ -8,6 +8,7 @@ INTEGRANTES DO GRUPO:
 #include <stdlib.h>
 #include <string.h>
 #include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Função que imprime os registros de acordo com os parâmetros de busca
 void imprimirRegistros(DADOS **registros)

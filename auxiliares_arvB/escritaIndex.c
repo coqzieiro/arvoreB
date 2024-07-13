@@ -4,7 +4,7 @@ INTEGRANTES DO GRUPO:
                     Fernando Alee Suaiden,      NºUSP: 12680836
 */
 
-#include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 #include "../bibliotecas/funcoes_fornecidas.h"
 #include "../bibliotecas/funcionalidades.h"
 #include "../bibliotecas/definicoesTipos.h"

@@ -5,6 +5,7 @@ INTEGRANTES DO GRUPO:
 */
 
 #include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 #include "../bibliotecas/funcoes_fornecidas.h"
 #include "../bibliotecas/funcionalidades.h"
 #include "../bibliotecas/definicoesTipos.h"

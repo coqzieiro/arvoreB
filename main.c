@@ -12,6 +12,7 @@ INTEGRANTES DO GRUPO:
 #include "../bibliotecas/definicoesTipos.h"
 #include "../bibliotecas/funcoes_fornecidas.h"
 #include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 
 int main(void){
     int opcao, numBuscas, numRemocoes, numInsercoes, id;

@@ -5,7 +5,7 @@ INTEGRANTES DO GRUPO:
                     Fernando Alee Suaiden,      NºUSP: 12680836
 */
 
-#include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Função para ler os valores do cabeçalho do arquivo binário e salvar na estrutura 'cabecalho'
 void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho) {

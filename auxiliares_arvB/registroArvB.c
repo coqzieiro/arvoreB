@@ -4,7 +4,7 @@ INTEGRANTES DO GRUPO:
                     Fernando Alee Suaiden,      NºUSP: 12680836
 */
 
-#include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Função para criar um registro vazio de árvore B com valores padrão
 REGISTRO_ARVORE_B *criarRegistroArvoreBVazio() {

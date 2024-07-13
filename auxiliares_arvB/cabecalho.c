@@ -5,7 +5,7 @@ INTEGRANTES DO GRUPO:
 */
 
 #include "../bibliotecas/definicoesTipos.h"
-#include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Função que cria o cabeçalho e define os valores iniciais de seus campos
 CABECALHO *criarCabecalho(void){
