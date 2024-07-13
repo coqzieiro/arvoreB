@@ -6,7 +6,7 @@ INTEGRANTES DO GRUPO:
 
 #include "../bibliotecas/definicoesTipos.h"
 #include "../bibliotecas/funcoes_fornecidas.h"
-#include "../bibliotecas/funcoesAuxiliares.h"
+#include "../bibliotecas/funcoesAuxiliaresB.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
