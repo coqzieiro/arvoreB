@@ -17,39 +17,43 @@ CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio() {
     return(cabecalho);
 }
 
-// Obtém o status do cabeçalho da árvore B
-char getStatusCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
-    if (cabecalho == NULL) {
-        return('$');
-    }
-    return(cabecalho->status);
+// Função que cria o cabeçalho e define os valores iniciais de seus campos
+CABECALHO *criarCabecalho(void){
+    CABECALHO *cabecalho = (CABECALHO*)malloc(sizeof(CABECALHO));
+    cabecalho->status = '1';
+    cabecalho->topo = -1;
+    cabecalho->proxByteOffset = 0;
+    cabecalho->nroRegArq = 0;
+    cabecalho->nroRegRem = 0;
+
+    return(cabecalho);
 }
 
 // Obtém o RRN da raiz do cabeçalho da árvore B
-int getNoRaizCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
+/*int getNoRaizCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
     if(cabecalho == NULL) {
         return(-1);
     }
 
     return(cabecalho->noRaiz);
-}
+}*/
 
 // Obtém o próximo RRN do cabeçalho da árvore B
-int getProxRRNCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
+/*int getProxRRNCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
     if (cabecalho == NULL) {
         return(-1);
     }
 
     return(cabecalho->proxRRN);
-}
+}*/
 
 // Obtém o número de chaves do cabeçalho da árvore B
-int getNroChavesCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
+/*int getNroChavesCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
     if (cabecalho == NULL) {
         return(-1);
     }
     return(cabecalho->nroChaves);
-}
+}*/
 
 // Define o status do cabeçalho da árvore B
 int setStatusCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, char status) {

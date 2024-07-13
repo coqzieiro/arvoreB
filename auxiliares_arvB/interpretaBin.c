@@ -8,7 +8,7 @@ INTEGRANTES DO GRUPO:
 #include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Função para ler os valores do cabeçalho do arquivo binário e salvar na estrutura 'cabecalho'
-void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho) {
+void lerCabecalhoB(FILE *file, CABECALHO *cabecalho) {
     char status;
     // Lê o status do cabeçalho do arquivo
     fread(&status, sizeof(char), 1, file);
@@ -40,7 +40,7 @@ CABECALHO *retornaCabecalhoBinario(FILE *file) {
     // Cria uma estrutura de cabeçalho e lê os valores do arquivo binário para ela
     CABECALHO *cabecalho = criarCabecalho();
     fseek(file, 0, SEEK_SET);
-    lerCabecalhoFromBin(file, cabecalho);
+    lerCabecalhoB(file, cabecalho);
 
     return cabecalho;
 }

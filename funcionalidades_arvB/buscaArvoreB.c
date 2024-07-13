@@ -21,15 +21,28 @@ void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int busc
     }
 
     CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fp); // Lê o cabeçalho da árvore B
+
+    if(cabecalhoArvoreB == NULL){
+        cabecalhoArvoreB->status = '$';
+    }
     
-    if(getStatusCabecalhoArvoreB(cabecalhoArvoreB) == '0') {
+    if(cabecalhoArvoreB->status == '0') {
         printf("Falha no processamento do arquivo.\n"); // Verifica se o status do cabeçalho é inválido
         limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
         fclose(fp); // Fecha o arquivo
         return;
     }
 
-    int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB); // Obtém o RRN da raiz da árvore B
+    int rrnAtual;
+
+    if(cabecalhoArvoreB == NULL) {
+        rrnAtual = -1;
+    } else {
+        rrnAtual = cabecalhoArvoreB->noRaiz;
+    }
+
+    //int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB); // Obtém o RRN da raiz da árvore B
+
     limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
 
     printf(buscaMinuscula ? "Busca %d\n\n" : "BUSCA %d\n\n", i + 1); // Imprime o número da busca

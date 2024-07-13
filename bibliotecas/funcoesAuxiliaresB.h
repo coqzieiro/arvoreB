@@ -14,16 +14,11 @@ INTEGRANTES DO GRUPO:
     #include <stdbool.h>
 
     // Funções auxiliares do cabeçalho árvore-B
-    void lerCabecalhoFromBin(FILE *file, CABECALHO *cabecalho);
+    void lerCabecalhoB(FILE *arquivo, CABECALHO *cabecalho);
     int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int quantidade, FILE *file);
-    void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset);
+    void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset); // m
     void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho);
     CABECALHO *criarCabecalho(void);
-    char getStatus(CABECALHO *cabecalho);
-    int64_t getTopo(CABECALHO *cabecalho);
-    int64_t getProxByteOffset(CABECALHO *cabecalho);
-    int getNroRegArq(CABECALHO *cabecalho);
-    int getNroRem(CABECALHO *cabecalho);
     void setStatus(CABECALHO *cabecalho, char status);
     void setTopo(CABECALHO *cabecalho, int64_t topo);
     void setProxByteOffset(CABECALHO *cabecalho, int64_t proxByteOffset);
@@ -37,10 +32,7 @@ INTEGRANTES DO GRUPO:
     void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
     CABECALHO *retornaCabecalhoBinario(FILE *file);
     CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio();
-    char getStatusCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
-    int getNoRaizCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
-    int getProxRRNCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
-    int getNroChavesCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
+    //int getNroChavesCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
     int setStatusCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, char status);
     int setNoRaizCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int noRaiz);
     int setProxRRNCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int proxRRN);
@@ -55,7 +47,7 @@ INTEGRANTES DO GRUPO:
     int removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave);
     int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente, int chaveDescendente);
     int removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente);
-    int getRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro);
+    // int getRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro);
     int getAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro);
     int setRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro, int rrn);
     int setAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro, int alturaNo);

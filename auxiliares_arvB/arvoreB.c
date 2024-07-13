@@ -98,8 +98,26 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             inserirChaveRegistroArvoreB(registroDireito, chaves[i], byteOffsets[i]);
         }
     } else {
-        int rrnFilhoEsq = getRRNRegistroArvoreB(filhoEsq);
-        int rrnFilhoDir = getRRNRegistroArvoreB(filhoDir);
+        REGISTRO_ARVORE_B *registroEsq = criarRegistroArvoreBVazio();
+        REGISTRO_ARVORE_B *registroDir = criarRegistroArvoreBVazio();
+
+        if (filhoEsq == NULL) {
+            registroEsq->rrn = -1;
+        } else {
+            registroEsq->rrn = filhoEsq->rrn;
+        }
+
+        int rrnFilhoEsq = registroEsq->rrn;
+        //int rrnFilhoEsq = getRRNRegistroArvoreB(filhoEsq);
+
+        if (filhoDir == NULL) {
+            registroDir->rrn = -1;
+        } else {
+            registroDir->rrn = filhoDir->rrn;
+        }
+
+        int rrnFilhoDir = registroDir->rrn;
+        //int rrnFilhoDir = getRRNRegistroArvoreB(filhoDir);
 
         int64_t descendentes[ORDEM_ARVORE_B + 1];
 
@@ -143,9 +161,26 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
         }
 
     }
+    
+    REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
 
-    int rrnAtual = getRRNRegistroArvoreB(caminho[nivel]);
-    int proxRRN = getProxRRNCabecalhoArvoreB(cabecalho);
+    if (caminho[nivel] == NULL) {
+        registro->rrn = -1;
+    } else {
+        registro->rrn = caminho[nivel]->rrn;
+    }
+    
+    int rrnAtual = registro->rrn;
+
+    // int rrnAtual = getRRNRegistroArvoreB(caminho[nivel]);
+
+    int proxRRN;
+
+    if (cabecalho == NULL) {
+        proxRRN = -1;
+    } else {
+        proxRRN = cabecalho->proxRRN;
+    }
 
     setRRNRegistroArvoreB(registroEsquerdo, rrnAtual);
     setRRNRegistroArvoreB(registroDireito, proxRRN);
@@ -183,7 +218,17 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
             setNoRaizCabecalhoArvoreB(cabecalho, rrnRaiz);
             setProxRRNCabecalhoArvoreB(cabecalho, rrnRaiz + 1);
-            setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
+
+            int chave;
+
+            if (cabecalho == NULL) {
+                chave = -1;
+            } else {
+                chave = cabecalho->nroChaves;
+            }
+
+            setNroChavesCabecalhoArvoreB(cabecalho, chave + 1);
+
             escreverCabecalhoArvoreB(arquivo, cabecalho);
 
             aumentarAlturaRecursivamente(arquivo, rrnRaiz);
@@ -193,20 +238,53 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             apagarRegistroArvoreB(novaRaiz);
             limpaCabecalhoArvoreB(cabecalho);
         } else {
-            REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
+            REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
+
+            if (caminho[nivel - 1] == NULL) {
+                registro->rrn = -1;
+            } else {
+                registro->rrn = caminho[nivel - 1]->rrn;
+            }
+
+            REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, registro->rrn);
+
+            // REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
 
             escreverRegistroArvoreB(registroEsquerdo, arquivo, rrnAtual);
             escreverRegistroArvoreB(registroDireito, arquivo, proxRRN);
 
             inserirChaveRegistroArvoreB(registroPai, chavePromovida, byteOffsetPromovido);
             inserirDescendenteRegistroArvoreB(registroPai, proxRRN, menorChaveDireita);
-            escreverRegistroArvoreB(registroPai, arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
+
+            escreverRegistroArvoreB(registroPai, arquivo, registro->rrn);
+
+            // escreverRegistroArvoreB(registroPai, arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
 
             setProxRRNCabecalhoArvoreB(cabecalho, proxRRN + 1);
-            setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
+
+            int chave;
+
+            if (cabecalho == NULL) {
+                chave = -1;
+            } else {
+                chave = cabecalho->nroChaves;
+            }
+
+            setNroChavesCabecalhoArvoreB(cabecalho, chave + 1);
+
             escreverCabecalhoArvoreB(arquivo, cabecalho);
 
-            aumentarAlturaRecursivamente(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
+            /*REGISTRO_ARVORE_B *registro;
+
+            if (caminho[nivel - 1] == NULL) {
+                registro->rrn = -1;
+            } else {
+                registro->rrn = caminho[nivel - 1]->rrn;
+            }*/
+
+            aumentarAlturaRecursivamente(arquivo, registro->rrn);
+
+            //aumentarAlturaRecursivamente(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
 
             apagarRegistroArvoreB(registroEsquerdo);
             apagarRegistroArvoreB(registroDireito);
@@ -225,7 +303,14 @@ void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, i
 
     escreverRegistroArvoreB(registro, arquivo, rrnAtual);
 
-    setNroChavesCabecalhoArvoreB(cabecalho, getNroChavesCabecalhoArvoreB(cabecalho) + 1);
+    if (cabecalho == NULL) {
+        chave = -1;
+    } else {
+        chave = cabecalho->nroChaves;
+    }
+
+    setNroChavesCabecalhoArvoreB(cabecalho, chave + 1);
+
     escreverCabecalhoArvoreB(arquivo, cabecalho);
 }
 
@@ -281,7 +366,13 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
 void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
     CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
 
-    int nroChaves = getNroChavesCabecalhoArvoreB(cabecalho);
+    int nroChaves;
+
+    if (cabecalho == NULL) {
+        nroChaves = -1;
+    } else {
+        nroChaves = cabecalho->nroChaves;
+    }
 
     if (nroChaves == 0) {
         REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
@@ -303,7 +394,14 @@ void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
     }
 
     REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **) malloc(sizeof(REGISTRO_ARVORE_B *) * 1);
-    int64_t rrnAtual = getNoRaizCabecalhoArvoreB(cabecalho);
+
+    int64_t rrnAtual;
+
+    if(cabecalho == NULL){
+        rrnAtual = -1;
+    } else {
+        rrnAtual = cabecalho->noRaiz;
+    }
 
     int tamCaminho = 0;
 

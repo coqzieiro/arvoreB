@@ -30,11 +30,11 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
     fseek(arquivoBinario, 0, SEEK_SET);
 
     // Lê o cabeçalho
-    lerCabecalhoFromBin(arquivoBinario, cabecalho);
+    lerCabecalhoB(arquivoBinario, cabecalho);
 
     //CABECALHO *cabecalho = retornaCabecalhoBinario(arquivoBinario); // Lê o cabeçalho do arquivo binário
 
-    if(getStatus(cabecalho) == '0'){
+    if(cabecalho->status == '0'){
         printf("Falha no processamento do arquivo.\n");
         fclose(arquivoBinario);
         fclose(arquivoArvoreB);
@@ -50,7 +50,7 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
 
     int64_t posicao = 25; // Posição inicial do primeiro registro
 
-    int quantidade = getNroRegArq(cabecalho) + getNroRem(cabecalho); // Quantidade total de registros
+    int quantidade = cabecalho->nroRegArq + cabecalho->nroRegRem; // Quantidade total de registros
 
     free(cabecalho);
 

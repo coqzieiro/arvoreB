@@ -4,6 +4,7 @@
         "stdbool.h": "c",
         "definicoestipos.h": "c",
         "funcoesauxiliares.h": "c",
-        "funcoes_fornecidas.h": "c"
+        "funcoes_fornecidas.h": "c",
+        "stdlib.h": "c"
     }
 }

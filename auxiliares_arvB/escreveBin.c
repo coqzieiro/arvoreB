@@ -138,8 +138,8 @@ int imprimeRegistro(DADOS *registro) {
 
 // Função para imprimir registros por campos de busca
 void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
-    int64_t byteOffset = getProxByteOffset(cabecalho);
-    int numRegistros = getNroRegArq(cabecalho) + getNroRem(cabecalho); // Número total de registros (incluindo removidos)
+    int64_t byteOffset = cabecalho->proxByteOffset;
+    int numRegistros = cabecalho->nroRegArq + cabecalho->nroRegRem; // Número total de registros (incluindo removidos)
     byteOffset = 25; // Posição inicial do byteOffset
 
     if (numRegistros == 0) { // Verifica se o arquivo não possui registros
@@ -237,7 +237,7 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
     fseek(file, 0, SEEK_END);
     int finalArquivo = ftell(file); // Obtém o final do arquivo
 
-    int proxByteOffset = getTopo(cabecalho); // Obtém o topo da lista de removidos
+    int proxByteOffset = cabecalho->topo; // Obtém o topo da lista de removidos
     
     int count = 0;
 
@@ -306,9 +306,9 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
 
     setStatus(cabecalho, '0');
 
-    setNroRegArq(cabecalho, getNroRegArq(cabecalho) + 1);
+    setNroRegArq(cabecalho, cabecalho->nroRegArq + 1);
     writeNroRegArqCabecalho(cabecalho, file);
-    setNroRem(cabecalho, getNroRem(cabecalho) - 1);
+    setNroRem(cabecalho, cabecalho->nroRegRem - 1);
     writeNroRegRemCabecalho(cabecalho, file);
     
     if(tamanhoLista == 1) { // Lista só tem um elemento removido
@@ -523,7 +523,7 @@ int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int q
     if(getTamanhoListaRemovidos(removidos) == 0) { // Se não há registros removidos
         CABECALHO *cabecalho = retornaCabecalhoBinario(file);
 
-        setNroRegArq(cabecalho, getNroRegArq(cabecalho) + quantidade);
+        setNroRegArq(cabecalho, cabecalho->nroRegArq + quantidade);
         writeNroRegArqCabecalho(cabecalho, file);
 
         for(int i = 0; i < quantidade; i++) {
@@ -629,7 +629,16 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
         return false;
     }
 
-    int rrnRaiz = getNoRaizCabecalhoArvoreB(cabecalho);
+    int rrnRaiz;
+
+    if(cabecalho == NULL) {
+        rrnRaiz = -1;
+    } else {
+        rrnRaiz = cabecalho->noRaiz;
+    }
+
+    // int rrnRaiz = getNoRaizCabecalhoArvoreB(cabecalho);
+
     if (rrnRaiz == -1) {
         // Se a árvore está vazia, cria um novo nó raiz
         REGISTRO_ARVORE_B *novoRegistro = criarRegistroArvoreBVazio();

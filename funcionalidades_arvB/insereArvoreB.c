@@ -61,7 +61,14 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         scan_quote_string(nacionalidade[i]);
         scan_quote_string(nomeClube[i]);
 
-        int rrnAtual = getNoRaizCabecalhoArvoreB(cabecalhoArvoreB); // Obtém o RRN da raiz da árvore B
+        int rrnAtual;
+
+        if(cabecalhoArvoreB == NULL) {
+            rrnAtual = -1;
+        } else {
+            rrnAtual = cabecalhoArvoreB->noRaiz;
+        }
+
         int64_t byteoffsetRegistro = buscarRegistroIdRec(fileArvoreB, id, rrnAtual);
 
         if(byteoffsetRegistro != -1) { // Registro já existe

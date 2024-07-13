@@ -59,7 +59,7 @@ void EscritaRegistroFixo(DADOS_FIXOS* registro, FILE* arquivoBinario){
 void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int statusByte = 0;
     fseek(arquivoBin, statusByte, SEEK_SET);
-    char status = getStatus(cabecalho);
+    char status = cabecalho->status;
     fwrite(&status, sizeof(char), 1, arquivoBin);
 }
 
@@ -67,7 +67,7 @@ void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
 void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int topoByte = 1;
     fseek(arquivoBin, topoByte, SEEK_SET);
-    int64_t topo = getTopo(cabecalho);
+    int64_t topo = cabecalho->topo;
     fwrite(&topo, sizeof(int64_t), 1, arquivoBin);
 }
 
@@ -75,14 +75,14 @@ void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
 void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int proxByteOffsetByte = 9;
     fseek(arquivoBin, proxByteOffsetByte, SEEK_SET);
-    int64_t proxByteOffset = getProxByteOffset(cabecalho);
+    int64_t proxByteOffset = cabecalho->proxByteOffset;
     fwrite(&proxByteOffset, sizeof(int64_t), 1, arquivoBin);
 }
 
 void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int nroRegArqByte = 17;
     fseek(arquivoBin, nroRegArqByte, SEEK_SET);
-    int nroRegArq = getNroRegArq(cabecalho);
+    int nroRegArq = cabecalho->nroRegArq;
     fwrite(&nroRegArq, sizeof(int), 1, arquivoBin);
 }
 
@@ -90,6 +90,6 @@ void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
 void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     const int nroRegRemByte = 21;
     fseek(arquivoBin, nroRegRemByte, SEEK_SET);
-    int nroRem = getNroRem(cabecalho);
+    int nroRem = cabecalho->nroRegRem;
     fwrite(&nroRem, sizeof(int), 1, arquivoBin);
 }
