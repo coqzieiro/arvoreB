@@ -108,7 +108,6 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
         }
 
         int rrnFilhoEsq = registroEsq->rrn;
-        //int rrnFilhoEsq = getRRNRegistroArvoreB(filhoEsq);
 
         if (filhoDir == NULL) {
             registroDir->rrn = -1;
@@ -117,7 +116,6 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
         }
 
         int rrnFilhoDir = registroDir->rrn;
-        //int rrnFilhoDir = getRRNRegistroArvoreB(filhoDir);
 
         int64_t descendentes[ORDEM_ARVORE_B + 1];
 
@@ -171,8 +169,6 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
     }
     
     int rrnAtual = registro->rrn;
-
-    // int rrnAtual = getRRNRegistroArvoreB(caminho[nivel]);
 
     int proxRRN;
 
@@ -248,8 +244,6 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
 
             REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, registro->rrn);
 
-            // REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
-
             escreverRegistroArvoreB(registroEsquerdo, arquivo, rrnAtual);
             escreverRegistroArvoreB(registroDireito, arquivo, proxRRN);
 
@@ -257,8 +251,6 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             inserirDescendenteRegistroArvoreB(registroPai, proxRRN, menorChaveDireita);
 
             escreverRegistroArvoreB(registroPai, arquivo, registro->rrn);
-
-            // escreverRegistroArvoreB(registroPai, arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
 
             setProxRRNCabecalhoArvoreB(cabecalho, proxRRN + 1);
 
@@ -283,9 +275,6 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             }*/
 
             aumentarAlturaRecursivamente(arquivo, registro->rrn);
-
-            //aumentarAlturaRecursivamente(arquivo, getRRNRegistroArvoreB(caminho[nivel - 1]));
-
             apagarRegistroArvoreB(registroEsquerdo);
             apagarRegistroArvoreB(registroDireito);
             apagarRegistroArvoreB(registroPai);

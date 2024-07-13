@@ -146,15 +146,6 @@ int removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t desce
     return 1;
 }
 
-// Função para obter o RRN de um registro de árvore B
-/*int getRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro) {
-    if (registro == NULL) {
-        return -1;
-    }
-    
-    return registro->rrn;
-}*/
-
 // Função para obter a altura de um nó em um registro de árvore B
 int getAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro) {
     if (registro == NULL) {

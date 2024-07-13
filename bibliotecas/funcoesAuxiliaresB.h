@@ -16,7 +16,7 @@ INTEGRANTES DO GRUPO:
     // Funções auxiliares do cabeçalho árvore-B
     void lerCabecalhoB(FILE *arquivo, CABECALHO *cabecalho);
     int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int quantidade, FILE *file);
-    void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset); // m
+    void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset);
     void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho);
     CABECALHO *criarCabecalho(void);
     void setStatus(CABECALHO *cabecalho, char status);
@@ -46,7 +46,6 @@ INTEGRANTES DO GRUPO:
     int removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave);
     int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente, int chaveDescendente);
     int removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente);
-    // int getRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro);
     int getAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro);
     int setRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro, int rrn);
     int setAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro, int alturaNo);
