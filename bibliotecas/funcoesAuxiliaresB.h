@@ -58,35 +58,11 @@ INTEGRANTES DO GRUPO:
     int escreverRegistroArvoreB(REGISTRO_ARVORE_B *registro, FILE *arquivo, int rrn);
 
     // Funções get/set de registros árvore-B
-    void imprimirRegistros(DADOS **registros);
-    DADOS **intersecaoDoisRegistros(DADOS **registro1, DADOS **registro2);
-    DADOS *criarRegistroNulo();
-    DADOS* criarRegistro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube);
-    char retornaRemovido(DADOS *registro);
-    int retornaTamanhoRegistro(DADOS *registro);
-    int64_t retornaProx(DADOS *registro);
-    int retornaId(DADOS *registro);
-    int retornaIdade(DADOS *registro);
-    int RetornaTamNomeJogador(DADOS *registro);
-    DADOS *buscaOfsset(long long offset, FILE *file);
-    char* retornaNomeJogador(DADOS *registro);
-    int retornaTamNacionalidade(DADOS *registro);
-    char* retornaNacionalidade(DADOS *registro);
-    int retornaTamNomeClube(DADOS *registro);
-    char* retornaNomeClube(DADOS *registro);
-    void setaProx(DADOS *registro, int64_t prox);
-    void setaRemovido(DADOS *registro, int removido);
-    void setaTamanhoRegistro(DADOS *registro, int tamanhoRegistro);
-    void setaId(DADOS *registro, int id);
-    void setaIdade(DADOS *registro, int idade);
-    void setaTamNomeJogador(DADOS *registro, int tamNomeJogador);
-    void setaNomeJogador(DADOS *registro, char *nomeJogador);
-    void setaTamNacionalidade(DADOS *registro, int tamNacionalidade);
-    void setaNacionalidade(DADOS *registro, char *nacionalidade);
-    void setaTamNomeClube(DADOS *registro, int tamNomeClube);
-    void setaNomeClube(DADOS *registro, char *nomeClube);
-    void liberarRegistro(DADOS *registro);
-    DADOS *lerRegistroFromBin(int posicao, FILE *arquivoBin);
+    DADOS **encontrar_registros_em_comum(DADOS **vetor1, DADOS **vetor2);
+    DADOS *inicializa_registro();
+    DADOS* atribui_valores_registro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube);
+    void free_registro(DADOS *registro);
+    DADOS *leitura_registro_arquivoBin(int offset, FILE *arquivoBin);
 
     // Funções auxiliares para escrita árvore-B
     int imprimeRegistro(DADOS *registro);
@@ -101,7 +77,7 @@ INTEGRANTES DO GRUPO:
     void apagarListaRemovidos(REMOVIDOS *removidos);
     void removerRegistroIndice(LISTA_INDICE *lista, int index);
     void removerRegistroRemovidoPosicao(REMOVIDOS *removidos, int posicao);
-    REGISTRO_INDICE *criarRegistroIndice();
+    REGISTRO_INDICE *inicializa_registro_index();
     void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao, FILE *file);
     void setIndexRegistroIndice(REGISTRO_INDICE *registro, int index);
     void setByteOffsetRegistroIndice(REGISTRO_INDICE *registro, int64_t byteOffset);

@@ -49,9 +49,9 @@ void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int busc
         int64_t byteOffsetRegistroBuscado = buscarRegistroIdRec(fp, id, rrnAtual); // Busca o byte offset do registro na árvore B
 
         if(byteOffsetRegistroBuscado != -1) { // Se o registro foi encontrado
-            DADOS *registro = buscaOfsset(byteOffsetRegistroBuscado, file); // Busca o registro no arquivo binário
+            DADOS *registro = leitura_registro_arquivoBin(byteOffsetRegistroBuscado, file); // Busca o registro no arquivo binário
             imprimeRegistro(registro); // Imprime o registro
-            liberarRegistro(registro); // Libera a memória do registro
+            free_registro(registro); // Libera a memória do registro
         } else {
             printf("Registro inexistente.\n\n"); // Se o registro não foi encontrado
         }

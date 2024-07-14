@@ -75,7 +75,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
             nomeJogador[i] = '\0';
             nacionalidade[i] = '\0';
             nomeClube[i] = '\0';
-            registros[i] = criarRegistro('1', 0, 0, 0, 0, 0, nomeJogador[i], 0, nomeClube[i], 0, nacionalidade[i]);
+            registros[i] = atribui_valores_registro('1', 0, 0, 0, 0, 0, nomeJogador[i], 0, nomeClube[i], 0, nacionalidade[i]);
             continue;
         }
 
@@ -85,7 +85,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         if(strcmp(nacionalidade[i], "NULO") == 0 || strcmp(nacionalidade[i], "") == 0) strcpy(nacionalidade[i], "");
         if(strcmp(nomeClube[i], "NULO") == 0 || strcmp(nomeClube[i], "") == 0) strcpy(nomeClube[i], "");
 
-        registros[i] = criarRegistro('0', 33 + strlen(nomeJogador[i]) + strlen(nomeClube[i]) + strlen(nacionalidade[i]), -1, id, idade, strlen(nomeJogador[i]), nomeJogador[i], strlen(nacionalidade[i]), nacionalidade[i], strlen(nomeClube[i]), nomeClube[i]);
+        registros[i] = atribui_valores_registro('0', 33 + strlen(nomeJogador[i]) + strlen(nomeClube[i]) + strlen(nacionalidade[i]), -1, id, idade, strlen(nomeJogador[i]), nomeJogador[i], strlen(nacionalidade[i]), nacionalidade[i], strlen(nomeClube[i]), nomeClube[i]);
     }
 
     limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
@@ -100,16 +100,15 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
             tamanhoRegistroAtual = 0;
             fseek(arquivoBin, 0, SEEK_END);
             byteOffsets[i] = ftell(arquivoBin);
-            setProxByteOffset(cabecalho, byteOffsets[i] + retornaTamanhoRegistro(registros[i]));
+            setProxByteOffset(cabecalho, byteOffsets[i] + registros[i]->tamanhoRegistro);
             writeProxByteOffsetCabecalho(cabecalho, arquivoBin);
         } else {
-            DADOS *registro = lerRegistroFromBin(byteOffsets[i], arquivoBin);
-            tamanhoRegistroAtual = retornaTamanhoRegistro(registro);
-            liberarRegistro(registro);
+            DADOS *registro = leitura_registro_arquivoBin(byteOffsets[i], arquivoBin);
+            tamanhoRegistroAtual = registro->tamanhoRegistro;
+            free_registro(registro);
         }
 
-        setaProx(registros[i], -1);
-
+        registros[i]->prox = -1;
         // Escrevendo o registro no arquivo binário
         setStatus(cabecalho, '0');
         writeStatusCabecalho(cabecalho, arquivoBin);
@@ -123,7 +122,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         fwrite(&statusArquivoArvoreB, sizeof(char), 1, fileArvoreB);
 
         // Insere a chave e o byteOffset no arquivo da árvore B
-        inserirArvoreB(fileArvoreB, retornaId(registros[i]), byteOffsets[i]);
+        inserirArvoreB(fileArvoreB,  registros[i]->id, byteOffsets[i]);
 
         // Atualiza o status do arquivo da árvore B para '1'
         fseek(fileArvoreB, 0, SEEK_SET);
@@ -132,7 +131,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
     }
 
     for(int i = 0; i < numOperacoes; i++) {
-        liberarRegistro(registros[i]);
+        free_registro(registros[i]);
     }
 
     free(registros);

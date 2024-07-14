@@ -52,23 +52,42 @@ bool escreverRegistro(DADOS *registro, int byteOffset, int tamRegistroAtual, FIL
         return false;
     }
 
-    char removido = retornaRemovido(registro);
-    int tamRegistroOriginal = retornaTamanhoRegistro(registro);
+    char removido = registro->removido;
+    int tamRegistroOriginal = registro->tamanhoRegistro;
     int tamanhoRegistro = tamRegistroOriginal;
-    int64_t prox = retornaProx(registro);
-    int id = retornaId(registro);
-    int idade = retornaIdade(registro);
-    int tamNomeJogador = RetornaTamNomeJogador(registro);
-    char *nomeJogador = retornaNomeJogador(registro);
-    int tamNacionalidade = retornaTamNacionalidade(registro);
-    char *nacionalidade = retornaNacionalidade(registro);
-    int tamNomeClube = retornaTamNomeClube(registro);
-    char *nomeClube = retornaNomeClube(registro);
+    int64_t prox = registro->prox;
+    int id =  registro->id;
+    int idade = registro->idade;
+    int tamNomeJogador = registro->tamNomeJog;
+    char *nomeJogador;
+
+    if (registro->nomeJogador == NULL || strcmp(registro->nomeJogador, "") == 0) // Check for NULL and empty string
+    {
+        nomeJogador = "SEM DADO";
+    }
+    else{
+        nomeJogador = registro->nomeJogador;
+    }
+
+    int tamNacionalidade =registro->tamNacionalidade;
+    char *nacionalidade;
+
+    if (registro->nacionalidade == NULL || strcmp(registro->nacionalidade, "") == 0) // Check for NULL and empty string
+    {
+        nacionalidade = "SEM DADO";
+    }else nacionalidade = registro->nacionalidade;
+
+    int tamNomeClube = registro->tamNomeClube;
+    char *nomeClube;
+    if (registro->nomeClube == NULL || strcmp(registro->nomeClube, "") == 0) // Check for NULL and empty string
+    {
+        nomeClube = "SEM DADO";
+    }else nomeClube = registro->nomeClube;
 
     fseek(arquivoBin, byteOffset, SEEK_SET); // Move o ponteiro do arquivo para a posição do registro
 
     if(tamRegistroAtual != 0) {
-        setaTamanhoRegistro(registro, tamRegistroAtual);
+        registro->tamanhoRegistro = tamRegistroAtual;
         tamanhoRegistro = tamRegistroAtual;
     }
 
@@ -93,18 +112,32 @@ bool escreverRegistro(DADOS *registro, int byteOffset, int tamRegistroAtual, FIL
 
 // Função para imprimir um registro
 int imprimeRegistro(DADOS *registro) {
-    if (retornaRemovido(registro) == '0') { // Se o registro não foi removido, imprime seus dados na tela
+    if (registro->removido == '0') { // Se o registro não foi removido, imprime seus dados na tela
 
         // Recebe o valor dos atributos do registro
-        char *nomeClube = retornaNomeClube(registro);
-        char *nacionalidade = retornaNacionalidade(registro);
-        char *nomeJogador = retornaNomeJogador(registro);
+        char *nomeClube;
+        if (registro->nomeClube == NULL || strcmp(registro->nomeClube, "") == 0) // Check for NULL and empty string
+        {
+            nomeClube =  "SEM DADO";
+        }else nomeClube = registro->nomeClube;
+        char *nacionalidade;
+        if (registro->nacionalidade == NULL || strcmp(registro->nacionalidade, "") == 0) // Check for NULL and empty string
+        {
+            nacionalidade =  "SEM DADO";
+        }else nacionalidade = registro->nacionalidade;
+
+        char *nomeJogador;
+
+        if (registro->nomeJogador == NULL || strcmp(registro->nomeJogador, "") == 0) // Check for NULL and empty string
+        {
+            nomeJogador = "SEM DADO";
+        }else nomeJogador = registro->nomeJogador;
 
         printf("Nome do Jogador: ");
         if (strcmp(nomeJogador, "SEM DADO") == 0) { // Se o nome do jogador for "SEM DADO", imprime "SEM DADO"
             printf("SEM DADO\n");
         } else { // Se não, imprime cada caractere do nome do jogador
-            for (int j = 0; j < RetornaTamNomeJogador(registro); j++) {
+            for (int j = 0; j < registro->tamNomeJog; j++) {
                 printf("%c", nomeJogador[j]);
             }
             printf("\n");
@@ -114,7 +147,7 @@ int imprimeRegistro(DADOS *registro) {
         if (strcmp(nacionalidade, "SEM DADO") == 0) { // Se a nacionalidade for "SEM DADO", imprime "SEM DADO"
             printf("SEM DADO\n");
         } else { // Se não, imprime cada caractere da nacionalidade
-            for (int j = 0; j < retornaTamNacionalidade(registro); j++) {
+            for (int j = 0; j <registro->tamNacionalidade; j++) {
                 printf("%c", nacionalidade[j]);
             }
             printf("\n");
@@ -124,7 +157,7 @@ int imprimeRegistro(DADOS *registro) {
         if (strcmp(nomeClube, "SEM DADO") == 0) { // Se o nome do clube for "SEM DADO", imprime "SEM DADO"
             printf("SEM DADO\n");
         } else { // Se não, imprime cada caractere do nome do clube
-            for (int j = 0; j < retornaTamNomeClube(registro); j++) {
+            for (int j = 0; j < registro->tamNomeClube; j++) {
                 printf("%c", nomeClube[j]);
             }
             printf("\n");
@@ -186,32 +219,47 @@ void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, c
     printf("Busca %d\n\n", i+1); // Imprime o número da busca
 
     for (int j = 0; j < numRegistros; j++) {
-        DADOS *registro = lerRegistroFromBin(byteOffset, file); // Lê um registro do arquivo binário
-        byteOffset += retornaTamanhoRegistro(registro); // Atualiza o byteOffset para a posição do próximo registro
+        DADOS *registro = leitura_registro_arquivoBin(byteOffset, file); // Lê um registro do arquivo binário
+        byteOffset += registro->tamanhoRegistro; // Atualiza o byteOffset para a posição do próximo registro
 
         int imprimir = 1; // Flag para determinar se o registro deve ser impresso
-        if (retornaRemovido(registro) == '1') { // Verifica se o registro está marcado como removido
+        if (registro->removido == '1') { // Verifica se o registro está marcado como removido
             imprimir = 0;
         } else {
             for (int k = 0; k < m; k++) {
                 if (strcmp(campos[k], "id") == 0) { // Verifica se o parâmetro da busca é o id
-                    if (id != retornaId(registro)) {
+                    if (id !=  registro->id) {
                         imprimir = 0;
                     }
                 } else if (strcmp(campos[k], "nomeJogador") == 0) {
-                    if (strcmp(nome, retornaNomeJogador(registro)) != 0) {
+                    char* nomeJogador;
+                    if (registro->nomeJogador == NULL || strcmp(registro->nomeJogador, "") == 0) // Check for NULL and empty string
+                    {
+                        nomeJogador = "SEM DADO";
+                    }else nomeJogador = registro->nomeJogador;
+                    if (strcmp(nome, nomeJogador) != 0) {
                         imprimir = 0;
                     }
                 } else if (strcmp(campos[k], "idade") == 0) {
-                    if (idade != retornaIdade(registro)) {
+                    if (idade != registro->idade) {
                         imprimir = 0;
                     }
                 } else if (strcmp(campos[k], "nomeClube") == 0) {
-                    if (strcmp(nomeClube, retornaNomeClube(registro)) != 0) {
+                    char* nomeClube;
+                    if (registro->nomeClube == NULL || strcmp(registro->nomeClube, "") == 0) // Check for NULL and empty string
+                    {
+                        nomeClube = "SEM DADO";
+                    }else nomeClube = registro->nomeClube;
+                    if (strcmp(nomeClube, nomeClube) != 0) {
                         imprimir = 0;
                     }
                 } else if (strcmp(campos[k], "nacionalidade") == 0) {
-                    if (strcmp(nacionalidade, retornaNacionalidade(registro)) != 0) {
+                    char* nacionalidade1;
+                    if (registro->nacionalidade == NULL || strcmp(registro->nacionalidade, "") == 0) // Check for NULL and empty string
+                    {
+                        nacionalidade1 = "SEM DADO";
+                    }else nacionalidade1 =  registro->nacionalidade;
+                    if (strcmp(nacionalidade, nacionalidade1) != 0) {
                         imprimir = 0;
                     }
                 }
@@ -222,7 +270,7 @@ void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, c
             imprimeRegistro(registro); // Chama a função para imprimir o registro
             impressoes++;
         }
-        liberarRegistro(registro); // Libera a memória do registro
+        free_registro(registro); // Libera a memória do registro
     }
     if(impressoes == 0) { // Se nenhum registro foi impresso
         printf("Registro inexistente.\n\n");
@@ -243,39 +291,39 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
 
     // Percorre todos os registros removidos
     while(proxByteOffset != -1 && proxByteOffset < finalArquivo) {
-        DADOS *registro = lerRegistroFromBin(proxByteOffset, file);
+        DADOS *registro = leitura_registro_arquivoBin(proxByteOffset, file);
 
         count++;
 
-        if(retornaRemovido(registro) == '1') {
-            REGISTRO_INDICE *registroIndice = criarRegistroIndice();
-            setIndexRegistroIndice(registroIndice, retornaId(registro));
+        if(registro->removido == '1') {
+            REGISTRO_INDICE *registroIndice = inicializa_registro_index();
+            setIndexRegistroIndice(registroIndice,  registro->id);
             setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
 
-            adicionarRegistroRemovido(removidos, registroIndice, retornaTamanhoRegistro(registro));
+            adicionarRegistroRemovido(removidos, registroIndice, registro->tamanhoRegistro);
         }
 
-        proxByteOffset = retornaProx(registro);
+        proxByteOffset =registro->prox;
 
-        liberarRegistro(registro);
+        free_registro(registro);
 
         DADOS *proxRegistro;
 
         if(proxByteOffset != -1 && proxByteOffset < finalArquivo)
-            proxRegistro = lerRegistroFromBin(proxByteOffset, file);
+            proxRegistro = leitura_registro_arquivoBin(proxByteOffset, file);
 
         // Anota o último registro removido
-        if(retornaProx(proxRegistro) == -1 && retornaRemovido(proxRegistro) == '1') {
-            REGISTRO_INDICE *registroIndice = criarRegistroIndice();
-            setIndexRegistroIndice(registroIndice, retornaId(proxRegistro));
+        if(proxRegistro->prox == -1 && registro->removido == '1') {
+            REGISTRO_INDICE *registroIndice = inicializa_registro_index();
+            setIndexRegistroIndice(registroIndice,  registro->id);
             setByteOffsetRegistroIndice(registroIndice, proxByteOffset);
 
-            adicionarRegistroRemovido(removidos, registroIndice, retornaTamanhoRegistro(proxRegistro));
-            liberarRegistro(proxRegistro);
+            adicionarRegistroRemovido(removidos, registroIndice, registro->tamanhoRegistro);
+            free_registro(proxRegistro);
             break;
         }
 
-        liberarRegistro(proxRegistro);
+        free_registro(proxRegistro);
     }
 
     limpaCabecalho(cabecalho); // Libera a memória do cabeçalho
@@ -294,7 +342,7 @@ REMOVIDOS *criarListaRemovidosVazia() {
 
 // Função para remover um registro da lista de removidos e atualizar o arquivo
 void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao, FILE *file) {
-    DADOS *registro = buscaOfsset(getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, posicao)), file);
+    DADOS *registro = leitura_registro_arquivoBin(getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, posicao)), file);
 
     if(posicao == -1) {
         return;
@@ -341,7 +389,7 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
         fwrite(&byteOffsetProximo, sizeof(int), 1, file);
     }
 
-    liberarRegistro(registro);
+    free_registro(registro);
     limpaCabecalho(cabecalho);
 
     removerRegistroRemovidoPosicao(removidos, posicao);
@@ -378,7 +426,7 @@ bool apagarListaIndice(LISTA_INDICE *lista) {
 }
 
 // Função para criar um registro de índice
-REGISTRO_INDICE *criarRegistroIndice() {
+REGISTRO_INDICE *inicializa_registro_index() {
     REGISTRO_INDICE *registro = (REGISTRO_INDICE *) malloc(sizeof(REGISTRO_INDICE));
     if(!registro) return NULL;
     registro->index = -1;
@@ -538,12 +586,12 @@ int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int q
     }
 
     for(int i = 0; i < quantidade; i++) {
-        if(retornaTamanhoRegistro(registros[i]) == 0) {
+        if(registros[i]->tamanhoRegistro == 0) {
             tamanhos[i] = -1;
             byteOffsets[i] = 0;
             continue;
         }
-        tamanhos[i] = retornaTamanhoRegistro(registros[i]);
+        tamanhos[i] = registros[i]->tamanhoRegistro;
     }
 
     // Obtém o best fit na ordem do maior para o menor
@@ -601,9 +649,9 @@ int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registr
 
     if(middle + 1 < getTamanhoListaIndice(removidos->lista)) { // Tem um registro removido depois
         int64_t proxByteOffset = getByteOffsetRegistroIndice(getRegistroIndice(removidos->lista, middle + 1));
-        setaProx(registro, proxByteOffset);
+         registro->prox = proxByteOffset;
     } else { // Não tem registro removido depois
-        setaProx(registro, -1);
+         registro->prox = -1;
     }
 
     removerRegistroRemovidoEAtualizarArquivo(removidos, middle, file);

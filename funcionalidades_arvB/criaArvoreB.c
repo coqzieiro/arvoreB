@@ -55,20 +55,20 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
     free(cabecalho);
 
     for(int i = 0; i < quantidade; i++) {
-        DADOS *registro = lerRegistroFromBin(posicao, arquivoBinario); // Lê um registro do arquivo binário
+        DADOS *registro = leitura_registro_arquivoBin(posicao, arquivoBinario); // Lê um registro do arquivo binário
 
-        if(retornaRemovido(registro) == '1') { // Pula o registro removido
-            posicao += retornaTamanhoRegistro(registro);
+        if(registro->removido == '1') { // Pula o registro removido
+            posicao += registro->tamanhoRegistro;
             continue;
         }
 
-        int chave = retornaId(registro); // Obtém a chave do registro
+        int chave =  registro->id; // Obtém a chave do registro
         int64_t byteOffset = posicao; // Obtém o byteOffset do registro
         
         inserirArvoreB(arquivoArvoreB, chave, byteOffset); // Insere o registro na árvore B
 
-        posicao += retornaTamanhoRegistro(registro); // Atualiza a posição para o próximo registro
-        liberarRegistro(registro); // Libera a memória do registro
+        posicao += registro->tamanhoRegistro; // Atualiza a posição para o próximo registro
+        free_registro(registro); // Libera a memória do registro
     }
 
     limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
