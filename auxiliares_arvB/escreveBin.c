@@ -326,7 +326,7 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
         free_registro(proxRegistro);
     }
 
-    limpaCabecalho(cabecalho); // Libera a memória do cabeçalho
+    free(cabecalho);
 
     return removidos;
 }
@@ -352,21 +352,20 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     const int byteProx = 5;
     CABECALHO *cabecalho = retornaCabecalhoBinario(file);
 
-    setStatus(cabecalho, '0');
+    cabecalho->status = '0';
 
-    setNroRegArq(cabecalho, cabecalho->nroRegArq + 1);
+
+    cabecalho->nroRegArq = cabecalho->nroRegArq + 1;
     writeNroRegArqCabecalho(cabecalho, file);
-    setNroRem(cabecalho, cabecalho->nroRegRem - 1);
+    cabecalho->nroRegRem = cabecalho->nroRegRem - 1;
     writeNroRegRemCabecalho(cabecalho, file);
     
     if(tamanhoLista == 1) { // Lista só tem um elemento removido
-        setTopo(cabecalho, -1);
         writeTopoCabecalho(cabecalho, file);
     } else if(posicao == 0) { // Removendo o primeiro elemento
         REGISTRO_INDICE *registroIndice = getRegistroIndice(removidos->lista, 1);
         int64_t byteOffset = getByteOffsetRegistroIndice(registroIndice);
-
-        setTopo(cabecalho, byteOffset);
+        cabecalho->topo = byteOffset;
         writeTopoCabecalho(cabecalho, file);
     } else if(posicao == tamanhoLista - 1) { // Removendo o último elemento
         REGISTRO_INDICE *registroIndice = getRegistroIndice(removidos->lista, posicao - 1);
@@ -390,8 +389,7 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     }
 
     free_registro(registro);
-    limpaCabecalho(cabecalho);
-
+    free(cabecalho);
     removerRegistroRemovidoPosicao(removidos, posicao);
 }
 
@@ -571,15 +569,14 @@ int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int q
     if(getTamanhoListaRemovidos(removidos) == 0) { // Se não há registros removidos
         CABECALHO *cabecalho = retornaCabecalhoBinario(file);
 
-        setNroRegArq(cabecalho, cabecalho->nroRegArq + quantidade);
+        cabecalho->nroRegArq = cabecalho->nroRegArq + quantidade;
         writeNroRegArqCabecalho(cabecalho, file);
 
         for(int i = 0; i < quantidade; i++) {
             byteOffsets[i] = -1;
         }
 
-        limpaCabecalho(cabecalho);
-
+        free(cabecalho);
         free(tamanhos);
 
         return byteOffsets;

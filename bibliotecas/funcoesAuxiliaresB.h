@@ -19,12 +19,6 @@ INTEGRANTES DO GRUPO:
     void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset);
     void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho);
     CABECALHO *criarCabecalho(void);
-    void setStatus(CABECALHO *cabecalho, char status);
-    void setTopo(CABECALHO *cabecalho, int64_t topo);
-    void setProxByteOffset(CABECALHO *cabecalho, int64_t proxByteOffset);
-    void setNroRegArq(CABECALHO *cabecalho, int nroRegArq);
-    void setNroRem(CABECALHO *cabecalho, int nroRem);
-    void limpaCabecalho(CABECALHO *cabecalho);
     void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
     void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
     void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);

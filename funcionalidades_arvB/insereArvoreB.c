@@ -100,7 +100,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
             tamanhoRegistroAtual = 0;
             fseek(arquivoBin, 0, SEEK_END);
             byteOffsets[i] = ftell(arquivoBin);
-            setProxByteOffset(cabecalho, byteOffsets[i] + registros[i]->tamanhoRegistro);
+            cabecalho->proxByteOffset = byteOffsets[i] + registros[i]->tamanhoRegistro;
             writeProxByteOffsetCabecalho(cabecalho, arquivoBin);
         } else {
             DADOS *registro = leitura_registro_arquivoBin(byteOffsets[i], arquivoBin);
@@ -110,10 +110,10 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
 
         registros[i]->prox = -1;
         // Escrevendo o registro no arquivo binário
-        setStatus(cabecalho, '0');
+        cabecalho->status = '0';
         writeStatusCabecalho(cabecalho, arquivoBin);
         escreverRegistro(registros[i], byteOffsets[i], tamanhoRegistroAtual, arquivoBin);
-        setStatus(cabecalho, '1');
+        cabecalho->status = '1';
         writeStatusCabecalho(cabecalho, arquivoBin);
 
         // Atualiza o status do arquivo da árvore B para '0'
@@ -140,7 +140,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
     free(nacionalidade);
     free(nomeClube);
 
-    limpaCabecalho(cabecalho);
+    free(cabecalho);
     apagarListaRemovidos(removidos);
 
     fclose(arquivoBin);

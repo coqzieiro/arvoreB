@@ -28,6 +28,6 @@ void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvor
         imprimirRegistrosPorCampos(file, cabecalho, buscaId, nomeArquivoArvoreB, i); // Chama a função para imprimir registros
         
         fclose(file); // Fecha o arquivo
-        limpaCabecalho(cabecalho); // Libera a memória do cabeçalho
+        free(cabecalho);
     }
 }
