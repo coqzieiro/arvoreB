@@ -35,7 +35,7 @@ int criarIndex(char* nomeArquivoBinario, char* nomeArquivoIndices, int opcao){
     cabecalho_index.status = '0';
 
     // Escrita do cabeçalho no arquivo de index
-    EscritaCabecalho_Index(&cabecalho_index, arquivoBinarioDeIndices);
+    EscritaCabIndex(&cabecalho_index, arquivoBinarioDeIndices);
 
     // Variáveis para armazenar dados do registro
     REGISTRO_INDEX registro_index;
@@ -83,7 +83,7 @@ int criarIndex(char* nomeArquivoBinario, char* nomeArquivoIndices, int opcao){
             registro_index.byteOffset = byteOffset;
 
             // Escreve o registro de índice no arquivo binário de índices
-            EscritaRegistro_Index(&registro_index, arquivoBinarioDeIndices);
+            EscritaRegIndex(&registro_index, arquivoBinarioDeIndices);
         }
 
         // Atualiza o byteOffset para o próximo registro
@@ -100,7 +100,7 @@ int criarIndex(char* nomeArquivoBinario, char* nomeArquivoIndices, int opcao){
     fseek(arquivoBinarioDeIndices, 0, SEEK_SET);
     
     // escrita do cabeçalho no arquivo binário de índices
-    EscritaCabecalho_Index(&cabecalho_index, arquivoBinarioDeIndices);
+    EscritaCabIndex(&cabecalho_index, arquivoBinarioDeIndices);
 
     // Fechamento dos arquivos
     fclose(arquivoBinario);

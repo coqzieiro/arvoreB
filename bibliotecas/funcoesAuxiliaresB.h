@@ -73,22 +73,12 @@ INTEGRANTES DO GRUPO:
     void removerRegistroRemovidoPosicao(REMOVIDOS *removidos, int posicao);
     REGISTRO_INDICE *inicializa_registro_index();
     void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao, FILE *file);
-    void setIndexRegistroIndice(REGISTRO_INDICE *registro, int index);
-    void setByteOffsetRegistroIndice(REGISTRO_INDICE *registro, int64_t byteOffset);
-    void setRegistroListaIndice(LISTA_INDICE *lista, int index, REGISTRO_INDICE *registro);
-    void setTamanho(LISTA_INDICE *lista, int tamanho);
     LISTA_INDICE *criarListaIndice();
     bool apagarListaIndice(LISTA_INDICE *lista);
-    void apagarRegistroIndice(REGISTRO_INDICE *registro);
     void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho);
-    int getTamanhoListaIndice(LISTA_INDICE *lista);
     int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registro, FILE *file);
     int64_t getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id);
     void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos);
-    REGISTRO_INDICE *getRegistroIndice(LISTA_INDICE *lista, int index);
     int buscarPosicaoRegistroIndiceLinear(LISTA_INDICE *lista, int id);
-    int getIndexRegistroIndice(REGISTRO_INDICE *registro);
-    int64_t getByteOffsetRegistroIndice(REGISTRO_INDICE *registro);
-    int getTamanhoListaRemovidos(REMOVIDOS *removidos);
 
 #endif

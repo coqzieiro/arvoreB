@@ -29,8 +29,8 @@ INTEGRANTES DO GRUPO:
     int todosCamposCorrespondemFixo(DADOS_FIXOS registro, CAMPO_BUSCA camposBusca[], int numCamposBusca);
     
     // Escrita no index
-    void EscritaCabecalho_Index(CABECALHO_INDEX* cabecalho_index, FILE* nomeArquivoBinarioDeIndices);
-    void EscritaRegistro_Index(REGISTRO_INDEX* registro_index, FILE* nomeArquivoBinarioDeIndices);
+    void EscritaCabIndex(CABECALHO_INDEX* cabecalho_index, FILE* nomeArquivoBinarioDeIndices);
+    void EscritaRegIndex(REGISTRO_INDEX* registro_index, FILE* nomeArquivoBinarioDeIndices);
 
     // Funções auxiliares de remoção
     void InicializaRegistroJogador(DADOS* registro);

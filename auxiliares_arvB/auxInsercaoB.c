@@ -284,6 +284,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
     return true;
 }
 
+// Função para inserir em nós que não estão cheios
 void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B *registro) {
     if (!inserirChaveRegistroArvoreB(registro, chave, byteOffset)) {
         return;
@@ -303,6 +304,7 @@ void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, i
     escreverCabecalhoArvoreB(arquivo, cabecalho);
 }
 
+// Função para inserir recursivamente
 void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho) {
     REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnAtual);
 
@@ -352,6 +354,7 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
     free(caminho);
 }
 
+// Função para inserir no index árvoreB
 void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
     CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
 

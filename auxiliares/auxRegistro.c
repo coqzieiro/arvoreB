@@ -11,15 +11,11 @@ INTEGRANTES DO GRUPO:
 #include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Função que encontra registros em comum entre dois vetores de registros.
-DADOS **encontrar_registros_em_comum(DADOS **vetor1, DADOS **vetor2)
-{
+DADOS **encontrar_registros_em_comum(DADOS **vetor1, DADOS **vetor2){
     int qtd_registros = 0;
     int i, j;
     DADOS **resultado = (DADOS **)malloc(0);
 
-    // Para cada registro no primeiro vetor (vetor1), verifica se existe um registro
-    // no segundo vetor (vetor2) com o mesmo ID. Se encontrar, adiciona o registro
-    // ao vetor de interseção (resultado).
     for (i = 0; vetor1[i] != NULL; i++){
         for (j = 0; vetor2[j] != NULL; j++){
             if ( vetor1[i]->id ==  vetor2[j]->id){

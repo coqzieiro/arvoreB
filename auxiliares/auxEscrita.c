@@ -93,3 +93,14 @@ void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin) {
     int nroRem = cabecalho->nroRegRem;
     fwrite(&nroRem, sizeof(int), 1, arquivoBin);
 }
+
+// Função que escreve o registro de índice no arquivo de índices
+void EscritaRegIndex(REGISTRO_INDEX* registro_index, FILE* nomeArquivoBinarioDeIndices) {
+    fwrite(&registro_index->id, sizeof(registro_index->id), 1, nomeArquivoBinarioDeIndices);
+    fwrite(&registro_index->byteOffset, sizeof(registro_index->byteOffset), 1, nomeArquivoBinarioDeIndices);
+}
+
+// Função que escreve o cabeçalho no arquivo de índices
+void EscritaCabIndex(CABECALHO_INDEX* cabecalho_index, FILE* nomeArquivoBinarioDeIndices){
+    fwrite(&cabecalho_index->status,           sizeof(cabecalho_index->status),         1, nomeArquivoBinarioDeIndices);
+}
