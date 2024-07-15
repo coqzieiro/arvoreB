@@ -63,7 +63,7 @@ INTEGRANTES DO GRUPO:
 
     // Estrutura de cabeçalho para índices
     typedef struct {
-        char status; // Status do índice
+        char status;                 // Status do índice
     } CABECALHO_INDEX;
 
     // Estrutura para registros de índice
@@ -89,17 +89,17 @@ INTEGRANTES DO GRUPO:
 
     // Estrutura para registros da árvore B
     typedef struct _registroArvoreB {
-        int rrn;                     // RRN do registro
-        int alturaNo;                // Altura do nó
-        int nroChaves;               // Número de chaves no nó
-        int chaves[ORDEM_ARVORE_B - 1]; // Chaves do nó
-        int64_t byteOffsets[ORDEM_ARVORE_B - 1]; // Byte offsets das chaves
-        int descendentes[ORDEM_ARVORE_B]; // Descendentes do nó
+        int rrn;                                    // RRN do registro
+        int alturaNo;                               // Altura do nó
+        int nroChaves;                              // Número de chaves no nó
+        int chaves[ORDEM_ARVORE_B - 1];             // Chaves do nó
+        int64_t byteOffsets[ORDEM_ARVORE_B - 1];    // Byte offsets das chaves
+        int descendentes[ORDEM_ARVORE_B];           // Descendentes do nó
     } REGISTRO_ARVORE_B;
 
     // Estrutura para registros de índice
     typedef struct REGISTRO_INDICE {
-        int index;                   // Índice do registro
+        int index;             // Índice do registro
         int64_t byteOffset;    // Byte offset do registro
     } REGISTRO_INDICE;
 

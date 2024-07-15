@@ -11,6 +11,133 @@ INTEGRANTES DO GRUPO:
 #include <stdio.h>
 #include <stdlib.h>
 
+// Função para imprimir registros por campos de busca
+void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
+    int64_t byteOffset = cabecalho->proxByteOffset;
+    int numRegistros = cabecalho->nroRegArq + cabecalho->nroRegRem; // Número total de registros (incluindo removidos)
+    byteOffset = 25; // Posição inicial do byteOffset
+
+    if (numRegistros == 0) { // Verifica se o arquivo não possui registros
+        printf("Registro inexistente.\n\n");
+        fclose(file); // Fecha o arquivo
+        return;
+    }
+
+    char campos[5][50]; // Armazena os nomes dos campos a serem buscados
+    char parametros[5][50]; // Armazena os valores dos parâmetros a serem buscados
+    int id = -1, idade;
+    char nome[50], nomeClube[50], nacionalidade[50]; // Variáveis para armazenar os valores dos campos
+
+    int impressoes = 0; // Contador de impressões de registros
+    int m;
+    scanf("%i", &m); // Lê o número de parâmetros da busca
+
+    for (int j = 0; j < m; j++) {
+        scanf("%s", campos[j]); // Lê um parâmetro da busca
+        if (strcmp(campos[j], "id") == 0) {
+            scanf("%i", &id); // Lê o id da busca
+            snprintf(parametros[j], 50, "%i", id);
+            if(buscaId == 1 && id != -1) { // Verifica se a busca pelo índice vai ser feita com o arquivo da árvore B
+                buscaIdArvore(id, file, nomeArquivoArvoreB, i, 1); // Chama a função para buscar o id na árvore B
+                return;
+            }
+        } else if (strcmp(campos[j], "nomeJogador") == 0) {
+            scan_quote_string(nome); // Lê o nome do jogador
+            strcpy(parametros[j], nome);
+        } else if (strcmp(campos[j], "idade") == 0) {
+            scanf("%i", &idade); // Lê a idade
+            snprintf(parametros[j], 50, "%i", idade);
+        } else if (strcmp(campos[j], "nomeClube") == 0) {
+            scan_quote_string(nomeClube); // Lê o nome do clube
+            strcpy(parametros[j], nomeClube);
+        } else if (strcmp(campos[j], "nacionalidade") == 0) {
+            scan_quote_string(nacionalidade); // Lê a nacionalidade
+            strcpy(parametros[j], nacionalidade);
+        } else {
+            printf("Campo invalido\n"); // Parâmetro inválido
+        }
+    }
+
+    printf("Busca %d\n\n", i+1); // Imprime o número da busca
+
+    for (int j = 0; j < numRegistros; j++) {
+        DADOS *registro = leitura_registro_arquivoBin(byteOffset, file); // Lê um registro do arquivo binário
+        byteOffset += registro->tamanhoRegistro; // Atualiza o byteOffset para a posição do próximo registro
+
+        int imprimir = 1; // Flag para determinar se o registro deve ser impresso
+        if (registro->removido == '1') { // Verifica se o registro está marcado como removido
+            imprimir = 0;
+        } else {
+            for (int k = 0; k < m; k++) {
+                if (strcmp(campos[k], "id") == 0) { // Verifica se o parâmetro da busca é o id
+                    if (id !=  registro->id) {
+                        imprimir = 0;
+                    }
+                } else if (strcmp(campos[k], "nomeJogador") == 0) {
+                    char* nomeJogador;
+                    if (registro->nomeJogador == NULL || strcmp(registro->nomeJogador, "") == 0) // Check for NULL and empty string
+                    {
+                        nomeJogador = "SEM DADO";
+                    }else nomeJogador = registro->nomeJogador;
+                    if (strcmp(nome, nomeJogador) != 0) {
+                        imprimir = 0;
+                    }
+                } else if (strcmp(campos[k], "idade") == 0) {
+                    if (idade != registro->idade) {
+                        imprimir = 0;
+                    }
+                } else if (strcmp(campos[k], "nomeClube") == 0) {
+                    char* nomeClube;
+                    if (registro->nomeClube == NULL || strcmp(registro->nomeClube, "") == 0) // Check for NULL and empty string
+                    {
+                        nomeClube = "SEM DADO";
+                    }else nomeClube = registro->nomeClube;
+                    if (strcmp(nomeClube, nomeClube) != 0) {
+                        imprimir = 0;
+                    }
+                } else if (strcmp(campos[k], "nacionalidade") == 0) {
+                    char* nacionalidade1;
+                    if (registro->nacionalidade == NULL || strcmp(registro->nacionalidade, "") == 0) // Check for NULL and empty string
+                    {
+                        nacionalidade1 = "SEM DADO";
+                    }else nacionalidade1 =  registro->nacionalidade;
+                    if (strcmp(nacionalidade, nacionalidade1) != 0) {
+                        imprimir = 0;
+                    }
+                }
+            }
+        }
+        
+        if (imprimir == 1) { // Se todos os parâmetros coincidem, imprime o registro
+            imprimeRegistro(registro); // Chama a função para imprimir o registro
+            impressoes++;
+        }
+        free_registro(registro); // Libera a memória do registro
+    }
+    if(impressoes == 0) { // Se nenhum registro foi impresso
+        printf("Registro inexistente.\n\n");
+    }
+}
+
+// Função para criar um registro vazio de árvore B com valores padrão
+REGISTRO_ARVORE_B *criarRegistroArvoreBVazio() {
+    REGISTRO_ARVORE_B *registro = malloc(sizeof(REGISTRO_ARVORE_B));
+    registro->rrn = -1;
+    registro->alturaNo = 0;
+    registro->nroChaves = 0;
+
+    // Inicializa os arrays de chaves, byte offsets e descendentes com -1
+    for (int i = 0; i < ORDEM_ARVORE_B - 1; i++) {
+        registro->chaves[i] = -1;
+        registro->byteOffsets[i] = -1;
+    }
+    for (int i = 0; i < ORDEM_ARVORE_B; i++) {
+        registro->descendentes[i] = -1;
+    }
+
+    return registro;
+}
+
 // Função recursiva para buscar um registro por ID na árvore B
 int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
     REGISTRO_ARVORE_B *registroAtual = lerRegistroArvoreB(fileArvoreB, rrnAtual); // Lê o registro da árvore B no RRN atual
@@ -169,245 +296,6 @@ int imprimeRegistro(DADOS *registro) {
     }
 }
 
-// Função para imprimir registros por campos de busca
-void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
-    int64_t byteOffset = cabecalho->proxByteOffset;
-    int numRegistros = cabecalho->nroRegArq + cabecalho->nroRegRem; // Número total de registros (incluindo removidos)
-    byteOffset = 25; // Posição inicial do byteOffset
-
-    if (numRegistros == 0) { // Verifica se o arquivo não possui registros
-        printf("Registro inexistente.\n\n");
-        fclose(file); // Fecha o arquivo
-        return;
-    }
-
-    char campos[5][50]; // Armazena os nomes dos campos a serem buscados
-    char parametros[5][50]; // Armazena os valores dos parâmetros a serem buscados
-    int id = -1, idade;
-    char nome[50], nomeClube[50], nacionalidade[50]; // Variáveis para armazenar os valores dos campos
-
-    int impressoes = 0; // Contador de impressões de registros
-    int m;
-    scanf("%i", &m); // Lê o número de parâmetros da busca
-
-    for (int j = 0; j < m; j++) {
-        scanf("%s", campos[j]); // Lê um parâmetro da busca
-        if (strcmp(campos[j], "id") == 0) {
-            scanf("%i", &id); // Lê o id da busca
-            snprintf(parametros[j], 50, "%i", id);
-            if(buscaId == 1 && id != -1) { // Verifica se a busca pelo índice vai ser feita com o arquivo da árvore B
-                buscaIdArvore(id, file, nomeArquivoArvoreB, i, 1); // Chama a função para buscar o id na árvore B
-                return;
-            }
-        } else if (strcmp(campos[j], "nomeJogador") == 0) {
-            scan_quote_string(nome); // Lê o nome do jogador
-            strcpy(parametros[j], nome);
-        } else if (strcmp(campos[j], "idade") == 0) {
-            scanf("%i", &idade); // Lê a idade
-            snprintf(parametros[j], 50, "%i", idade);
-        } else if (strcmp(campos[j], "nomeClube") == 0) {
-            scan_quote_string(nomeClube); // Lê o nome do clube
-            strcpy(parametros[j], nomeClube);
-        } else if (strcmp(campos[j], "nacionalidade") == 0) {
-            scan_quote_string(nacionalidade); // Lê a nacionalidade
-            strcpy(parametros[j], nacionalidade);
-        } else {
-            printf("Campo invalido\n"); // Parâmetro inválido
-        }
-    }
-
-    printf("Busca %d\n\n", i+1); // Imprime o número da busca
-
-    for (int j = 0; j < numRegistros; j++) {
-        DADOS *registro = leitura_registro_arquivoBin(byteOffset, file); // Lê um registro do arquivo binário
-        byteOffset += registro->tamanhoRegistro; // Atualiza o byteOffset para a posição do próximo registro
-
-        int imprimir = 1; // Flag para determinar se o registro deve ser impresso
-        if (registro->removido == '1') { // Verifica se o registro está marcado como removido
-            imprimir = 0;
-        } else {
-            for (int k = 0; k < m; k++) {
-                if (strcmp(campos[k], "id") == 0) { // Verifica se o parâmetro da busca é o id
-                    if (id !=  registro->id) {
-                        imprimir = 0;
-                    }
-                } else if (strcmp(campos[k], "nomeJogador") == 0) {
-                    char* nomeJogador;
-                    if (registro->nomeJogador == NULL || strcmp(registro->nomeJogador, "") == 0) // Check for NULL and empty string
-                    {
-                        nomeJogador = "SEM DADO";
-                    }else nomeJogador = registro->nomeJogador;
-                    if (strcmp(nome, nomeJogador) != 0) {
-                        imprimir = 0;
-                    }
-                } else if (strcmp(campos[k], "idade") == 0) {
-                    if (idade != registro->idade) {
-                        imprimir = 0;
-                    }
-                } else if (strcmp(campos[k], "nomeClube") == 0) {
-                    char* nomeClube;
-                    if (registro->nomeClube == NULL || strcmp(registro->nomeClube, "") == 0) // Check for NULL and empty string
-                    {
-                        nomeClube = "SEM DADO";
-                    }else nomeClube = registro->nomeClube;
-                    if (strcmp(nomeClube, nomeClube) != 0) {
-                        imprimir = 0;
-                    }
-                } else if (strcmp(campos[k], "nacionalidade") == 0) {
-                    char* nacionalidade1;
-                    if (registro->nacionalidade == NULL || strcmp(registro->nacionalidade, "") == 0) // Check for NULL and empty string
-                    {
-                        nacionalidade1 = "SEM DADO";
-                    }else nacionalidade1 =  registro->nacionalidade;
-                    if (strcmp(nacionalidade, nacionalidade1) != 0) {
-                        imprimir = 0;
-                    }
-                }
-            }
-        }
-        
-        if (imprimir == 1) { // Se todos os parâmetros coincidem, imprime o registro
-            imprimeRegistro(registro); // Chama a função para imprimir o registro
-            impressoes++;
-        }
-        free_registro(registro); // Libera a memória do registro
-    }
-    if(impressoes == 0) { // Se nenhum registro foi impresso
-        printf("Registro inexistente.\n\n");
-    }
-}
-
-// Função para criar uma lista de registros removidos a partir de um arquivo binário
-REMOVIDOS *criarListaRemovidos(FILE *file) {
-    CABECALHO *cabecalho = retornaCabecalhoBinario(file); // Obtém o cabeçalho do arquivo
-    REMOVIDOS *removidos = criarListaRemovidosVazia(); // Cria uma lista vazia de registros removidos
-
-    fseek(file, 0, SEEK_END);
-    int finalArquivo = ftell(file); // Obtém o final do arquivo
-
-    int proxByteOffset = cabecalho->topo; // Obtém o topo da lista de removidos
-    
-    int count = 0;
-
-    // Percorre todos os registros removidos
-    while(proxByteOffset != -1 && proxByteOffset < finalArquivo) {
-        DADOS *registro = leitura_registro_arquivoBin(proxByteOffset, file);
-
-        count++;
-
-        if(registro->removido == '1') {
-            REGISTRO_INDICE *registroIndice = inicializa_registro_index();
-            registroIndice->index = registro->id;
-            registroIndice->byteOffset = proxByteOffset;
-
-            adicionarRegistroRemovido(removidos, registroIndice, registro->tamanhoRegistro);
-        }
-
-        proxByteOffset =registro->prox;
-
-        free_registro(registro);
-
-        DADOS *proxRegistro;
-
-        if(proxByteOffset != -1 && proxByteOffset < finalArquivo)
-            proxRegistro = leitura_registro_arquivoBin(proxByteOffset, file);
-
-        // Anota o último registro removido
-        if(proxRegistro->prox == -1 && registro->removido == '1') {
-            REGISTRO_INDICE *registroIndice = inicializa_registro_index();
-            registroIndice->index = registro->id;
-            registroIndice->byteOffset = proxByteOffset;
-
-            adicionarRegistroRemovido(removidos, registroIndice, registro->tamanhoRegistro);
-            free_registro(proxRegistro);
-            break;
-        }
-
-        free_registro(proxRegistro);
-    }
-
-    free(cabecalho);
-
-    return removidos;
-}
-
-// Função para criar uma lista vazia de registros removidos
-REMOVIDOS *criarListaRemovidosVazia() {
-    REMOVIDOS *removidos = malloc(sizeof(REMOVIDOS));
-    removidos->lista = criarListaIndice();
-    removidos->tamanhos = malloc(sizeof(int) * 1000);
-
-    return removidos;
-}
-
-// Função para remover um registro da lista de removidos e atualizar o arquivo
-void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao, FILE *file) {
-    DADOS *registro = leitura_registro_arquivoBin(removidos->lista->registros[posicao]->byteOffset, file);
-
-    if(posicao == -1) {
-        return;
-    }
-
-    int tamanhoLista = removidos->lista->tamanho;
-    const int byteProx = 5;
-    CABECALHO *cabecalho = retornaCabecalhoBinario(file);
-
-    cabecalho->status = '0';
-
-
-    cabecalho->nroRegArq = cabecalho->nroRegArq + 1;
-    writeNroRegArqCabecalho(cabecalho, file);
-    cabecalho->nroRegRem = cabecalho->nroRegRem - 1;
-    writeNroRegRemCabecalho(cabecalho, file);
-    
-    if(tamanhoLista == 1) { // Lista só tem um elemento removido
-        writeTopoCabecalho(cabecalho, file);
-    } else if(posicao == 0) { // Removendo o primeiro elemento
-        
-        REGISTRO_INDICE *registroIndice = removidos->lista->registros[1];
-
-        int64_t byteOffset = registroIndice->byteOffset;
-
-        cabecalho->topo = byteOffset;
-
-        writeTopoCabecalho(cabecalho, file);
-    } else if(posicao == tamanhoLista - 1) { // Removendo o último elemento
-        
-        REGISTRO_INDICE *registroIndice = removidos->lista->registros[posicao - 1];
-
-        int64_t byteOffset = registroIndice->byteOffset;
-
-        int prox = -1;
-        
-        byteOffset += byteProx;
-        fseek(file, byteOffset, SEEK_SET);
-        fwrite(&prox, sizeof(int), 1, file);
-    } else {
-        REGISTRO_INDICE *registroIndiceAnterior = removidos->lista->registros[posicao - 1];
-
-        REGISTRO_INDICE *registroIndiceProximo = removidos->lista->registros[posicao + 1];
-
-        int64_t byteOffsetAnterior = registroIndiceAnterior->byteOffset;
-
-        int64_t byteOffsetProximo = registroIndiceProximo->byteOffset;
-
-        byteOffsetAnterior += byteProx;
-        fseek(file, byteOffsetAnterior, SEEK_SET);
-        fwrite(&byteOffsetProximo, sizeof(int), 1, file);
-    }
-
-    free_registro(registro);
-    free(cabecalho);
-    removerRegistroRemovidoPosicao(removidos, posicao);
-}
-
-// Função para apagar a lista de registros removidos
-void apagarListaRemovidos(REMOVIDOS *removidos) {
-    apagarListaIndice(removidos->lista);
-    free(removidos->tamanhos);
-    free(removidos);
-}
-
 // Função para criar uma lista de índices
 LISTA_INDICE *criarListaIndice() {
     LISTA_INDICE *lista = (LISTA_INDICE *)malloc(sizeof(LISTA_INDICE));
@@ -440,27 +328,6 @@ REGISTRO_INDICE *inicializa_registro_index() {
     return registro;
 }
 
-// Função para remover um registro da lista de índices
-void removerRegistroIndice(LISTA_INDICE *lista, int index) {
-    free(lista->registros[index]);
-
-    // Desloca todos os registros após o registro removido para a esquerda
-    for (int i = index; i < lista->tamanho - 1; i++) {
-        lista->registros[i] = lista->registros[i + 1];
-    }
-
-    lista->tamanho--;
-}
-
-// Função para remover um registro da posição especificada na lista de removidos
-void removerRegistroRemovidoPosicao(REMOVIDOS *removidos, int posicao) {
-    removerRegistroIndice(removidos->lista, posicao);
-
-    for(int i = posicao; i < removidos->lista->tamanho; i++) {
-        removidos->tamanhos[i] = removidos->tamanhos[i + 1];
-    }
-}
-
 // Função para buscar a posição de um registro de índice na lista de forma linear
 int buscarPosicaoRegistroIndiceLinear(LISTA_INDICE *lista, int id) {
     if (lista->tamanho == 0) return -1; // Verifica se a lista está vazia
@@ -473,41 +340,6 @@ int buscarPosicaoRegistroIndiceLinear(LISTA_INDICE *lista, int id) {
     }
 
     return -1; // Se o registro não foi encontrado, retorna -1
-}
-
-// Função para adicionar um novo registro na lista em ordem de tamanho
-void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho) {
-    int right = removidos->lista->tamanho;
-    int left = 0;
-    
-    while (left < right) {
-        int middle = (left + right) / 2;
-        if (removidos->tamanhos[middle] > tamanho) {
-            right = middle;
-        } else {
-            left = middle + 1;
-        }
-    }
-
-    // Move elementos à direita para abrir espaço para o novo registro
-    shiftElementosListaRemovidosRight(removidos, left);
-
-    // Adiciona o novo registro na posição encontrada
-    removidos->lista->registros[left] = registroIndice;
-
-    removidos->tamanhos[left] = tamanho;
-
-    // Atualiza o tamanho da 
-    removidos->lista->tamanho = removidos->lista->tamanho + 1;
-}
-
-// Função para deslocar elementos da lista de removidos para a direita
-void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
-    for(int i = removidos->lista->tamanho; i > pos; i--) {
-        REGISTRO_INDICE *registro = removidos->lista->registros[i - 1];
-        removidos->lista->registros[i] = registro;
-        removidos->tamanhos[i] = removidos->tamanhos[i - 1];
-    }
 }
 
 // Função para obter o maior byte offset menor que um ID específico
@@ -572,7 +404,7 @@ int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int q
     free(tamanhos);
 
     return byteOffsets;
-}
+} 
 
 // Função para obter o melhor ajuste (best fit) e liberar o espaço correspondente
 int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registro, FILE *file) {
@@ -616,68 +448,45 @@ int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registr
     return byteOffset;
 }
 
-// Função para adicionar um nó à árvore B
-bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
-    // Lê o cabeçalho da árvore B
-    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivoArvoreB);
-
-    // Verifica se cabeçalho é nulo
-    if (cabecalho == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        return false;
+// Função para ler um registro de árvore B de um arquivo
+REGISTRO_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn) {
+    REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
+    if (registro == NULL || arquivo == NULL) {
+        return NULL;
     }
+    
+    int64_t byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
 
-    // Se o cabeçalho indica que a árvore está inconsistente, retorna false
-    if (cabecalho->status == '0') {
-        printf("Falha no processamento do arquivo.\n");
-        limpaCabecalhoArvoreB(cabecalho);
-        return false;
+    fseek(arquivo, byteOffset, SEEK_SET);
+
+    fread(&registro->alturaNo, sizeof(int), 1, arquivo);
+    fread(&registro->nroChaves, sizeof(int), 1, arquivo);
+    for (int i = 0; i < ORDEM_ARVORE_B - 1; i++) {
+        fread(&registro->chaves[i], sizeof(int), 1, arquivo);
+        fread(&registro->byteOffsets[i], sizeof(int64_t), 1, arquivo);
     }
+    fread(registro->descendentes, sizeof(int), ORDEM_ARVORE_B, arquivo);
 
-    int rrnRaiz;
+    return registro;
+}
 
-    if(cabecalho == NULL) {
-        rrnRaiz = -1;
-    } else {
-        rrnRaiz = cabecalho->noRaiz;
+// Função para escrever um registro de árvore B em um arquivo
+int escreverRegistroArvoreB(REGISTRO_ARVORE_B *registro, FILE *arquivo, int rrn) {
+    if (registro == NULL || arquivo == NULL) {
+        return 0;
     }
+    
+    int64_t byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
 
-    if (rrnRaiz == -1) {
-        // Se a árvore está vazia, cria um novo nó raiz
-        REGISTRO_ARVORE_B *novoRegistro = criarRegistroArvoreBVazio();
-        setAlturaNoRegistroArvoreB(novoRegistro, 0);
-        inserirChaveRegistroArvoreB(novoRegistro, chave, byteOffset);
-        setRRNRegistroArvoreB(novoRegistro, 0);
+    fseek(arquivo, byteOffset, SEEK_SET);
 
-        escreverRegistroArvoreB(novoRegistro, arquivoArvoreB, 0);
-        apagarRegistroArvoreB(novoRegistro);
-
-        setNoRaizCabecalhoArvoreB(cabecalho, 0);
-        setProxRRNCabecalhoArvoreB(cabecalho, 1);
-        setNroChavesCabecalhoArvoreB(cabecalho, 1);
-        setStatusCabecalhoArvoreB(cabecalho, '1');
-        escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
-        limpaCabecalhoArvoreB(cabecalho);
-        return true;
+    fwrite(&registro->alturaNo, sizeof(int), 1, arquivo);
+    fwrite(&registro->nroChaves, sizeof(int), 1, arquivo);
+    for (int i = 0; i < ORDEM_ARVORE_B - 1; i++) {
+        fwrite(&registro->chaves[i], sizeof(int), 1, arquivo);
+        fwrite(&registro->byteOffsets[i], sizeof(int64_t), 1, arquivo);
     }
+    fwrite(registro->descendentes, sizeof(int), ORDEM_ARVORE_B, arquivo);
 
-    // Inicializa o array de caminho para rastrear o caminho percorrido na árvore
-    REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **)malloc(sizeof(REGISTRO_ARVORE_B *));
-    int tamCaminho = 0;
-
-    // Chama a função recursiva de inserção
-    insercaoArvoreBRecursiva(arquivoArvoreB, cabecalho, chave, byteOffset, rrnRaiz, caminho, 0, &tamCaminho);
-
-    // Atualiza e escreve o cabeçalho de volta
-    setStatusCabecalhoArvoreB(cabecalho, '1');
-    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
-    limpaCabecalhoArvoreB(cabecalho);
-
-    // Limpa a memória
-    for (int i = 0; i < tamCaminho; i++) {
-        apagarRegistroArvoreB(caminho[i]);
-    }
-    free(caminho);
-
-    return true;
+    return 1;
 }

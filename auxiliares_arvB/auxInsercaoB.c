@@ -354,6 +354,143 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
     free(caminho);
 }
 
+// Função para adicionar um nó à árvore B
+bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
+    // Lê o cabeçalho da árvore B
+    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivoArvoreB);
+
+    // Verifica se cabeçalho é nulo
+    if (cabecalho == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return false;
+    }
+
+    // Se o cabeçalho indica que a árvore está inconsistente, retorna false
+    if (cabecalho->status == '0') {
+        printf("Falha no processamento do arquivo.\n");
+        limpaCabecalhoArvoreB(cabecalho);
+        return false;
+    }
+
+    int rrnRaiz;
+
+    if(cabecalho == NULL) {
+        rrnRaiz = -1;
+    } else {
+        rrnRaiz = cabecalho->noRaiz;
+    }
+
+    if (rrnRaiz == -1) {
+        // Se a árvore está vazia, cria um novo nó raiz
+        REGISTRO_ARVORE_B *novoRegistro = criarRegistroArvoreBVazio();
+        setAlturaNoRegistroArvoreB(novoRegistro, 0);
+        inserirChaveRegistroArvoreB(novoRegistro, chave, byteOffset);
+        setRRNRegistroArvoreB(novoRegistro, 0);
+
+        escreverRegistroArvoreB(novoRegistro, arquivoArvoreB, 0);
+        apagarRegistroArvoreB(novoRegistro);
+
+        setNoRaizCabecalhoArvoreB(cabecalho, 0);
+        setProxRRNCabecalhoArvoreB(cabecalho, 1);
+        setNroChavesCabecalhoArvoreB(cabecalho, 1);
+        setStatusCabecalhoArvoreB(cabecalho, '1');
+        escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
+        limpaCabecalhoArvoreB(cabecalho);
+        return true;
+    }
+
+    // Inicializa o array de caminho para rastrear o caminho percorrido na árvore
+    REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **)malloc(sizeof(REGISTRO_ARVORE_B *));
+    int tamCaminho = 0;
+
+    // Chama a função recursiva de inserção
+    insercaoArvoreBRecursiva(arquivoArvoreB, cabecalho, chave, byteOffset, rrnRaiz, caminho, 0, &tamCaminho);
+
+    // Atualiza e escreve o cabeçalho de volta
+    setStatusCabecalhoArvoreB(cabecalho, '1');
+    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
+    limpaCabecalhoArvoreB(cabecalho);
+
+    // Limpa a memória
+    for (int i = 0; i < tamCaminho; i++) {
+        apagarRegistroArvoreB(caminho[i]);
+    }
+    free(caminho);
+
+    return true;
+}
+
+// Função para inserir uma chave em um registro de árvore B
+int inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, int64_t byteOffset) {
+    if (registro->nroChaves == ORDEM_ARVORE_B - 1) {
+        // Se o registro estiver cheio, não é possível inserir
+        return 0;
+    } else if (registro->nroChaves == 0) {
+        // Se o registro estiver vazio, insere a chave na primeira posição
+        registro->chaves[0] = chave;
+        registro->byteOffsets[0] = byteOffset;
+        registro->nroChaves++;
+    } else {
+        // Encontra a posição correta para inserir a chave
+        int posicao = 0;
+        for (int i = 0; i < registro->nroChaves; i++) {
+            if (registro->chaves[i] == chave) {
+                // Se a chave já existe, não insere
+                return 0;
+            }
+            if (registro->chaves[i] > chave) {
+                posicao = i;
+                break;
+            }
+            posicao++;
+        }
+
+        // Desloca as chaves e byte offsets para abrir espaço para a nova chave
+        if (registro->nroChaves > posicao) {
+            for (int i = registro->nroChaves; i > posicao; i--) {
+                registro->chaves[i] = registro->chaves[i - 1];
+                registro->byteOffsets[i] = registro->byteOffsets[i - 1];
+            }
+        }
+
+        // Insere a nova chave e byte offset na posição correta
+        registro->chaves[posicao] = chave;
+        registro->byteOffsets[posicao] = byteOffset;
+        registro->nroChaves++;
+    }
+
+    return 1;
+}
+
+// Função para inserir um descendente em um registro de árvore B
+int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente, int chaveDescendente) {
+    if (!registro || registro->nroChaves == 0) {
+        return 0;
+    }
+
+    int i = 0;
+    // Encontra a posição correta para inserir o descendente
+    while (i < registro->nroChaves && registro->chaves[i] < chaveDescendente) {
+        if (registro->chaves[i] == chaveDescendente) {
+            // Se a chave já existe, não insere
+            return 0;
+        }
+        i++;
+    }
+
+    // Desloca os descendentes para abrir espaço para o novo descendente
+    if (registro->descendentes[i] != -1) {
+        for (int j = registro->nroChaves; j > i; j--) {
+            registro->descendentes[j] = registro->descendentes[j - 1];
+        }
+    }
+
+    // Insere o novo descendente na posição correta
+    registro->descendentes[i] = descendente;
+
+    return 1;
+}
+
 // Função para inserir no index árvoreB
 void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
     CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
