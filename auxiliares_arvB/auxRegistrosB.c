@@ -147,7 +147,12 @@ int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
     int descendente;
 
     for(int i = 0; i < numerosChaves; i++) {
-        chave = getChave(registroAtual, i); // Obtém a chave na posição i
+        if (registroAtual == NULL || i < 0 || i >= ORDEM_ARVORE_B - 1) {
+            chave = -1; 
+        } else {
+            chave = registroAtual->chaves[i];
+        }
+
         descendente = getDescendente(registroAtual, i); // Obtém o descendente na posição i
 
         if(id == chave) {

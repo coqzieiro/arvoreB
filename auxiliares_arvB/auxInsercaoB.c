@@ -54,7 +54,13 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
     bool inserido = false;
     int posicao = -1;
     for (int i = 0; i < ORDEM_ARVORE_B; i++) {
-        int chaveLida = getChave(caminho[nivel], index);
+        int chaveLida;
+        if (caminho[nivel] == NULL || index < 0 || index >= ORDEM_ARVORE_B - 1) {
+            chaveLida = -1; // ou qualquer valor indicando erro
+        } else {
+            chaveLida = caminho[nivel]->chaves[index];
+        }
+
         if (chavePromovida == chaveLida) {
             return false;
         }
@@ -139,7 +145,8 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
 
         for (int i = 0; i < ORDEM_ARVORE_B + 1; i++) {
             REGISTRO_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, descendentes[i]);
-            chavesDescendentes[i] = getChave(registroDescendente, 0);
+            chavesDescendentes[i] = registroDescendente->chaves[0]; // Obtém a chave na posição i
+
             apagarRegistroArvoreB(registroDescendente);
         }
 
@@ -185,8 +192,17 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
     escreverRegistroArvoreB(registroEsquerdo, arquivo, rrnAtual);
     escreverRegistroArvoreB(registroDireito, arquivo, proxRRN);
 
-    maiorChaveEsquerda = getChave(registroEsquerdo, ORDEM_ARVORE_B / 2 - 1);
-    menorChaveDireita = getChave(registroDireito, 0);
+    if (registroEsquerdo == NULL || (ORDEM_ARVORE_B / 2 - 1) < 0 || (ORDEM_ARVORE_B / 2 - 1) >= ORDEM_ARVORE_B - 1) {
+        maiorChaveEsquerda = -1; 
+    } else {
+        maiorChaveEsquerda = registroEsquerdo->chaves[ORDEM_ARVORE_B / 2 - 1];
+    }
+
+    if (registroDireito == NULL || 0 >= ORDEM_ARVORE_B - 1) {
+        menorChaveDireita = -1; 
+    } else {
+        menorChaveDireita = registroDireito->chaves[0];
+    }
 
     if (nivel > 0 && (caminho[nivel - 1]->nroChaves == ORDEM_ARVORE_B - 1)) {
         setProxRRNCabecalhoArvoreB(cabecalho, proxRRN + 1);
@@ -198,9 +214,18 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
     } else {
         escreverRegistroArvoreB(registroEsquerdo, arquivo, rrnAtual);
         escreverRegistroArvoreB(registroDireito, arquivo, proxRRN);
+        
+        if (registroEsquerdo == NULL || (ORDEM_ARVORE_B / 2 - 1) < 0 || (ORDEM_ARVORE_B / 2 - 1) >= ORDEM_ARVORE_B - 1) {
+            maiorChaveEsquerda = -1; 
+        } else {
+            maiorChaveEsquerda = registroEsquerdo->chaves[ORDEM_ARVORE_B / 2 - 1];
+        }
 
-        maiorChaveEsquerda = getChave(registroEsquerdo, ORDEM_ARVORE_B / 2 - 2);
-        menorChaveDireita = getChave(registroDireito, 0);
+        if (registroDireito == NULL || 0 >= ORDEM_ARVORE_B - 1) {
+            menorChaveDireita = -1; 
+        } else {
+            menorChaveDireita = registroDireito->chaves[0];
+        }
 
         if (nivel == 0) {
             REGISTRO_ARVORE_B *novaRaiz = criarRegistroArvoreBVazio();
@@ -320,7 +345,11 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
         int chaves[ORDEM_ARVORE_B - 1];
 
         for (int i = 0; i < registro->nroChaves; i++) {
-            chaves[i] = getChave(registro, i);
+            if (registro == NULL || i < 0 || i >= ORDEM_ARVORE_B - 1) {
+                chaves[i] = -1; 
+            } else {
+                chaves[i] = registro->chaves[i];
+            }
         }
 
         int posicao = 0;

@@ -6,15 +6,6 @@ INTEGRANTES DO GRUPO:
 
 #include "../bibliotecas/funcoesAuxiliaresB.h"
 
-// Função para obter uma chave em uma posição específica de um registro de árvore B
-int getChave(REGISTRO_ARVORE_B *registro, int posicao) {
-    if (registro == NULL || posicao < 0 || posicao >= ORDEM_ARVORE_B - 1) {
-        return -1;
-    }
-
-    return registro->chaves[posicao];
-}
-
 // Função para obter o byte offset de uma chave em uma posição específica de um registro de árvore B
 int64_t getByteOffsetRegistroArvoreB(REGISTRO_ARVORE_B *registro, int posicao) {
     if (registro == NULL || posicao < 0 || posicao >= ORDEM_ARVORE_B - 1) {
