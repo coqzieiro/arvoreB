@@ -14,7 +14,15 @@ int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz) {
 
     // Conta o número de descendentes do nó
     for (int i = 0; i < ORDEM_ARVORE_B; i++) {
-        if (getDescendente(registro, i) != -1) {
+        int descendenteTemp = 0;
+
+        if (registro == NULL || i < 0 || i >= ORDEM_ARVORE_B) {
+            descendenteTemp = -1;
+        } else {
+            descendenteTemp = registro->descendentes[i];
+        }
+
+        if (descendenteTemp != -1) {
             nroDescendentes++;
         }
     }
@@ -31,7 +39,14 @@ int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz) {
 
     // Calcula a altura máxima dos descendentes
     for (int i = 0; i < nroDescendentes; i++) {
-        int rrnDescendente = getDescendente(registro, i);
+        int rrnDescendente = 0;
+
+        if (registro == NULL || i < 0 || i >= ORDEM_ARVORE_B) {
+            rrnDescendente = -1;
+        } else {
+            rrnDescendente = registro->descendentes[i];
+        }
+
         int altura = aumentarAlturaRecursivamente(arquivo, rrnDescendente);
         if (altura > maxAltura) {
             maxAltura = altura;
@@ -79,7 +94,13 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             break;
         }
         chaves[i] = chaveLida;
-        byteOffsets[i] = getByteOffsetRegistroArvoreB(caminho[nivel], index);
+
+        if (caminho[nivel] == NULL || index < 0 || index >= ORDEM_ARVORE_B - 1) {
+            byteOffsets[i] = -1;
+        } else {
+            byteOffsets[i] = caminho[nivel]->byteOffsets[index];
+        }
+        
         index++;
     }
 
@@ -134,7 +155,13 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
                 index += 2;
                 continue;
             }
-            descendentes[index] = getDescendente(caminho[nivel], i);
+
+            if (caminho[nivel] == NULL || i < 0 || i >= ORDEM_ARVORE_B) {
+                descendentes[index] = -1;
+            } else {
+                descendentes[index] = caminho[nivel]->descendentes[i];
+            }
+
             index++;
         }
 
@@ -369,8 +396,15 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
 
             posicao++;
         }
+        
+        int rrnDescendente = 0;
 
-        int rrnDescendente = getDescendente(registro, posicao);
+        if (registro == NULL || posicao < 0 || posicao >= ORDEM_ARVORE_B) {
+            rrnDescendente = -1;
+        } else {
+            rrnDescendente = registro->descendentes[posicao];
+        }
+
         return insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnDescendente, caminho, nivel + 1, tamCaminho);
     }
 

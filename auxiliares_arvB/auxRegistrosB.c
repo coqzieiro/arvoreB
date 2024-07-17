@@ -153,10 +153,21 @@ int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
             chave = registroAtual->chaves[i];
         }
 
-        descendente = getDescendente(registroAtual, i); // Obtém o descendente na posição i
+        if (registroAtual == NULL || i < 0 || i >= ORDEM_ARVORE_B) {
+            descendente = -1;
+        } else {
+            descendente = registroAtual->descendentes[i];
+        }
 
         if(id == chave) {
-            int64_t byteoffsetRegistro = getByteOffsetRegistroArvoreB(registroAtual, i); // Obtém o byte offset do registro
+            int64_t byteoffsetRegistro;
+
+            if (registroAtual == NULL || i < 0 || i >= ORDEM_ARVORE_B - 1) {
+                byteoffsetRegistro = -1;
+            } else {
+                byteoffsetRegistro = registroAtual->byteOffsets[i];
+            }
+
             apagarRegistroArvoreB(registroAtual); // Libera a memória do registro
             return byteoffsetRegistro; // Retorna o byte offset do registro
         } else if(id < chave) {
@@ -169,7 +180,12 @@ int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
         }
     }
 
-    descendente = getDescendente(registroAtual, numerosChaves); // Obtém o descendente na última posição
+    if (registroAtual == NULL || numerosChaves < 0 || numerosChaves >= ORDEM_ARVORE_B) {
+        descendente = -1;
+    } else {
+        descendente = registroAtual->descendentes[numerosChaves];
+    }
+
     if(descendente != -1) {
         apagarRegistroArvoreB(registroAtual); // Libera a memória do registro
         return buscarRegistroIdRec(fileArvoreB, id, descendente); // Busca recursivamente no descendente
