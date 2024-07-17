@@ -200,7 +200,7 @@ int AtualizaTamanhoStrings(DADOS* registro) {
 }
 
 // Função que reutiliza um registro removido ou insere um novo registro
-int* ReutilizarRegistro(FILE* arquivoBinario, CABECALHO* cabecalho, DADOS* registro, int BestFit, LISTA* removidos) {
+int* ReutilizarRegistro(FILE* arquivoBinario, CABECALHO_DADOS* cabecalho, DADOS* registro, int BestFit, LISTA* removidos) {
     int tamRegRemovido;
 
     if (BestFit != -1) {
@@ -259,7 +259,7 @@ void EscreveLixo(FILE* arquivoBinario, int tamRegistroRemovido, int tamRegistroI
 }
 
 // Função que inicializa o cabeçalho
-void IniCabecalho(CABECALHO* cabecalho) {
+void IniCabecalho(CABECALHO_DADOS* cabecalho) {
     cabecalho->status = '0';
     cabecalho->topo = -1;
     cabecalho->proxByteOffset = 25;

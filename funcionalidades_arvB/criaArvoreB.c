@@ -24,7 +24,7 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
     }
 
     // Inicializa o cabeçalho
-    CABECALHO *cabecalho = criarCabecalho();
+    CABECALHO_DADOS *cabecalho = criarCabecalho();
 
     // Vai para o começo do cabeçalho
     fseek(arquivoBinario, 0, SEEK_SET);

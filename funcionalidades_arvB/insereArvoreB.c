@@ -21,7 +21,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         fclose(fileArvoreB);
         return false;
     }
-    CABECALHO *cabecalho = retornaCabecalhoBinario(arquivoBin);
+    CABECALHO_DADOS *cabecalho = cabecalhoLido(arquivoBin);
     CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB); // Lê o cabeçalho da árvore B
 
     if (cabecalho == NULL || cabecalhoArvoreB == NULL) {

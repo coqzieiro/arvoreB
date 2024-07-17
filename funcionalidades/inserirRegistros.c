@@ -21,7 +21,7 @@ void inserir(FILE* nomeArquivoBinario){
         return;
     }
     
-    CABECALHO cabecalho;
+    CABECALHO_DADOS cabecalho;
     
     // Inicializa o cabeçalho
     IniCabecalho(&cabecalho);

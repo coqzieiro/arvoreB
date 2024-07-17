@@ -30,7 +30,7 @@ int criarIndex(char* nomeArquivoBinario, char* nomeArquivoIndices, int opcao){
     }
     
     // Inicialização do cabeçalho
-    CABECALHO_INDEX cabecalho_index;
+    CABECALHO_INDICE cabecalho_index;
 
     cabecalho_index.status = '0';
 
@@ -38,7 +38,7 @@ int criarIndex(char* nomeArquivoBinario, char* nomeArquivoIndices, int opcao){
     EscritaCabIndex(&cabecalho_index, arquivoBinarioDeIndices);
 
     // Variáveis para armazenar dados do registro
-    REGISTRO_INDEX registro_index;
+    DADOS_INDICE registro_index;
 
     char statusCabecalhoArquivoBinario;
 
@@ -73,7 +73,7 @@ int criarIndex(char* nomeArquivoBinario, char* nomeArquivoIndices, int opcao){
 
         // Tenta ler o tamanho do registro id
         fseek(arquivoBinario, 8, SEEK_CUR);
-        if (fread(&registro_index.id, sizeof(int), 1, arquivoBinario) != 1) {
+        if (fread(&registro_index.index, sizeof(int), 1, arquivoBinario) != 1) {
             break; // Sai do loop se não conseguir ler
         }
 

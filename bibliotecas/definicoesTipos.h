@@ -10,7 +10,7 @@ INTEGRANTES DO GRUPO:
     #define MAX_CAMPO 50
     #define TAM_INICIAL_BYTEOFFSET 25
     #define ORDEM_ARVORE_B 4
-    #define TAMANHO_REGISTRO_ARVORE_B 60
+    #define TAMANHO_DADOS_ARVORE_B 60
 
     #include <stdint.h>
     #include <stdio.h>
@@ -22,7 +22,20 @@ INTEGRANTES DO GRUPO:
         int64_t proxByteOffset;      // Próximo byte offset disponível
         int nroRegArq;               // Número de registros no arquivo
         int nroRegRem;               // Número de registros removidos
-    } CABECALHO;
+    } CABECALHO_DADOS;
+
+    // Estrutura de cabeçalho para índices
+    typedef struct {
+        char status;                 // Status do índice
+    } CABECALHO_INDICE;
+
+    // Estrutura de cabeçalho para árvores B
+    typedef struct {
+        char status;                 // Status da árvore
+        int noRaiz;                  // RRN do nó raiz
+        int proxRRN;                 // Próximo RRN disponível
+        int nroChaves;               // Número de chaves na árvore
+    } CABECALHO_ARVORE_B;
 
     // Estrutura de dados para registros de variáveis
     typedef struct {
@@ -54,38 +67,11 @@ INTEGRANTES DO GRUPO:
         char nomeClube[100];
     } DADOS_FIXOS;
 
-    // Estrutura para armazenar informações de campos de busca
-    typedef struct {
-        char nomeCampo[MAX_CAMPO];   // Nome do campo
-        int valorInt;                // Valor inteiro do campo
-        char valorString[MAX_CAMPO]; // Valor string do campo
-    } CAMPO_BUSCA;
-
-    // Estrutura de cabeçalho para índices
-    typedef struct {
-        char status;                 // Status do índice
-    } CABECALHO_INDEX;
-
     // Estrutura para registros de índice
     typedef struct {
-        int id;                      // ID do registro
-        int64_t byteOffset;          // Byte offset do registro
-    } REGISTRO_INDEX;
-
-    // Estrutura para listas encadeadas
-    typedef struct LISTA {
-        struct LISTA *prox;          // Próximo nó da lista
-        int tamRegistro;             // Tamanho do registro
-        int64_t byteOffset;          // Byte offset do registro
-    } LISTA;
-
-    // Estrutura de cabeçalho para árvores B
-    typedef struct CABECALHO_ARVORE_B {
-        char status;                 // Status da árvore
-        int noRaiz;                  // RRN do nó raiz
-        int proxRRN;                 // Próximo RRN disponível
-        int nroChaves;               // Número de chaves na árvore
-    } CABECALHO_ARVORE_B;
+        int index;             // Índice do registro
+        int64_t byteOffset;    // Byte offset do registro
+    } DADOS_INDICE;
 
     // Estrutura para registros da árvore B
     typedef struct _registroArvoreB {
@@ -95,19 +81,27 @@ INTEGRANTES DO GRUPO:
         int chaves[ORDEM_ARVORE_B - 1];             // Chaves do nó
         int64_t byteOffsets[ORDEM_ARVORE_B - 1];    // Byte offsets das chaves
         int descendentes[ORDEM_ARVORE_B];           // Descendentes do nó
-    } REGISTRO_ARVORE_B;
+    } DADOS_ARVORE_B;
 
-    // Estrutura para registros de índice
-    typedef struct REGISTRO_INDICE {
-        int index;             // Índice do registro
-        int64_t byteOffset;    // Byte offset do registro
-    } REGISTRO_INDICE;
+    // Estrutura para armazenar informações de campos de busca
+    typedef struct {
+        char nomeCampo[MAX_CAMPO];   // Nome do campo
+        int valorInt;                // Valor inteiro do campo
+        char valorString[MAX_CAMPO]; // Valor string do campo
+    } CAMPO_BUSCA;
+
+    // Estrutura para listas encadeadas
+    typedef struct LISTA {
+        struct LISTA *prox;          // Próximo nó da lista
+        int tamRegistro;             // Tamanho do registro
+        int64_t byteOffset;          // Byte offset do registro
+    } LISTA;
 
     // Estrutura para listas de índices
     typedef struct LISTA_INDICE {
         int tamanho;                 // Tamanho atual da lista
         int max_tamanho;             // Tamanho máximo da lista
-        REGISTRO_INDICE **registros; // Vetor de ponteiros para registros de índice
+        DADOS_INDICE **registros; // Vetor de ponteiros para registros de índice
     } LISTA_INDICE;
 
     // Estrutura para armazenar registros removidos

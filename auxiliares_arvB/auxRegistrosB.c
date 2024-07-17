@@ -12,7 +12,7 @@ INTEGRANTES DO GRUPO:
 #include <stdlib.h>
 
 // Função para imprimir registros por campos de busca
-void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
+void imprimirRegistrosPorCampos(FILE *file, CABECALHO_DADOS *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i) {
     int64_t byteOffset = cabecalho->proxByteOffset;
     int numRegistros = cabecalho->nroRegArq + cabecalho->nroRegRem; // Número total de registros (incluindo removidos)
     byteOffset = 25; // Posição inicial do byteOffset
@@ -120,8 +120,8 @@ void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, c
 }
 
 // Função para criar um registro vazio de árvore B com valores padrão
-REGISTRO_ARVORE_B *criarRegistroArvoreBVazio() {
-    REGISTRO_ARVORE_B *registro = malloc(sizeof(REGISTRO_ARVORE_B));
+DADOS_ARVORE_B *criarRegistroArvoreBVazio() {
+    DADOS_ARVORE_B *registro = malloc(sizeof(DADOS_ARVORE_B));
     registro->rrn = -1;
     registro->alturaNo = 0;
     registro->nroChaves = 0;
@@ -140,7 +140,7 @@ REGISTRO_ARVORE_B *criarRegistroArvoreBVazio() {
 
 // Função recursiva para buscar um registro por ID na árvore B
 int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
-    REGISTRO_ARVORE_B *registroAtual = lerRegistroArvoreB(fileArvoreB, rrnAtual); // Lê o registro da árvore B no RRN atual
+    DADOS_ARVORE_B *registroAtual = lerRegistroArvoreB(fileArvoreB, rrnAtual); // Lê o registro da árvore B no RRN atual
     
     int numerosChaves = registroAtual->nroChaves; // Obtém o número de chaves no registro
     int chave;
@@ -322,7 +322,7 @@ LISTA_INDICE *criarListaIndice() {
     LISTA_INDICE *lista = (LISTA_INDICE *)malloc(sizeof(LISTA_INDICE));
     lista->tamanho = 0;
     lista->max_tamanho = 1000;
-    lista->registros = (REGISTRO_INDICE **)malloc(sizeof(REGISTRO_INDICE *) * lista->max_tamanho); // Aloca espaço para 1000 endereços de registros
+    lista->registros = (DADOS_INDICE **)malloc(sizeof(DADOS_INDICE *) * lista->max_tamanho); // Aloca espaço para 1000 endereços de registros
 
     return lista;
 }
@@ -341,8 +341,8 @@ bool apagarListaIndice(LISTA_INDICE *lista) {
 }
 
 // Função para criar um registro de índice
-REGISTRO_INDICE *inicializa_registro_index() {
-    REGISTRO_INDICE *registro = (REGISTRO_INDICE *) malloc(sizeof(REGISTRO_INDICE));
+DADOS_INDICE *inicializa_registro_index() {
+    DADOS_INDICE *registro = (DADOS_INDICE *) malloc(sizeof(DADOS_INDICE));
     if(!registro) return NULL;
     registro->index = -1;
     registro->byteOffset = -1;
@@ -369,7 +369,7 @@ int64_t getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id) {
     if(posicao <= 0) {
         return -1;
     } else {
-        REGISTRO_INDICE *registroIndice = removidos->lista->registros[posicao - 1];
+        DADOS_INDICE *registroIndice = removidos->lista->registros[posicao - 1];
         return registroIndice->byteOffset;
     }
 }
@@ -380,7 +380,7 @@ int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int q
     int64_t *byteOffsets = malloc(sizeof(int64_t) * quantidade);
 
     if(removidos->lista->tamanho == 0) { // Se não há registros removidos
-        CABECALHO *cabecalho = retornaCabecalhoBinario(file);
+        CABECALHO_DADOS *cabecalho = cabecalhoLido(file);
 
         cabecalho->nroRegArq = cabecalho->nroRegArq + quantidade;
         writeNroRegArqCabecalho(cabecalho, file);
@@ -470,13 +470,13 @@ int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registr
 }
 
 // Função para ler um registro de árvore B de um arquivo
-REGISTRO_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn) {
-    REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
+DADOS_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn) {
+    DADOS_ARVORE_B *registro = criarRegistroArvoreBVazio();
     if (registro == NULL || arquivo == NULL) {
         return NULL;
     }
     
-    int64_t byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
+    int64_t byteOffset = (rrn + 1) * TAMANHO_DADOS_ARVORE_B;
 
     fseek(arquivo, byteOffset, SEEK_SET);
 
@@ -492,12 +492,12 @@ REGISTRO_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn) {
 }
 
 // Função para escrever um registro de árvore B em um arquivo
-int escreverRegistroArvoreB(REGISTRO_ARVORE_B *registro, FILE *arquivo, int rrn) {
+int escreverRegistroArvoreB(DADOS_ARVORE_B *registro, FILE *arquivo, int rrn) {
     if (registro == NULL || arquivo == NULL) {
         return 0;
     }
     
-    int64_t byteOffset = (rrn + 1) * TAMANHO_REGISTRO_ARVORE_B;
+    int64_t byteOffset = (rrn + 1) * TAMANHO_DADOS_ARVORE_B;
 
     fseek(arquivo, byteOffset, SEEK_SET);
 

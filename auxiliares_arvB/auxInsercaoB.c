@@ -8,7 +8,7 @@ INTEGRANTES DO GRUPO:
 
 // Função que aumenta a altura dos nós recursivamente
 int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz) {
-    REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnRaiz);
+    DADOS_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnRaiz);
 
     int nroDescendentes = 0;
 
@@ -61,7 +61,7 @@ int aumentarAlturaRecursivamente(FILE *arquivo, int rrnRaiz) {
 }
 
 // Função para dividir o nó e retornar a nova raiz
-bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, int byteOffsetPromovido, REGISTRO_ARVORE_B **caminho, REGISTRO_ARVORE_B *filhoEsq, REGISTRO_ARVORE_B *filhoDir, int nivel) { 
+bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, int byteOffsetPromovido, DADOS_ARVORE_B **caminho, DADOS_ARVORE_B *filhoEsq, DADOS_ARVORE_B *filhoDir, int nivel) { 
     int chaves[ORDEM_ARVORE_B];
     int byteOffsets[ORDEM_ARVORE_B];
 
@@ -113,9 +113,9 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
         isFolha = true;
     }
 
-    REGISTRO_ARVORE_B *registroEsquerdo = criarRegistroArvoreBVazio();
+    DADOS_ARVORE_B *registroEsquerdo = criarRegistroArvoreBVazio();
     int maiorChaveEsquerda = -1;
-    REGISTRO_ARVORE_B *registroDireito = criarRegistroArvoreBVazio();
+    DADOS_ARVORE_B *registroDireito = criarRegistroArvoreBVazio();
     int menorChaveDireita = -1;
 
     if (isFolha) {
@@ -126,8 +126,8 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             inserirChaveRegistroArvoreB(registroDireito, chaves[i], byteOffsets[i]);
         }
     } else {
-        REGISTRO_ARVORE_B *registroEsq = criarRegistroArvoreBVazio();
-        REGISTRO_ARVORE_B *registroDir = criarRegistroArvoreBVazio();
+        DADOS_ARVORE_B *registroEsq = criarRegistroArvoreBVazio();
+        DADOS_ARVORE_B *registroDir = criarRegistroArvoreBVazio();
 
         if (filhoEsq == NULL) {
             registroEsq->rrn = -1;
@@ -171,7 +171,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
         int chavesDescendentes[ORDEM_ARVORE_B + 1];
 
         for (int i = 0; i < ORDEM_ARVORE_B + 1; i++) {
-            REGISTRO_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, descendentes[i]);
+            DADOS_ARVORE_B *registroDescendente = lerRegistroArvoreB(arquivo, descendentes[i]);
             chavesDescendentes[i] = registroDescendente->chaves[0]; // Obtém a chave na posição i
 
             apagarRegistroArvoreB(registroDescendente);
@@ -195,7 +195,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
 
     }
     
-    REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
+    DADOS_ARVORE_B *registro = criarRegistroArvoreBVazio();
 
     if (caminho[nivel] == NULL) {
         registro->rrn = -1;
@@ -256,7 +256,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
         }
 
         if (nivel == 0) {
-            REGISTRO_ARVORE_B *novaRaiz = criarRegistroArvoreBVazio();
+            DADOS_ARVORE_B *novaRaiz = criarRegistroArvoreBVazio();
 
             int rrnRaiz = proxRRN + 1;
 
@@ -290,7 +290,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             apagarRegistroArvoreB(novaRaiz);
             limpaCabecalhoArvoreB(cabecalho);
         } else {
-            REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
+            DADOS_ARVORE_B *registro = criarRegistroArvoreBVazio();
 
             if (caminho[nivel - 1] == NULL) {
                 registro->rrn = -1;
@@ -298,7 +298,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
                 registro->rrn = caminho[nivel - 1]->rrn;
             }
 
-            REGISTRO_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, registro->rrn);
+            DADOS_ARVORE_B *registroPai = lerRegistroArvoreB(arquivo, registro->rrn);
 
             escreverRegistroArvoreB(registroEsquerdo, arquivo, rrnAtual);
             escreverRegistroArvoreB(registroDireito, arquivo, proxRRN);
@@ -333,7 +333,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
 }
 
 // Função para inserir em nós que não estão cheios
-void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B *registro) {
+void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, DADOS_ARVORE_B *registro) {
     if (!inserirChaveRegistroArvoreB(registro, chave, byteOffset)) {
         return;
     }
@@ -353,11 +353,11 @@ void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, i
 }
 
 // Função para inserir recursivamente
-void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho) {
-    REGISTRO_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnAtual);
+void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, DADOS_ARVORE_B **caminho, int nivel, int *tamCaminho) {
+    DADOS_ARVORE_B *registro = lerRegistroArvoreB(arquivo, rrnAtual);
 
     registro->rrn = rrnAtual;
-    caminho = realloc(caminho, sizeof(REGISTRO_ARVORE_B *) * (nivel + 1));
+    caminho = realloc(caminho, sizeof(DADOS_ARVORE_B *) * (nivel + 1));
     caminho[nivel] = registro;
     *tamCaminho = nivel + 1;
 
@@ -441,7 +441,7 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
 
     if (rrnRaiz == -1) {
         // Se a árvore está vazia, cria um novo nó raiz
-        REGISTRO_ARVORE_B *novoRegistro = criarRegistroArvoreBVazio();
+        DADOS_ARVORE_B *novoRegistro = criarRegistroArvoreBVazio();
         novoRegistro->alturaNo = 0;
         inserirChaveRegistroArvoreB(novoRegistro, chave, byteOffset);
         novoRegistro->rrn = 0;
@@ -462,7 +462,7 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
     }
 
     // Inicializa o array de caminho para rastrear o caminho percorrido na árvore
-    REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **)malloc(sizeof(REGISTRO_ARVORE_B *));
+    DADOS_ARVORE_B **caminho = (DADOS_ARVORE_B **)malloc(sizeof(DADOS_ARVORE_B *));
     int tamCaminho = 0;
 
     // Chama a função recursiva de inserção
@@ -483,7 +483,7 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
 }
 
 // Função para inserir uma chave em um registro de árvore B
-int inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, int64_t byteOffset) {
+int inserirChaveRegistroArvoreB(DADOS_ARVORE_B *registro, int chave, int64_t byteOffset) {
     if (registro->nroChaves == ORDEM_ARVORE_B - 1) {
         // Se o registro estiver cheio, não é possível inserir
         return 0;
@@ -525,7 +525,7 @@ int inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, int64_t 
 }
 
 // Função para inserir um descendente em um registro de árvore B
-int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente, int chaveDescendente) {
+int inserirDescendenteRegistroArvoreB(DADOS_ARVORE_B *registro, int64_t descendente, int chaveDescendente) {
     if (!registro || registro->nroChaves == 0) {
         return 0;
     }
@@ -566,7 +566,7 @@ void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
     }
 
     if (nroChaves == 0) {
-        REGISTRO_ARVORE_B *registro = criarRegistroArvoreBVazio();
+        DADOS_ARVORE_B *registro = criarRegistroArvoreBVazio();
         registro->alturaNo = 0;
         inserirChaveRegistroArvoreB(registro, chave, byteOffset);
         registro->rrn = 0;
@@ -584,7 +584,7 @@ void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
         return;
     }
 
-    REGISTRO_ARVORE_B **caminho = (REGISTRO_ARVORE_B **) malloc(sizeof(REGISTRO_ARVORE_B *) * 1);
+    DADOS_ARVORE_B **caminho = (DADOS_ARVORE_B **) malloc(sizeof(DADOS_ARVORE_B *) * 1);
 
     int64_t rrnAtual;
 

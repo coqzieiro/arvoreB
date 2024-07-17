@@ -23,7 +23,7 @@ void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvor
             return;
         }
 
-        CABECALHO *cabecalho = retornaCabecalhoBinario(file); // Cria um cabeçalho e atribui os valores a ele
+        CABECALHO_DADOS *cabecalho = cabecalhoLido(file); // Cria um cabeçalho e atribui os valores a ele
 
         imprimirRegistrosPorCampos(file, cabecalho, buscaId, nomeArquivoArvoreB, i); // Chama a função para imprimir registros
         

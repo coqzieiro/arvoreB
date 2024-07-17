@@ -22,7 +22,7 @@ void buscarRegistros(const char *arquivoEntrada, int numBuscas) {
         return;
     }
 
-    CABECALHO cabecalho;
+    CABECALHO_DADOS cabecalho;
 
     // Lê o cabeçalho campo a campo
     LeituraCabecalho(&cabecalho, entrada);

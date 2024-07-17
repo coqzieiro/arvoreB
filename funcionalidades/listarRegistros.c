@@ -23,7 +23,7 @@ void listarRegistros(const char* nomeArquivoBinario) {
         return;
     }
 
-    CABECALHO cabecalho;
+    CABECALHO_DADOS cabecalho;
 
     // Leitura do cabeçalho
     LeituraCabecalho(&cabecalho, arquivoBinario);

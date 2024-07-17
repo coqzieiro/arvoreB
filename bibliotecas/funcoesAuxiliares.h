@@ -14,12 +14,12 @@ INTEGRANTES DO GRUPO:
     #include <stdbool.h>
 
     // Leitura de cabeçalho e registros
-    void LeituraCabecalho(CABECALHO* cabecalho, FILE* arquivoBinario);
+    void LeituraCabecalho(CABECALHO_DADOS* cabecalho, FILE* arquivoBinario);
     void LeituraRegistro(DADOS* registro, FILE* arquivoBinario);
     void LeituraRegistroFixo(DADOS_FIXOS* registro, FILE* arquivoBinario);
 
     // Escrita de cabeçalho e registros
-    void EscritaCabecalho(CABECALHO* cabecalho, FILE* arquivoBinario);
+    void EscritaCabecalho(CABECALHO_DADOS* cabecalho, FILE* arquivoBinario);
     void EscritaRegistro(DADOS* registro, FILE* arquivoBinario);
     void EscritaRegistroFixo(DADOS_FIXOS* registro, FILE* arquivoBinario);
     
@@ -29,8 +29,8 @@ INTEGRANTES DO GRUPO:
     int todosCamposCorrespondemFixo(DADOS_FIXOS registro, CAMPO_BUSCA camposBusca[], int numCamposBusca);
     
     // Escrita no index
-    void EscritaCabIndex(CABECALHO_INDEX* cabecalho_index, FILE* nomeArquivoBinarioDeIndices);
-    void EscritaRegIndex(REGISTRO_INDEX* registro_index, FILE* nomeArquivoBinarioDeIndices);
+    void EscritaCabIndex(CABECALHO_INDICE* cabecalho_index, FILE* nomeArquivoBinarioDeIndices);
+    void EscritaRegIndex(DADOS_INDICE* registro_index, FILE* nomeArquivoBinarioDeIndices);
 
     // Funções auxiliares de remoção
     void InicializaRegistroJogador(DADOS* registro);
@@ -50,9 +50,9 @@ INTEGRANTES DO GRUPO:
     void DesalocaLista(LISTA* cabeca);
     void LeituraCampos(DADOS* registro);
     int AtualizaTamanhoStrings(DADOS* registro);
-    int* ReutilizarRegistro(FILE* arquivoBinario, CABECALHO* cabecalho, DADOS* registro, int MetodoBestFitOffset, LISTA* removidos);
+    int* ReutilizarRegistro(FILE* arquivoBinario, CABECALHO_DADOS* cabecalho, DADOS* registro, int MetodoBestFitOffset, LISTA* removidos);
     void EscreveRegistroInsercao(FILE* arquivoBinario, DADOS* registro);
     void EscreveLixo(FILE* arquivoBinario, int tamRegistroRemovido, int tamRegistroInserido);
-    void IniCabecalho(CABECALHO* cabecalho);
+    void IniCabecalho(CABECALHO_DADOS* cabecalho);
 
 #endif

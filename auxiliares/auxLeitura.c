@@ -15,7 +15,7 @@ INTEGRANTES DO GRUPO:
 #include <limits.h>
 
 // Função que lê o cabeçalho
-void LeituraCabecalho(CABECALHO* cabecalho, FILE* arquivoBinario) {
+void LeituraCabecalho(CABECALHO_DADOS* cabecalho, FILE* arquivoBinario) {
     fseek(arquivoBinario, 0, SEEK_SET);
     fread(&cabecalho->status,         sizeof(cabecalho->status),         1, arquivoBinario);
     fread(&cabecalho->topo,           sizeof(cabecalho->topo),           1, arquivoBinario);    

@@ -14,60 +14,62 @@ INTEGRANTES DO GRUPO:
     #include <stdbool.h>
 
     // Funções auxiliares do cabeçalho árvore-B
-    void lerCabecalhoB(FILE *arquivo, CABECALHO *cabecalho);
-    int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int quantidade, FILE *file);
-    void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset);
-    void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, REGISTRO_ARVORE_B **caminho, int nivel, int *tamCaminho);
-    CABECALHO *criarCabecalho(void);
-    void writeStatusCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
-    void writeTopoCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
-    void writeProxByteOffsetCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
-    void writeNroRegArqCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
-    void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
-    CABECALHO *retornaCabecalhoBinario(FILE *file);
+    CABECALHO_DADOS *criarCabecalho(void);
+    CABECALHO_DADOS *cabecalhoLido(FILE* arquivoBinario); //ok
     CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio();
     CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file);
+    void lerCabecalhoB(FILE *arquivo, CABECALHO_DADOS *cabecalho);
+    void writeStatusCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
+    void writeTopoCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
+    void writeProxByteOffsetCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
+    void writeNroRegArqCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
+    void writeNroRegRemCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
     int escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho);
     int limpaCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
 
-    // Funções auxiliares manipulação de registros árvore-B
-    REGISTRO_ARVORE_B *criarRegistroArvoreBVazio();
-    int inserirChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave, int64_t byteOffset);
-    int removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave);
-    int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente, int chaveDescendente);
-    int removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente);
-    int apagarRegistroArvoreB(REGISTRO_ARVORE_B *registro);
-    REGISTRO_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn);
-    int escreverRegistroArvoreB(REGISTRO_ARVORE_B *registro, FILE *arquivo, int rrn);
-
-    // Funções get/set de registros árvore-B
+    // FunçÕes auxiliares para registros árvore-B
+    DADOS_ARVORE_B *criarRegistroArvoreBVazio();
+    DADOS_ARVORE_B *lerRegistroArvoreB(FILE *arquivo, int rrn);
     DADOS **encontrar_registros_em_comum(DADOS **vetor1, DADOS **vetor2);
     DADOS *inicializa_registro();
-    DADOS* atribui_valores_registro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube);
-    void free_registro(DADOS *registro);
     DADOS *leitura_registro_arquivoBin(int offset, FILE *arquivoBin);
-
-    // Funções auxiliares para escrita árvore-B
-    int imprimeRegistro(DADOS *registro);
+    DADOS* atribui_valores_registro(char removido, int tamanhoRegistro, long prox, int id, int idade, int tamNomeJogador, char *nomeJogador, int tamNacionalidade, char *nacionalidade, int tamNomeClube, char *nomeClube);
+    DADOS_INDICE *inicializa_registro_index();
+    LISTA_INDICE *criarListaIndice();
+    int apagarRegistroArvoreB(DADOS_ARVORE_B *registro);
+    int escreverRegistroArvoreB(DADOS_ARVORE_B *registro, FILE *arquivo, int rrn);
     bool escreverRegistro(DADOS *registro, int byteOffset, int tamRegistroAtual, FILE *arquivoBin);
-    void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
-    void imprimirRegistrosPorCampos(FILE *file, CABECALHO *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i);
+    bool apagarListaIndice(LISTA_INDICE *lista);
+    void free_registro(DADOS *registro);
+    
+    // Funções auxiliares para busca árvore-B
     int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual);
+    int buscarPosicaoRegistroIndiceLinear(LISTA_INDICE *lista, int id);
+    int imprimeRegistro(DADOS *registro);
+    void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
+    void imprimirRegistrosPorCampos(FILE *file, CABECALHO_DADOS *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i);
+
+    // Funcões auxiliares para remoção árvore-B
     REMOVIDOS *criarListaRemovidos(FILE *file);
-    bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
-    bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB);
     REMOVIDOS *criarListaRemovidosVazia();
+    int64_t getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id);
+    int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int quantidade, FILE *file);
+    int removerChaveRegistroArvoreB(DADOS_ARVORE_B *registro, int chave);
+    int removerDescendenteRegistroArvoreB(DADOS_ARVORE_B *registro, int64_t descendente);
     void apagarListaRemovidos(REMOVIDOS *removidos);
     void removerRegistroIndice(LISTA_INDICE *lista, int index);
     void removerRegistroRemovidoPosicao(REMOVIDOS *removidos, int posicao);
-    REGISTRO_INDICE *inicializa_registro_index();
+    void adicionarRegistroRemovido(REMOVIDOS *removidos, DADOS_INDICE *registroIndice, int tamanho);
     void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao, FILE *file);
-    LISTA_INDICE *criarListaIndice();
-    bool apagarListaIndice(LISTA_INDICE *lista);
-    void adicionarRegistroRemovido(REMOVIDOS *removidos, REGISTRO_INDICE *registroIndice, int tamanho);
-    int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registro, FILE *file);
-    int64_t getMaiorByteOffsetMenorQue(REMOVIDOS *removidos, int id);
     void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos);
-    int buscarPosicaoRegistroIndiceLinear(LISTA_INDICE *lista, int id);
+
+    // Funções auxiliares para inserção árvore-B
+    int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registro, FILE *file);
+    int inserirChaveRegistroArvoreB(DADOS_ARVORE_B *registro, int chave, int64_t byteOffset);
+    int inserirDescendenteRegistroArvoreB(DADOS_ARVORE_B *registro, int64_t descendente, int chaveDescendente);
+    bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
+    bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB);
+    void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset);
+    void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, DADOS_ARVORE_B **caminho, int nivel, int *tamCaminho);
 
 #endif

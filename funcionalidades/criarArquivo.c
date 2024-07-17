@@ -32,7 +32,7 @@ void criarArquivoBinario(char* nomeArquivoCSV, char* nomeArquivoBinario){
     }
 
     // Inicialização do cabeçalho
-    CABECALHO cabecalho;
+    CABECALHO_DADOS cabecalho;
 
     cabecalho.status = '0';
     cabecalho.topo = -1;
