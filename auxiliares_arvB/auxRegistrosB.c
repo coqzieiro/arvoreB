@@ -142,7 +142,7 @@ REGISTRO_ARVORE_B *criarRegistroArvoreBVazio() {
 int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual) {
     REGISTRO_ARVORE_B *registroAtual = lerRegistroArvoreB(fileArvoreB, rrnAtual); // Lê o registro da árvore B no RRN atual
     
-    int numerosChaves = getNroChavesRegistroArvoreB(registroAtual); // Obtém o número de chaves no registro
+    int numerosChaves = registroAtual->nroChaves; // Obtém o número de chaves no registro
     int chave;
     int descendente;
 

@@ -40,10 +40,6 @@ INTEGRANTES DO GRUPO:
     int removerChaveRegistroArvoreB(REGISTRO_ARVORE_B *registro, int chave);
     int inserirDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente, int chaveDescendente);
     int removerDescendenteRegistroArvoreB(REGISTRO_ARVORE_B *registro, int64_t descendente);
-    int getAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro);
-    int setRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro, int rrn);
-    int setAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro, int alturaNo);
-    int getNroChavesRegistroArvoreB(REGISTRO_ARVORE_B *registro);
     int getChave(REGISTRO_ARVORE_B *registro, int posicao);
     int64_t getByteOffsetRegistroArvoreB(REGISTRO_ARVORE_B *registro, int posicao);
     int getDescendente(REGISTRO_ARVORE_B *registro, int posicao);

@@ -6,44 +6,6 @@ INTEGRANTES DO GRUPO:
 
 #include "../bibliotecas/funcoesAuxiliaresB.h"
 
-// Função para obter a altura de um nó em um registro de árvore B
-int getAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro) {
-    if (registro == NULL) {
-        return -1;
-    }
-    
-    return registro->alturaNo;
-}
-
-// Função para definir o RRN de um registro de árvore B
-int setRRNRegistroArvoreB(REGISTRO_ARVORE_B *registro, int rrn) {
-    if (registro == NULL) {
-        return 0;
-    }
-    
-    registro->rrn = rrn;
-    return 1;
-}
-
-// Função para definir a altura de um nó em um registro de árvore B
-int setAlturaNoRegistroArvoreB(REGISTRO_ARVORE_B *registro, int alturaNo) {
-    if (registro == NULL) {
-        return 0;
-    }
-    
-    registro->alturaNo = alturaNo;
-    return 1;
-}
-
-// Função para obter o número de chaves em um registro de árvore B
-int getNroChavesRegistroArvoreB(REGISTRO_ARVORE_B *registro) {
-    if (registro == NULL) {
-        return -1;
-    }
-    
-    return registro->nroChaves;
-}
-
 // Função para obter uma chave em uma posição específica de um registro de árvore B
 int getChave(REGISTRO_ARVORE_B *registro, int posicao) {
     if (registro == NULL || posicao < 0 || posicao >= ORDEM_ARVORE_B - 1) {
