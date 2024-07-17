@@ -232,7 +232,8 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
     }
 
     if (nivel > 0 && (caminho[nivel - 1]->nroChaves == ORDEM_ARVORE_B - 1)) {
-        setProxRRNCabecalhoArvoreB(cabecalho, proxRRN + 1);
+        cabecalho->proxRRN = proxRRN + 1;
+
         if (!splitNo(arquivo, cabecalho, chavePromovida, byteOffsetPromovido, caminho, registroEsquerdo, registroDireito, nivel - 1)) {
             apagarRegistroArvoreB(registroEsquerdo);
             apagarRegistroArvoreB(registroDireito);
@@ -267,8 +268,8 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
             escreverRegistroArvoreB(novaRaiz, arquivo, rrnRaiz);
 
             CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
-            setNoRaizCabecalhoArvoreB(cabecalho, rrnRaiz);
-            setProxRRNCabecalhoArvoreB(cabecalho, rrnRaiz + 1);
+            cabecalho->noRaiz = rrnRaiz;
+            cabecalho->proxRRN = rrnRaiz + 1;
 
             int chave;
 
@@ -278,7 +279,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
                 chave = cabecalho->nroChaves;
             }
 
-            setNroChavesCabecalhoArvoreB(cabecalho, chave + 1);
+            cabecalho->nroChaves = chave + 1;
 
             escreverCabecalhoArvoreB(arquivo, cabecalho);
 
@@ -307,7 +308,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
 
             escreverRegistroArvoreB(registroPai, arquivo, registro->rrn);
 
-            setProxRRNCabecalhoArvoreB(cabecalho, proxRRN + 1);
+            cabecalho->proxRRN = proxRRN + 1;
 
             int chave;
 
@@ -317,17 +318,9 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
                 chave = cabecalho->nroChaves;
             }
 
-            setNroChavesCabecalhoArvoreB(cabecalho, chave + 1);
+            cabecalho->nroChaves = chave + 1;
 
             escreverCabecalhoArvoreB(arquivo, cabecalho);
-
-            /*REGISTRO_ARVORE_B *registro;
-
-            if (caminho[nivel - 1] == NULL) {
-                registro->rrn = -1;
-            } else {
-                registro->rrn = caminho[nivel - 1]->rrn;
-            }*/
 
             aumentarAlturaRecursivamente(arquivo, registro->rrn);
             apagarRegistroArvoreB(registroEsquerdo);
@@ -354,7 +347,7 @@ void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, i
         chave = cabecalho->nroChaves;
     }
 
-    setNroChavesCabecalhoArvoreB(cabecalho, chave + 1);
+    cabecalho->nroChaves = chave + 1;
 
     escreverCabecalhoArvoreB(arquivo, cabecalho);
 }
@@ -456,10 +449,13 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
         escreverRegistroArvoreB(novoRegistro, arquivoArvoreB, 0);
         apagarRegistroArvoreB(novoRegistro);
 
-        setNoRaizCabecalhoArvoreB(cabecalho, 0);
-        setProxRRNCabecalhoArvoreB(cabecalho, 1);
-        setNroChavesCabecalhoArvoreB(cabecalho, 1);
-        setStatusCabecalhoArvoreB(cabecalho, '1');
+        cabecalho->noRaiz = 0;
+
+        cabecalho->proxRRN = 1;
+
+        cabecalho->nroChaves = 1;
+
+        cabecalho->status = '1';
         escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
         limpaCabecalhoArvoreB(cabecalho);
         return true;
@@ -473,7 +469,7 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
     insercaoArvoreBRecursiva(arquivoArvoreB, cabecalho, chave, byteOffset, rrnRaiz, caminho, 0, &tamCaminho);
 
     // Atualiza e escreve o cabeçalho de volta
-    setStatusCabecalhoArvoreB(cabecalho, '1');
+    cabecalho->status = '1';
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
     limpaCabecalhoArvoreB(cabecalho);
 
@@ -578,9 +574,9 @@ void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
         escreverRegistroArvoreB(registro, arquivo, 0);
         apagarRegistroArvoreB(registro);
 
-        setNoRaizCabecalhoArvoreB(cabecalho, 0);
-        setProxRRNCabecalhoArvoreB(cabecalho, 1);
-        setNroChavesCabecalhoArvoreB(cabecalho, 1);
+        cabecalho->noRaiz = 0;
+        cabecalho->proxRRN = 1;
+        cabecalho->nroChaves = 1;
 
         escreverCabecalhoArvoreB(arquivo, cabecalho);
         limpaCabecalhoArvoreB(cabecalho);

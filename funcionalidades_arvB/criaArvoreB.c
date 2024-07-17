@@ -32,8 +32,6 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
     // Lê o cabeçalho
     lerCabecalhoB(arquivoBinario, cabecalho);
 
-    //CABECALHO *cabecalho = retornaCabecalhoBinario(arquivoBinario); // Lê o cabeçalho do arquivo binário
-
     if(cabecalho->status == '0'){
         printf("Falha no processamento do arquivo.\n");
         fclose(arquivoBinario);
@@ -44,7 +42,7 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
 
     CABECALHO_ARVORE_B *cabecalhoArvoreB = criarCabecalhoArvoreBVazio(); // Cria um cabeçalho vazio para a árvore B
 
-    setStatusCabecalhoArvoreB(cabecalhoArvoreB, '0');
+    cabecalhoArvoreB->status = '0';
     
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
 
@@ -75,7 +73,7 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
 
     cabecalhoArvoreB = lerCabecalhoArvoreB(arquivoArvoreB); // Lê o cabeçalho atualizado da árvore B
 
-    setStatusCabecalhoArvoreB(cabecalhoArvoreB, '1'); // Define o status do cabeçalho como consistente
+    cabecalhoArvoreB->status = '1';
 
     escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
 

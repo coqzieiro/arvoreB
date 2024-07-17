@@ -29,42 +29,6 @@ CABECALHO *criarCabecalho(void){
     return(cabecalho);
 }
 
-// Define o status do cabeçalho da árvore B
-int setStatusCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, char status) {
-    if (cabecalho == NULL) {
-        return(0);
-    }
-    cabecalho->status = status;
-    return(1);
-}
-
-// Define o RRN da raiz no cabeçalho da árvore B
-int setNoRaizCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int noRaiz) {
-    if (cabecalho == NULL) {
-        return(0);
-    }
-    cabecalho->noRaiz = noRaiz;
-    return(1);
-}
-
-// Define o próximo RRN no cabeçalho da árvore B
-int setProxRRNCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int proxRRN) {
-    if (cabecalho == NULL) {
-        return(0);
-    }
-    cabecalho->proxRRN = proxRRN;
-    return(1);
-}
-
-// Define o número de chaves no cabeçalho da árvore B
-int setNroChavesCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int nroChaves) {
-    if (cabecalho == NULL) {
-        return(0);
-    }
-    cabecalho->nroChaves = nroChaves;
-    return(1);
-}
-
 // Lê o cabeçalho da árvore B a partir de um arquivo
 CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file) {
     if (file == NULL) {

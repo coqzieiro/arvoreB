@@ -26,10 +26,6 @@ INTEGRANTES DO GRUPO:
     void writeNroRegRemCabecalho(CABECALHO *cabecalho, FILE *arquivoBin);
     CABECALHO *retornaCabecalhoBinario(FILE *file);
     CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio();
-    int setStatusCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, char status);
-    int setNoRaizCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int noRaiz);
-    int setProxRRNCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int proxRRN);
-    int setNroChavesCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho, int nroChaves);
     CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file);
     int escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho);
     int limpaCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
