@@ -267,7 +267,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
 
             escreverRegistroArvoreB(novaRaiz, arquivo, rrnRaiz);
 
-            CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
+            CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvB(arquivo);
             cabecalho->noRaiz = rrnRaiz;
             cabecalho->proxRRN = rrnRaiz + 1;
 
@@ -281,14 +281,15 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
 
             cabecalho->nroChaves = chave + 1;
 
-            escreverCabecalhoArvoreB(arquivo, cabecalho);
+            escreverCabecalhoArvB(arquivo, cabecalho);
 
             aumentarAlturaRecursivamente(arquivo, rrnRaiz);
 
             apagarRegistroArvoreB(registroEsquerdo);
             apagarRegistroArvoreB(registroDireito);
             apagarRegistroArvoreB(novaRaiz);
-            limpaCabecalhoArvoreB(cabecalho);
+            
+            free(cabecalho);
         } else {
             DADOS_ARVORE_B *registro = criarRegistroArvoreBVazio();
 
@@ -320,7 +321,7 @@ bool splitNo(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chavePromovida, i
 
             cabecalho->nroChaves = chave + 1;
 
-            escreverCabecalhoArvoreB(arquivo, cabecalho);
+            escreverCabecalhoArvB(arquivo, cabecalho);
 
             aumentarAlturaRecursivamente(arquivo, registro->rrn);
             apagarRegistroArvoreB(registroEsquerdo);
@@ -349,7 +350,7 @@ void insercaoNaoCheio(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, i
 
     cabecalho->nroChaves = chave + 1;
 
-    escreverCabecalhoArvoreB(arquivo, cabecalho);
+    escreverCabecalhoArvB(arquivo, cabecalho);
 }
 
 // Função para inserir recursivamente
@@ -416,7 +417,7 @@ void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int 
 // Função para adicionar um nó à árvore B
 bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
     // Lê o cabeçalho da árvore B
-    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivoArvoreB);
+    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvB(arquivoArvoreB);
 
     // Verifica se cabeçalho é nulo
     if (cabecalho == NULL) {
@@ -427,7 +428,7 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
     // Se o cabeçalho indica que a árvore está inconsistente, retorna false
     if (cabecalho->status == '0') {
         printf("Falha no processamento do arquivo.\n");
-        limpaCabecalhoArvoreB(cabecalho);
+        free(cabecalho);
         return false;
     }
 
@@ -456,8 +457,8 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
         cabecalho->nroChaves = 1;
 
         cabecalho->status = '1';
-        escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
-        limpaCabecalhoArvoreB(cabecalho);
+        escreverCabecalhoArvB(arquivoArvoreB, cabecalho);
+        free(cabecalho);
         return true;
     }
 
@@ -470,8 +471,8 @@ bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB) {
 
     // Atualiza e escreve o cabeçalho de volta
     cabecalho->status = '1';
-    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalho);
-    limpaCabecalhoArvoreB(cabecalho);
+    escreverCabecalhoArvB(arquivoArvoreB, cabecalho);
+    free(cabecalho);
 
     // Limpa a memória
     for (int i = 0; i < tamCaminho; i++) {
@@ -555,7 +556,7 @@ int inserirDescendenteRegistroArvoreB(DADOS_ARVORE_B *registro, int64_t descende
 
 // Função para inserir no index árvoreB
 void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
-    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvoreB(arquivo);
+    CABECALHO_ARVORE_B *cabecalho = lerCabecalhoArvB(arquivo);
 
     int nroChaves;
 
@@ -578,8 +579,8 @@ void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
         cabecalho->proxRRN = 1;
         cabecalho->nroChaves = 1;
 
-        escreverCabecalhoArvoreB(arquivo, cabecalho);
-        limpaCabecalhoArvoreB(cabecalho);
+        escreverCabecalhoArvB(arquivo, cabecalho);
+        free(cabecalho);
 
         return;
     }
@@ -598,5 +599,5 @@ void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset) {
 
     insercaoArvoreBRecursiva(arquivo, cabecalho, chave, byteOffset, rrnAtual, caminho, 0, &tamCaminho);
 
-    limpaCabecalhoArvoreB(cabecalho);
+    free(cabecalho);
 }

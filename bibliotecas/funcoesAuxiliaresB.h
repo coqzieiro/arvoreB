@@ -17,9 +17,8 @@ INTEGRANTES DO GRUPO:
     CABECALHO_DADOS *criarCabecalhoDados(); //ok
     CABECALHO_ARVORE_B *criarCabecalhoArvB(); //ok
     CABECALHO_DADOS *lerCabecalhoDados(FILE* arquivoBinario); //ok
-    CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *arquivoBinario); //ok
-    int escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho);
-    int limpaCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
+    CABECALHO_ARVORE_B *lerCabecalhoArvB(FILE *arquivoBinario); //ok
+    void escreverCabecalhoArvB(FILE *arquivoBinario, CABECALHO_ARVORE_B *cabecalho); // ok
 
     // FunçÕes auxiliares para registros árvore-B
     DADOS_ARVORE_B *criarRegistroArvoreBVazio();

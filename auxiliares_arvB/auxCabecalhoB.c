@@ -30,7 +30,7 @@ CABECALHO_DADOS *criarCabecalhoDados(){
 }
 
 // Carrega os dados do cabeçalho da árvore B de um arquivo
-CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *arquivoBinario) {
+CABECALHO_ARVORE_B *lerCabecalhoArvB(FILE *arquivoBinario) {
     if (arquivoBinario == NULL) {
         return NULL;
     }
@@ -46,32 +46,23 @@ CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *arquivoBinario) {
 }
 
 // Atualiza o cabeçalho da árvore B no arquivo
-int escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho) {
-    if (file == NULL || cabecalho == NULL) {
-        return 0;
+void escreverCabecalhoArvB(FILE *arquivoBinario, CABECALHO_ARVORE_B *cabecalho) {
+    if (arquivoBinario == NULL || cabecalho == NULL) {
+        return;
     }
-    fseek(file, 0, SEEK_SET);
+    fseek(arquivoBinario, 0, SEEK_SET);
     int tamanhoCabecalho = sizeof(char) + sizeof(int) * 3;
 
-    fwrite(&cabecalho->status, sizeof(char), 1, file);
-    fwrite(&cabecalho->noRaiz, sizeof(int), 1, file);
-    fwrite(&cabecalho->proxRRN, sizeof(int), 1, file);
-    fwrite(&cabecalho->nroChaves, sizeof(int), 1, file);
+    fwrite(&cabecalho->status, sizeof(char), 1, arquivoBinario);
+    fwrite(&cabecalho->noRaiz, sizeof(int), 1, arquivoBinario);
+    fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBinario);
+    fwrite(&cabecalho->nroChaves, sizeof(int), 1, arquivoBinario);
 
     char lixo = '$';
     for (int i = tamanhoCabecalho; i < TAMANHO_DADOS_ARVORE_B; i++) {
-        fwrite(&lixo, sizeof(char), 1, file); // Completa com lixo para uniformidade
+        fwrite(&lixo, sizeof(char), 1, arquivoBinario); // Completa com lixo para uniformidade
     }
-    return 1;
-}
-
-// Desaloca o cabeçalho da árvore B
-int limpaCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
-    if (cabecalho == NULL){
-        return 0;
-    }
-    free(cabecalho);
-    return 1;
+    return;
 }
 
 // Retorna a estrutura CABECALHO preenchida com dados lidos do arquivo binário

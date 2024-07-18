@@ -20,7 +20,7 @@ void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int busc
         return;
     }
 
-    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fp); // Lê o cabeçalho da árvore B
+    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvB(fp); // Lê o cabeçalho da árvore B
 
     if(cabecalhoArvoreB == NULL){
         cabecalhoArvoreB->status = '$';
@@ -28,7 +28,7 @@ void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int busc
     
     if(cabecalhoArvoreB->status == '0') {
         printf("Falha no processamento do arquivo.\n"); // Verifica se o status do cabeçalho é inválido
-        limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
+        free(cabecalhoArvoreB);
         fclose(fp); // Fecha o arquivo
         return;
     }
@@ -41,7 +41,8 @@ void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int busc
         rrnAtual = cabecalhoArvoreB->noRaiz;
     }
 
-    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
+    free(cabecalhoArvoreB);
+
 
     printf(buscaMinuscula ? "Busca %d\n\n" : "BUSCA %d\n\n", i + 1); // Imprime o número da busca
 

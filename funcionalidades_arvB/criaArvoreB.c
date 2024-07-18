@@ -44,7 +44,7 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
 
     cabecalhoArvoreB->status = '0';
     
-    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
+    escreverCabecalhoArvB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
 
     int64_t posicao = 25; // Posição inicial do primeiro registro
 
@@ -69,15 +69,15 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
         free_registro(registro); // Libera a memória do registro
     }
 
-    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
+    free(cabecalhoArvoreB);
 
-    cabecalhoArvoreB = lerCabecalhoArvoreB(arquivoArvoreB); // Lê o cabeçalho atualizado da árvore B
+    cabecalhoArvoreB = lerCabecalhoArvB(arquivoArvoreB); // Lê o cabeçalho atualizado da árvore B
 
     cabecalhoArvoreB->status = '1';
 
-    escreverCabecalhoArvoreB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
+    escreverCabecalhoArvB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
 
-    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho da árvore B
+    free(cabecalhoArvoreB);
 
     fclose(arquivoBinario); // Fecha o arquivo binário
     fclose(arquivoArvoreB); // Fecha o arquivo de índices

@@ -22,7 +22,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         return false;
     }
     CABECALHO_DADOS *cabecalho = lerCabecalhoDados(arquivoBin);
-    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB); // Lê o cabeçalho da árvore B
+    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvB(fileArvoreB); // Lê o cabeçalho da árvore B
 
     if (cabecalho == NULL || cabecalhoArvoreB == NULL) {
         printf("Falha no processamento do arquivo.\n");
@@ -88,7 +88,8 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         registros[i] = atribui_valores_registro('0', 33 + strlen(nomeJogador[i]) + strlen(nomeClube[i]) + strlen(nacionalidade[i]), -1, id, idade, strlen(nomeJogador[i]), nomeJogador[i], strlen(nacionalidade[i]), nacionalidade[i], strlen(nomeClube[i]), nomeClube[i]);
     }
 
-    limpaCabecalhoArvoreB(cabecalhoArvoreB); // Libera a memória do cabeçalho
+    //(cabecalhoArvoreB); // Libera a memória do cabeçalho
+    free(cabecalhoArvoreB);
 
     // Obtém o byteOffset do best fit de cada registro
     int64_t *byteOffsets = getBestFitArrayRegistros(removidos, registros, numOperacoes, arquivoBin);
@@ -107,7 +108,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
             fseek(arquivoBin, gapProxByteOffset, SEEK_SET);
             int64_t proxByteOffset = cabecalho->proxByteOffset;
             fwrite(&proxByteOffset, sizeof(int64_t), 1, arquivoBin);
-            
+
         } else {
             DADOS *registro = leitura_registro_arquivoBin(byteOffsets[i], arquivoBin);
             tamanhoRegistroAtual = registro->tamanhoRegistro;
