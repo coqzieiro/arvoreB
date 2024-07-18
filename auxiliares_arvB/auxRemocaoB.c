@@ -64,7 +64,7 @@ int removerDescendenteRegistroArvoreB(DADOS_ARVORE_B *registro, int64_t descende
 
 // Função para criar uma lista de registros removidos a partir de um arquivo binário
 REMOVIDOS *criarListaRemovidos(FILE *file) {
-    CABECALHO_DADOS *cabecalho = cabecalhoLido(file); // Obtém o cabeçalho do arquivo
+    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(file); // Obtém o cabeçalho do arquivo
     REMOVIDOS *removidos = criarListaRemovidosVazia(); // Cria uma lista vazia de registros removidos
 
     fseek(file, 0, SEEK_END);
@@ -207,18 +207,34 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
 
     int tamanhoLista = removidos->lista->tamanho;
     const int byteProx = 5;
-    CABECALHO_DADOS *cabecalho = cabecalhoLido(file);
+    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(file);
 
     cabecalho->status = '0';
 
 
     cabecalho->nroRegArq = cabecalho->nroRegArq + 1;
-    writeNroRegArqCabecalho(cabecalho, file);
+
+    // Escreve número de registros
+    const int gapNroRegArqByte = 17;
+    fseek(file, gapNroRegArqByte, SEEK_SET);
+    int nroRegArq = cabecalho->nroRegArq;
+    fwrite(&nroRegArq, sizeof(int), 1, file);
+
     cabecalho->nroRegRem = cabecalho->nroRegRem - 1;
-    writeNroRegRemCabecalho(cabecalho, file);
+
+    // Escreve número de registros removidos
+    const int gapNroRegRemByte = 21;
+    fseek(file, gapNroRegRemByte, SEEK_SET);
+    int nroRem = cabecalho->nroRegRem;
+    fwrite(&nroRem, sizeof(int), 1, file);
     
     if(tamanhoLista == 1) { // Lista só tem um elemento removido
-        writeTopoCabecalho(cabecalho, file);
+        // Escreve o topo do cabeçalho
+        const int topoByte = 1;
+        fseek(file, topoByte, SEEK_SET);
+        int64_t topo = cabecalho->topo;
+        fwrite(&topo, sizeof(int64_t), 1, file);
+
     } else if(posicao == 0) { // Removendo o primeiro elemento
         
         DADOS_INDICE *registroIndice = removidos->lista->registros[1];
@@ -227,7 +243,12 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
 
         cabecalho->topo = byteOffset;
 
-        writeTopoCabecalho(cabecalho, file);
+        // Escreve o topo do cabeçalho
+        const int topoByte = 1;
+        fseek(file, topoByte, SEEK_SET);
+        int64_t topo = cabecalho->topo;
+        fwrite(&topo, sizeof(int64_t), 1, file);
+
     } else if(posicao == tamanhoLista - 1) { // Removendo o último elemento
         
         DADOS_INDICE *registroIndice = removidos->lista->registros[posicao - 1];

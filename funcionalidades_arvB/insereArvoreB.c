@@ -21,7 +21,7 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         fclose(fileArvoreB);
         return false;
     }
-    CABECALHO_DADOS *cabecalho = cabecalhoLido(arquivoBin);
+    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(arquivoBin);
     CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvoreB(fileArvoreB); // Lê o cabeçalho da árvore B
 
     if (cabecalho == NULL || cabecalhoArvoreB == NULL) {
@@ -101,7 +101,13 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
             fseek(arquivoBin, 0, SEEK_END);
             byteOffsets[i] = ftell(arquivoBin);
             cabecalho->proxByteOffset = byteOffsets[i] + registros[i]->tamanhoRegistro;
-            writeProxByteOffsetCabecalho(cabecalho, arquivoBin);
+
+            // Escreve o próximo byteOffset
+            const int gapProxByteOffset = 9;
+            fseek(arquivoBin, gapProxByteOffset, SEEK_SET);
+            int64_t proxByteOffset = cabecalho->proxByteOffset;
+            fwrite(&proxByteOffset, sizeof(int64_t), 1, arquivoBin);
+            
         } else {
             DADOS *registro = leitura_registro_arquivoBin(byteOffsets[i], arquivoBin);
             tamanhoRegistroAtual = registro->tamanhoRegistro;
@@ -109,12 +115,24 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
         }
 
         registros[i]->prox = -1;
+
         // Escrevendo o registro no arquivo binário
         cabecalho->status = '0';
-        writeStatusCabecalho(cabecalho, arquivoBin);
+
+        // Escreve status antes de escrever o registro
+        const int statusByteAntes = 0;
+        fseek(arquivoBin, statusByteAntes, SEEK_SET);
+        char statusAntes = cabecalho->status;
+        fwrite(&statusAntes, sizeof(char), 1, arquivoBin);
+
         escreverRegistro(registros[i], byteOffsets[i], tamanhoRegistroAtual, arquivoBin);
+        
+        // Escreve status antes de escrever o registro
+        const int statusByteDepois = 0;
         cabecalho->status = '1';
-        writeStatusCabecalho(cabecalho, arquivoBin);
+        fseek(arquivoBin, statusByteDepois, SEEK_SET);
+        char statusDepois = cabecalho->status;
+        fwrite(&statusDepois, sizeof(char), 1, arquivoBin);
 
         // Atualiza o status do arquivo da árvore B para '0'
         fseek(fileArvoreB, 0, SEEK_SET);

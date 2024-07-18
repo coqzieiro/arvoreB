@@ -7,7 +7,7 @@ INTEGRANTES DO GRUPO:
 #include "../bibliotecas/funcoesAuxiliaresB.h"
 
 // Inicializa um cabeçalho de árvore B com valores padrão
-CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio() {
+CABECALHO_ARVORE_B *criarCabecalhoArvB() {
     CABECALHO_ARVORE_B *cabecalho = malloc(sizeof(CABECALHO_ARVORE_B));
     cabecalho->status = '0'; // Status inativo
     cabecalho->noRaiz = 0; // Raiz inicialmente inexistente
@@ -18,7 +18,7 @@ CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio() {
 }
 
 // Gera um cabeçalho genérico com valores iniciais pré-definidos
-CABECALHO_DADOS *criarCabecalho(void){
+CABECALHO_DADOS *criarCabecalhoDados(){
     CABECALHO_DADOS *cabecalho = (CABECALHO_DADOS*)malloc(sizeof(CABECALHO_DADOS));
     cabecalho->status = '1'; // Status ativo
     cabecalho->topo = -1; // Topo da pilha de registros removidos
@@ -30,17 +30,17 @@ CABECALHO_DADOS *criarCabecalho(void){
 }
 
 // Carrega os dados do cabeçalho da árvore B de um arquivo
-CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file) {
-    if (file == NULL) {
+CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *arquivoBinario) {
+    if (arquivoBinario == NULL) {
         return NULL;
     }
     CABECALHO_ARVORE_B *cabecalho = malloc(sizeof(CABECALHO_ARVORE_B));
 
-    fseek(file, 0, SEEK_SET);
-    fread(&cabecalho->status, sizeof(char), 1, file);
-    fread(&cabecalho->noRaiz, sizeof(int), 1, file);
-    fread(&cabecalho->proxRRN, sizeof(int), 1, file);
-    fread(&cabecalho->nroChaves, sizeof(int), 1, file);
+    fseek(arquivoBinario, 0, SEEK_SET);
+    fread(&cabecalho->status, sizeof(char), 1, arquivoBinario);
+    fread(&cabecalho->noRaiz, sizeof(int), 1, arquivoBinario);
+    fread(&cabecalho->proxRRN, sizeof(int), 1, arquivoBinario);
+    fread(&cabecalho->nroChaves, sizeof(int), 1, arquivoBinario);
 
     return cabecalho;
 }
@@ -74,34 +74,30 @@ int limpaCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho) {
     return 1;
 }
 
-// Extrai os dados do cabeçalho de um arquivo binário e armazena na estrutura CABECALHO
-void lerCabecalhoB(FILE *file, CABECALHO_DADOS *cabecalho) {
+// Retorna a estrutura CABECALHO preenchida com dados lidos do arquivo binário
+CABECALHO_DADOS *lerCabecalhoDados(FILE* arquivoBinario) {
+    CABECALHO_DADOS *cabecalho = criarCabecalhoDados(); // Cria a estrutura de cabeçalho
+    fseek(arquivoBinario, 0, SEEK_SET);
+
     char status;
-    fread(&status, sizeof(char), 1, file); // Lê o status atual do cabeçalho
+    fread(&status, sizeof(char), 1, arquivoBinario); // Lê o status atual do cabeçalho
     cabecalho->status = status;
 
     int64_t topo;
-    fread(&topo, sizeof(int64_t), 1, file); // Lê a posição do topo da pilha de registros removidos
+    fread(&topo, sizeof(int64_t), 1, arquivoBinario); // Lê a posição do topo da pilha de registros removidos
     cabecalho->topo = topo;
 
     int64_t proxByteOffset;
-    fread(&proxByteOffset, sizeof(int64_t), 1, file); // Lê o próximo byte offset para escrita
+    fread(&proxByteOffset, sizeof(int64_t), 1, arquivoBinario); // Lê o próximo byte offset para escrita
     cabecalho->proxByteOffset = proxByteOffset;
 
     int nroRegArq;
-    fread(&nroRegArq, sizeof(int), 1, file); // Lê o número de registros arquivados
+    fread(&nroRegArq, sizeof(int), 1, arquivoBinario); // Lê o número de registros arquivados
     cabecalho->nroRegArq = nroRegArq;
 
     int nroRem;
-    fread(&nroRem, sizeof(int), 1, file); // Lê o número de registros removidos
+    fread(&nroRem, sizeof(int), 1, arquivoBinario); // Lê o número de registros removidos
     cabecalho->nroRegRem = nroRem;
-}
-
-// Retorna a estrutura CABECALHO preenchida com dados lidos do arquivo binário
-CABECALHO_DADOS *cabecalhoLido(FILE* arquivoBinario) {
-    CABECALHO_DADOS *cabecalho = criarCabecalho(); // Cria a estrutura de cabeçalho
-    fseek(arquivoBinario, 0, SEEK_SET);
-    lerCabecalhoB(arquivoBinario, cabecalho); // Preenche a estrutura com dados do arquivo
 
     return(cabecalho);
 }

@@ -380,10 +380,15 @@ int64_t *getBestFitArrayRegistros(REMOVIDOS *removidos, DADOS **registros, int q
     int64_t *byteOffsets = malloc(sizeof(int64_t) * quantidade);
 
     if(removidos->lista->tamanho == 0) { // Se não há registros removidos
-        CABECALHO_DADOS *cabecalho = cabecalhoLido(file);
+        CABECALHO_DADOS *cabecalho = lerCabecalhoDados(file);
 
         cabecalho->nroRegArq = cabecalho->nroRegArq + quantidade;
-        writeNroRegArqCabecalho(cabecalho, file);
+
+        // Escreve número de registros
+        const int gapNroRegArqByte = 17;
+        fseek(file, gapNroRegArqByte, SEEK_SET);
+        int nroRegArq = cabecalho->nroRegArq;
+        fwrite(&nroRegArq, sizeof(int), 1, file);
 
         for(int i = 0; i < quantidade; i++) {
             byteOffsets[i] = -1;

@@ -14,16 +14,10 @@ INTEGRANTES DO GRUPO:
     #include <stdbool.h>
 
     // Funções auxiliares do cabeçalho árvore-B
-    CABECALHO_DADOS *criarCabecalho(void);
-    CABECALHO_DADOS *cabecalhoLido(FILE* arquivoBinario); //ok
-    CABECALHO_ARVORE_B *criarCabecalhoArvoreBVazio();
-    CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *file);
-    void lerCabecalhoB(FILE *arquivo, CABECALHO_DADOS *cabecalho);
-    void writeStatusCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
-    void writeTopoCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
-    void writeProxByteOffsetCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
-    void writeNroRegArqCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
-    void writeNroRegRemCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin);
+    CABECALHO_DADOS *criarCabecalhoDados(); //ok
+    CABECALHO_ARVORE_B *criarCabecalhoArvB(); //ok
+    CABECALHO_DADOS *lerCabecalhoDados(FILE* arquivoBinario); //ok
+    CABECALHO_ARVORE_B *lerCabecalhoArvoreB(FILE *arquivoBinario); //ok
     int escreverCabecalhoArvoreB(FILE *file, CABECALHO_ARVORE_B *cabecalho);
     int limpaCabecalhoArvoreB(CABECALHO_ARVORE_B *cabecalho);
 

@@ -24,13 +24,13 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
     }
 
     // Inicializa o cabeçalho
-    CABECALHO_DADOS *cabecalho = criarCabecalho();
+    CABECALHO_DADOS *cabecalho = criarCabecalhoDados();
 
     // Vai para o começo do cabeçalho
     fseek(arquivoBinario, 0, SEEK_SET);
 
     // Lê o cabeçalho
-    lerCabecalhoB(arquivoBinario, cabecalho);
+    cabecalho = lerCabecalhoDados(arquivoBinario);
 
     if(cabecalho->status == '0'){
         printf("Falha no processamento do arquivo.\n");
@@ -40,7 +40,7 @@ int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
         return(0);
     }
 
-    CABECALHO_ARVORE_B *cabecalhoArvoreB = criarCabecalhoArvoreBVazio(); // Cria um cabeçalho vazio para a árvore B
+    CABECALHO_ARVORE_B *cabecalhoArvoreB = criarCabecalhoArvB(); // Cria um cabeçalho vazio para a árvore B
 
     cabecalhoArvoreB->status = '0';
     

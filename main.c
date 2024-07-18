@@ -138,7 +138,7 @@ int main(void){
                 return 0;
             }
 
-            CABECALHO_DADOS *cabecalhoBin = cabecalhoLido(arquivoBinario); // Obtém o cabeçalho do arquivo
+            CABECALHO_DADOS *cabecalhoBin = lerCabecalhoDados(arquivoBinario); // Obtém o cabeçalho do arquivo
 
             if(cabecalhoBin->status == '0') {
                 printf("Falha no processamento do arquivo.\n"); // Checa a validade do status do cabeçalho

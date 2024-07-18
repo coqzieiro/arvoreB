@@ -55,45 +55,6 @@ void EscritaRegistroFixo(DADOS_FIXOS* registro, FILE* arquivoBinario){
     fwrite(&registro->nomeClube,         sizeof(char),                      registro->tamNomeClube,     arquivoBinario);
 }
 
-// Função que escreve o status do cabeçalho no arquivo binário
-void writeStatusCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin) {
-    const int statusByte = 0;
-    fseek(arquivoBin, statusByte, SEEK_SET);
-    char status = cabecalho->status;
-    fwrite(&status, sizeof(char), 1, arquivoBin);
-}
-
-// Função que escreve o topo do cabeçalho no arquivo binário
-void writeTopoCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin) {
-    const int topoByte = 1;
-    fseek(arquivoBin, topoByte, SEEK_SET);
-    int64_t topo = cabecalho->topo;
-    fwrite(&topo, sizeof(int64_t), 1, arquivoBin);
-}
-
-// Função que escreve o próximo byte offset do cabeçalho no arquivo binário
-void writeProxByteOffsetCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin) {
-    const int proxByteOffsetByte = 9;
-    fseek(arquivoBin, proxByteOffsetByte, SEEK_SET);
-    int64_t proxByteOffset = cabecalho->proxByteOffset;
-    fwrite(&proxByteOffset, sizeof(int64_t), 1, arquivoBin);
-}
-
-void writeNroRegArqCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin) {
-    const int nroRegArqByte = 17;
-    fseek(arquivoBin, nroRegArqByte, SEEK_SET);
-    int nroRegArq = cabecalho->nroRegArq;
-    fwrite(&nroRegArq, sizeof(int), 1, arquivoBin);
-}
-
-// Função que escreve o número de registros removidos no cabeçalho do arquivo binário
-void writeNroRegRemCabecalho(CABECALHO_DADOS *cabecalho, FILE *arquivoBin) {
-    const int nroRegRemByte = 21;
-    fseek(arquivoBin, nroRegRemByte, SEEK_SET);
-    int nroRem = cabecalho->nroRegRem;
-    fwrite(&nroRem, sizeof(int), 1, arquivoBin);
-}
-
 // Função que escreve o registro de índice no arquivo de índices
 void EscritaRegIndex(DADOS_INDICE* registro_index, FILE* nomeArquivoBinarioDeIndices) {
     fwrite(&registro_index->index, sizeof(registro_index->index), 1, nomeArquivoBinarioDeIndices);
