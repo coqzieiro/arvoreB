@@ -11,34 +11,35 @@ INTEGRANTES DO GRUPO:
 #include <stdio.h>
 
 // Função para criar um arquivo de árvore B a partir de um arquivo binário
-int criarArvoreB(char *binFileName, char *arvBFileName) {
-    FILE *arvBFile = fopen(arvBFileName, "wb+");
-    FILE *binFile = fopen(binFileName, "rb"); 
+int criarArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
+    FILE *arquivoArvB = fopen(nomeArquivoIndex, "wb+");
+    FILE *arquivoBinario = fopen(nomeArquivoBinario, "rb"); 
+
+    // Verifica a consistencia do arquivo binário e de indices (arvoreB)
+    if(arquivoBinario == NULL || arquivoArvB == NULL){
+        printf("Falha no processamento do arquivo.\n");
+
+        //fclose(arvBFile);
+        //fclose(binFile);
+        return(0);
+    }
 
     // Inicialização dos cabeçalhos
     CABECALHO_DADOS *cabecalho = criarCabecalhoDados();
     CABECALHO_ARVORE_B *cabecalhoArvB = criarCabecalhoArvB(); // Cria um cabeçalho vazio para a árvore B
 
     // Vai para o começo do arquivo e lê o cabeçalho do arquivo de dados
-    fseek(binFile, 0, SEEK_SET);
-    cabecalho = lerCabecalhoDados(binFile);
+    fseek(arquivoBinario, 0, SEEK_SET);
+    cabecalho = lerCabecalhoDados(arquivoBinario);
 
     // Escreve o cabeçalho do arquivo da arvB no arquivo da arvB
     cabecalhoArvB->status = '0';    
-    escreverCabecalhoArvB(arvBFile, cabecalhoArvB);
+    escreverCabecalhoArvB(arquivoArvB, cabecalhoArvB);
 
-    // Verifica a consistencia do arquivo binário e de indices (arvoreB)
-    if(!binFile || !arvBFile){
-        printf("Falha no processamento do arquivo.\n");
-
-        fclose(arvBFile);
-        fclose(binFile);
-        return(0);
-    }
     if(cabecalho->status == '0'){
         printf("Falha no processamento do arquivo.\n");
-        fclose(binFile);
-        fclose(arvBFile);
+        fclose(arquivoBinario);
+        fclose(arquivoArvB);
         free(cabecalho);
         return(0);
     }
@@ -50,7 +51,7 @@ int criarArvoreB(char *binFileName, char *arvBFileName) {
     int i;
 
     for(i = 0; i < numero_registros; i++) {
-        DADOS *registro = lerRegistroBinario(posicaoDoRegistro, binFile);
+        DADOS *registro = lerRegistroBinario(posicaoDoRegistro, arquivoBinario);
 
         // Se o registro for removido, pulamos ele
         if(registro->removido == '1') { 
@@ -62,7 +63,7 @@ int criarArvoreB(char *binFileName, char *arvBFileName) {
         int id_registro =  registro->id;
         
         // Registro é inserido na arvB
-        inserirArvoreB(arvBFile, id_registro, posicaoDoRegistro);
+        inserirArvoreB(arquivoArvB, id_registro, posicaoDoRegistro);
         
         // Atualiza a posição
         posicaoDoRegistro += registro->tamanhoRegistro;
@@ -74,17 +75,17 @@ int criarArvoreB(char *binFileName, char *arvBFileName) {
     free(cabecalhoArvB);
 
     // Lê cabeçalho do arquivo da árvoreB e atualiza o status
-    cabecalhoArvB = lerCabecalhoArvB(arvBFile);
+    cabecalhoArvB = lerCabecalhoArvB(arquivoArvB);
     cabecalhoArvB->status = '1';
 
     // Cabeçalho é escrito no arquivo da árvoreB
-    escreverCabecalhoArvB(arvBFile, cabecalhoArvB);
+    escreverCabecalhoArvB(arquivoArvB, cabecalhoArvB);
 
     // Libera a memória alocada
     free(cabecalhoArvB);
     free(cabecalho);
-    fclose(arvBFile);
-    fclose(binFile);
+    fclose(arquivoArvB);
+    fclose(arquivoBinario);
 
     return(1);
 }
