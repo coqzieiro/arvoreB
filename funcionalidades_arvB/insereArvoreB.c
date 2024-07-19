@@ -11,75 +11,85 @@ INTEGRANTES DO GRUPO:
 #include <stdio.h>
 
 // Função para inserir novos dados na árvore B
-bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes) {
-    FILE *arquivoBin = fopen(arquivoBinario, "rb+");
-    FILE *fileArvoreB = fopen(arquivoArvoreB, "rb+");
+bool insercao_arvoreB(char *binFileName, char *arvBFileName, int quantidade_insercoes) {
+    
+    // inicialização e alocação de variáveis
+    
+    FILE *arvBFile = fopen(arvBFileName, "rb+");
+    FILE *binFile = fopen(binFileName, "rb+");
 
-    if (arquivoBin == NULL || fileArvoreB == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        fclose(arquivoBin);
-        fclose(fileArvoreB);
-        return false;
-    }
-    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(arquivoBin);
-    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvB(fileArvoreB); // Lê o cabeçalho da árvore B
+    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(binFile);
+    CABECALHO_ARVORE_B *cabecalhoArvB = lerCabecalhoArvB(arvBFile); 
 
-    if (cabecalho == NULL || cabecalhoArvoreB == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        return false;
-    }
+    REMOVIDOS *list_of_removed = criarListaRemovidos(binFile);
+    DADOS **registros = malloc(sizeof(DADOS*) * quantidade_insercoes);
 
-    if(cabecalho->status == '0' || cabecalhoArvoreB->status == '0') {
-        printf("Falha no processamento do arquivo.\n");
-        free(cabecalho);
-        free(cabecalhoArvoreB);
-        fclose(arquivoBin);
-        fclose(fileArvoreB);
-        return false;
-    }
-
-    REMOVIDOS *removidos = criarListaRemovidos(arquivoBin);
-    DADOS **registros = malloc(sizeof(DADOS*) * numOperacoes);
-
+    char string_idade[10];
+    char **nomeJogador = malloc(sizeof(char*) * quantidade_insercoes);
+    char **nacionalidade = malloc(sizeof(char*) * quantidade_insercoes);
+    char **nomeClube = malloc(sizeof(char*) * quantidade_insercoes);
     int id;
-    char idadeStr[10];
-    char **nomeJogador = malloc(sizeof(char*) * numOperacoes);
-    char **nacionalidade = malloc(sizeof(char*) * numOperacoes);
-    char **nomeClube = malloc(sizeof(char*) * numOperacoes);
 
-    for(int i = 0; i < numOperacoes; i++) {
-        nomeJogador[i] = malloc(sizeof(char) * 50);
+    for(int i = 0; i < quantidade_insercoes; i++) {
         nacionalidade[i] = malloc(sizeof(char) * 50);
         nomeClube[i] = malloc(sizeof(char) * 50);
+        nomeJogador[i] = malloc(sizeof(char) * 50);
     }
 
-    for(int i = 0; i < numOperacoes; i++) {
-        // Lê o input do usuário
+    // faz as verificações necessárias nos ifs abaixo
+    if (binFile == NULL || arvBFile == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+
+        fclose(arvBFile);
+        fclose(binFile);
+        return false;
+    }
+
+    if (cabecalho == NULL || cabecalhoArvB == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return false;
+    }
+
+    if(cabecalho->status == '0' || cabecalhoArvB->status == '0') {
+        printf("Falha no processamento do arquivo.\n");
+
+        free(cabecalhoArvB);
+        free(cabecalho);
+
+        fclose(arvBFile);
+        fclose(binFile);
+        return false;
+    }
+
+    for(int i = 0; i < quantidade_insercoes; i++) {
+        // Usuário digita o id
         scanf("%i", &id);
-        scan_quote_string(idadeStr);
+
+        scan_quote_string(string_idade);
         scan_quote_string(nomeJogador[i]);
         scan_quote_string(nacionalidade[i]);
         scan_quote_string(nomeClube[i]);
 
-        int rrnAtual;
+        int rrn;
 
-        if(cabecalhoArvoreB == NULL) {
-            rrnAtual = -1;
-        } else {
-            rrnAtual = cabecalhoArvoreB->noRaiz;
-        }
+        if(cabecalhoArvB == NULL)
+            rrn = -1;
+        else
+            rrn = cabecalhoArvB->noRaiz;
 
-        int64_t byteoffsetRegistro = buscarRegistroIdRec(fileArvoreB, id, rrnAtual);
+        int64_t byteoffsetRegistro = buscarRegistroIdRec(arvBFile, id, rrn);
 
-        if(byteoffsetRegistro != -1) { // Registro já existe
+        if(byteoffsetRegistro != -1) { // Registro já é existente
             nomeJogador[i] = '\0';
             nacionalidade[i] = '\0';
             nomeClube[i] = '\0';
+
             registros[i] = atribui_valores_registro('1', 0, 0, 0, 0, 0, nomeJogador[i], 0, nomeClube[i], 0, nacionalidade[i]);
+
             continue;
         }
 
-        int idade = (strcmp(idadeStr, "NULO") == 0 || strcmp(idadeStr, "") == 0) ? -1 : atoi(idadeStr);
+        int idade = (strcmp(string_idade, "NULO") == 0 || strcmp(string_idade, "") == 0) ? -1 : atoi(string_idade);
 
         if(strcmp(nomeJogador[i], "NULO") == 0 || strcmp(nomeJogador[i], "") == 0) strcpy(nomeJogador[i], "");
         if(strcmp(nacionalidade[i], "NULO") == 0 || strcmp(nacionalidade[i], "") == 0) strcpy(nacionalidade[i], "");
@@ -87,83 +97,85 @@ bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numO
 
         registros[i] = atribui_valores_registro('0', 33 + strlen(nomeJogador[i]) + strlen(nomeClube[i]) + strlen(nacionalidade[i]), -1, id, idade, strlen(nomeJogador[i]), nomeJogador[i], strlen(nacionalidade[i]), nacionalidade[i], strlen(nomeClube[i]), nomeClube[i]);
     }
+    
+    free(cabecalhoArvB);
 
-    //(cabecalhoArvoreB); // Libera a memória do cabeçalho
-    free(cabecalhoArvoreB);
+    int tamanho_registro = 0;
 
-    // Obtém o byteOffset do best fit de cada registro
-    int64_t *byteOffsets = getBestFitArrayRegistros(removidos, registros, numOperacoes, arquivoBin);
-    int tamanhoRegistroAtual = 0;
+    // Gera um array contendo o byte offset com a estratégia best-fit para cada registro    
+    int64_t *best_fit_registros = getBestFitArrayRegistros(list_of_removed, registros, quantidade_insercoes, binFile);
+    
+    for(int i = 0; i < quantidade_insercoes; i++) {
+        if(best_fit_registros[i] == 0) continue; // Registro já é existente
+        if(best_fit_registros[i] == -1) { // Registro será inserido no fim
+            fseek(binFile, 0, SEEK_END);
 
-    for(int i = 0; i < numOperacoes; i++) {
-        if(byteOffsets[i] == 0) continue; // Registro já existe
-        if(byteOffsets[i] == -1) { // Registro será inserido no fim
-            tamanhoRegistroAtual = 0;
-            fseek(arquivoBin, 0, SEEK_END);
-            byteOffsets[i] = ftell(arquivoBin);
-            cabecalho->proxByteOffset = byteOffsets[i] + registros[i]->tamanhoRegistro;
+            best_fit_registros[i] = ftell(binFile);
+            tamanho_registro = 0;
+            cabecalho->proxByteOffset = best_fit_registros[i] + registros[i]->tamanhoRegistro;
 
             // Escreve o próximo byteOffset
             const int gapProxByteOffset = 9;
-            fseek(arquivoBin, gapProxByteOffset, SEEK_SET);
+            fseek(binFile, gapProxByteOffset, SEEK_SET);
             int64_t proxByteOffset = cabecalho->proxByteOffset;
-            fwrite(&proxByteOffset, sizeof(int64_t), 1, arquivoBin);
-
+            fwrite(&proxByteOffset, sizeof(int64_t), 1, binFile);
+            
         } else {
-            DADOS *registro = leitura_registro_arquivoBin(byteOffsets[i], arquivoBin);
-            tamanhoRegistroAtual = registro->tamanhoRegistro;
+            DADOS *registro = leitura_registro_arquivoBin(best_fit_registros[i], binFile);
+            tamanho_registro = registro->tamanhoRegistro;
             free_registro(registro);
         }
 
         registros[i]->prox = -1;
 
-        // Escrevendo o registro no arquivo binário
+        // Registro é escrito no arquivo binário
         cabecalho->status = '0';
-
-        // Escreve status antes de escrever o registro
-        const int statusByteAntes = 0;
-        fseek(arquivoBin, statusByteAntes, SEEK_SET);
-        char statusAntes = cabecalho->status;
-        fwrite(&statusAntes, sizeof(char), 1, arquivoBin);
-
-        escreverRegistro(registros[i], byteOffsets[i], tamanhoRegistroAtual, arquivoBin);
         
         // Escreve status antes de escrever o registro
+        const int statusByteAntes = 0;
+        fseek(binFile, statusByteAntes, SEEK_SET);
+        char statusAntes = cabecalho->status;
+        fwrite(&statusAntes, sizeof(char), 1, binFile);
+        
+        escreverRegistro(registros[i], best_fit_registros[i], tamanho_registro, binFile);
+
+        // Escreve status depois de escrever o registro
         const int statusByteDepois = 0;
         cabecalho->status = '1';
-        fseek(arquivoBin, statusByteDepois, SEEK_SET);
+        fseek(binFile, statusByteDepois, SEEK_SET);
         char statusDepois = cabecalho->status;
-        fwrite(&statusDepois, sizeof(char), 1, arquivoBin);
+        fwrite(&statusDepois, sizeof(char), 1, binFile);
 
-        // Atualiza o status do arquivo da árvore B para '0'
-        fseek(fileArvoreB, 0, SEEK_SET);
-        char statusArquivoArvoreB = '0';
-        fwrite(&statusArquivoArvoreB, sizeof(char), 1, fileArvoreB);
 
-        // Insere a chave e o byteOffset no arquivo da árvore B
-        inserirArvoreB(fileArvoreB,  registros[i]->id, byteOffsets[i]);
+        // Status do arquivo da árvore B é atualizado
+        char status_ArvBFile = '0';
+        fseek(arvBFile, 0, SEEK_SET);
+        fwrite(&status_ArvBFile, sizeof(char), 1, arvBFile);
 
-        // Atualiza o status do arquivo da árvore B para '1'
-        fseek(fileArvoreB, 0, SEEK_SET);
-        statusArquivoArvoreB = '1';
-        fwrite(&statusArquivoArvoreB, sizeof(char), 1, fileArvoreB);
+
+        // Id e byteOffset são inseridos no arquivo da árvore-B
+        inserirArvoreB(arvBFile, registros[i]->id, best_fit_registros[i]);
+
+
+        // Status do arquivo da árvore B é atualizado
+        status_ArvBFile = '1';
+        fseek(arvBFile, 0, SEEK_SET);
+        fwrite(&status_ArvBFile, sizeof(char), 1, arvBFile);
     }
 
-    for(int i = 0; i < numOperacoes; i++) {
+
+    for(int i = 0; i < quantidade_insercoes; i++)
         free_registro(registros[i]);
-    }
 
-    free(registros);
-    free(byteOffsets);
+
     free(nomeJogador);
     free(nacionalidade);
     free(nomeClube);
-
+    free(registros);
+    free(best_fit_registros);
     free(cabecalho);
-    apagarListaRemovidos(removidos);
-
-    fclose(arquivoBin);
-    fclose(fileArvoreB);
-
+    apagarListaRemovidos(list_of_removed);
+    fclose(arvBFile);
+    fclose(binFile);
     return true;
 }

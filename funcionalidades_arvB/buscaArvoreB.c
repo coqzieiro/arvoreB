@@ -12,53 +12,55 @@ INTEGRANTES DO GRUPO:
 #include <stdlib.h>
 
 // Função para imprimir um registro de ID específico na árvore B
-void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula) {
-    FILE *fp = fopen(nomeArquivoArvoreB, "rb"); // Abre o arquivo da árvore B no modo leitura
+void buscaIdArvore(int id, FILE *binFile, char *arvBFileName, int i, int eh_busca_minuscula) {
+    // arquivo da árvoreB com modo leitura de binário
+    FILE *arvBFile = fopen(arvBFileName, "rb"); 
 
-    if(fp == NULL) {
-        printf("Falha no processamento do arquivo.\n"); // Verifica se ocorreu um erro ao abrir o arquivo
+    // Leitura cabeçalho ArvB
+    CABECALHO_ARVORE_B *cabecalho_arvB = lerCabecalhoArvB(arvBFile); 
+
+    // Faz as verificações de consistências nos ifs abaixo
+    if(arvBFile == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        
+        return;
+    }
+    if(cabecalho_arvB->status == '0') {
+        // Libera a memória do cabeçalho da árvore B
+        free(cabecalho_arvB);
+        fclose(arvBFile);
+
+        printf("Falha no processamento do arquivo.\n"); 
+
         return;
     }
 
-    CABECALHO_ARVORE_B *cabecalhoArvoreB = lerCabecalhoArvB(fp); // Lê o cabeçalho da árvore B
+    int rrn;
 
-    if(cabecalhoArvoreB == NULL){
-        cabecalhoArvoreB->status = '$';
-    }
-    
-    if(cabecalhoArvoreB->status == '0') {
-        printf("Falha no processamento do arquivo.\n"); // Verifica se o status do cabeçalho é inválido
-        free(cabecalhoArvoreB);
-        fclose(fp); // Fecha o arquivo
-        return;
-    }
+    // if e else atualizam o rrn para o rrn da raíz da árvore B
+    if(cabecalho_arvB == NULL) rrn = -1;
+    else rrn = cabecalho_arvB->noRaiz;
 
-    int rrnAtual;
+    // Libera a memória alocada para o cabeçalho da árvoreB
+    free(cabecalho_arvB);
 
-    if(cabecalhoArvoreB == NULL) {
-        rrnAtual = -1;
-    } else {
-        rrnAtual = cabecalhoArvoreB->noRaiz;
-    }
+    printf(eh_busca_minuscula ? "Busca %d\n\n" : "BUSCA %d\n\n", i + 1);
 
-    free(cabecalhoArvoreB);
+    if(rrn != -1) { // ArvoreB não está vazia
+        // Encontra a posição do registro
+        int64_t posicao_registro = buscarRegistroIdRec(arvBFile, id, rrn);
 
+        // Se o registro for encontrado
+        if(posicao_registro != -1) {
+            // Busca o registro no arquivo binário
+            DADOS *registro = leitura_registro_arquivoBin(posicao_registro, binFile);
+            
+            imprimeRegistro(registro);
+            free_registro(registro);
+        } else
+            printf("Registro inexistente.\n\n");
+    } else
+        printf("Registro inexistente.\n\n");
 
-    printf(buscaMinuscula ? "Busca %d\n\n" : "BUSCA %d\n\n", i + 1); // Imprime o número da busca
-
-    if(rrnAtual != -1) {
-        int64_t byteOffsetRegistroBuscado = buscarRegistroIdRec(fp, id, rrnAtual); // Busca o byte offset do registro na árvore B
-
-        if(byteOffsetRegistroBuscado != -1) { // Se o registro foi encontrado
-            DADOS *registro = leitura_registro_arquivoBin(byteOffsetRegistroBuscado, file); // Busca o registro no arquivo binário
-            imprimeRegistro(registro); // Imprime o registro
-            free_registro(registro); // Libera a memória do registro
-        } else {
-            printf("Registro inexistente.\n\n"); // Se o registro não foi encontrado
-        }
-    } else {
-        printf("Registro inexistente.\n\n"); // Se a árvore B está vazia
-    }
-
-    fclose(fp); // Fecha o arquivo da árvore B
+    fclose(arvBFile);
 }

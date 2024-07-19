@@ -123,7 +123,7 @@ int main(void){
         case 7: { // Criação de arquivo de índice tipo árvore-B
             scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex);
 
-            if(criarArquivoArvoreB(nomeArquivoBinario, nomeArquivoIndex)) {
+            if(criarArvoreB(nomeArquivoBinario, nomeArquivoIndex)) {
                 binarioNaTela(nomeArquivoIndex);
             }
             break;
@@ -159,7 +159,7 @@ int main(void){
         case 9: { // Busca de dados por qualquer campo usando índice
             scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex); // Recebe o nome dos arquivos
 
-            imprimeRegistrosBuscados(nomeArquivoBinario, 1, nomeArquivoIndex); // Exibe registros buscados com a árvore B
+            recuperaRegistrosCorrespondentesBusca(nomeArquivoBinario, 1, nomeArquivoIndex); // Exibe registros buscados com a árvore B
 
             break;
         }
@@ -168,7 +168,7 @@ int main(void){
             scanf("%s %s %d", nomeArquivoBinario, nomeArquivoIndex, &numBuscas);
 
             // Realiza as inserções nos arquivos de dados e de árvore B
-            bool inseriu = inserirNovoDadoArvoreB(nomeArquivoBinario, nomeArquivoIndex, numBuscas);
+            bool inseriu = insercao_arvoreB(nomeArquivoBinario, nomeArquivoIndex, numBuscas);
 
             // Se inserido com sucesso
             if(inseriu) {

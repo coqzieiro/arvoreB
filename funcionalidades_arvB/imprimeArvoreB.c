@@ -11,23 +11,28 @@ INTEGRANTES DO GRUPO:
 #include <stdio.h>
 #include <stdlib.h>
 
-// Função para imprimir registros buscados
-void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB) {
-    int numOperacoes;
-    scanf("%d", &numOperacoes); // Lê o número de buscas a serem feitas
+// Função que imprime os registros com base nos campos de busca
+void recuperaRegistrosCorrespondentesBusca(char *binFileName, int buscaId, char *arvBFileName) {
+    int qtd_buscas;
+    scanf("%d", &qtd_buscas); // Quantidade de buscas
 
-    for (int i = 0; i < numOperacoes; i++) {
-        FILE *file = fopen(arquivo, "rb"); // Abre o arquivo binário no modo leitura
-        if (file == NULL) {
-            printf("Falha no processamento do arquivo."); // Verifica se ocorreu um erro ao abrir o arquivo
+    int i;
+
+    for (i = 0; i < qtd_buscas; i++) {
+
+        // Inicialização de variáveis
+        FILE *binFile = fopen(binFileName, "rb"); // modo leitura de binario
+        CABECALHO_DADOS *header = lerCabecalhoDados(binFile); // Cria um cabeçalho e atribui os valores a ele
+        
+        if (binFile == NULL) {
+            printf("Falha no processamento do arquivo.");
             return;
         }
-
-        CABECALHO_DADOS *cabecalho = lerCabecalhoDados(file); // Cria um cabeçalho e atribui os valores a ele
-
-        imprimirRegistrosPorCampos(file, cabecalho, buscaId, nomeArquivoArvoreB, i); // Chama a função para imprimir registros
+         // Função que de fato imprime os registros
+        imprimirRegistrosPorCampos(binFile, header, buscaId, arvBFileName, i);
         
-        fclose(file); // Fecha o arquivo
-        free(cabecalho);
+        fclose(binFile); 
+
+        free(header);
     }
 }

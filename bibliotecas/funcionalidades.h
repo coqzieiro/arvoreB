@@ -30,15 +30,15 @@ INTEGRANTES DO GRUPO:
     void inserir(FILE* nomeArquivoBinario);
 
     // Funcionalidade 7
-    int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex);
+    int criarArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex);
 
     // Funcionalidade 8
     void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula);
 
     // Funcionalidade 9
-    void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
+    void recuperaRegistrosCorrespondentesBusca(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
 
     // Funcionalidade 10
-    bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
+    bool insercao_arvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
 
 #endif

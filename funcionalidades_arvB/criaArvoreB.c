@@ -11,76 +11,80 @@ INTEGRANTES DO GRUPO:
 #include <stdio.h>
 
 // Função para criar um arquivo de árvore B a partir de um arquivo binário
-int criarArquivoArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
-    FILE *arquivoBinario = fopen(nomeArquivoBinario, "rb"); // Abre o arquivo binário no modo leitura
-    FILE *arquivoArvoreB = fopen(nomeArquivoIndex, "wb+"); // Abre o arquivo de índices no modo leitura e escrita
+int criarArvoreB(char *binFileName, char *arvBFileName) {
+    FILE *arvBFile = fopen(arvBFileName, "wb+");
+    FILE *binFile = fopen(binFileName, "rb"); 
 
-    // Verifica a consistencia do arquivo binário e de index
-    if(!arquivoBinario || !arquivoArvoreB){
+    // Inicialização dos cabeçalhos
+    CABECALHO_DADOS *cabecalho = criarCabecalhoDados();
+    CABECALHO_ARVORE_B *cabecalhoArvB = criarCabecalhoArvB(); // Cria um cabeçalho vazio para a árvore B
+
+    // Vai para o começo do arquivo e lê o cabeçalho do arquivo de dados
+    fseek(binFile, 0, SEEK_SET);
+    cabecalho = lerCabecalhoDados(binFile);
+
+    // Escreve o cabeçalho do arquivo da arvB no arquivo da arvB
+    cabecalhoArvB->status = '0';    
+    escreverCabecalhoArvB(arvBFile, cabecalhoArvB);
+
+    // Verifica a consistencia do arquivo binário e de indices (arvoreB)
+    if(!binFile || !arvBFile){
         printf("Falha no processamento do arquivo.\n");
-        fclose(arquivoBinario);
-        fclose(arquivoArvoreB);
+
+        fclose(arvBFile);
+        fclose(binFile);
         return(0);
     }
-
-    // Inicializa o cabeçalho
-    CABECALHO_DADOS *cabecalho = criarCabecalhoDados();
-
-    // Vai para o começo do cabeçalho
-    fseek(arquivoBinario, 0, SEEK_SET);
-
-    // Lê o cabeçalho
-    cabecalho = lerCabecalhoDados(arquivoBinario);
-
     if(cabecalho->status == '0'){
         printf("Falha no processamento do arquivo.\n");
-        fclose(arquivoBinario);
-        fclose(arquivoArvoreB);
+        fclose(binFile);
+        fclose(arvBFile);
         free(cabecalho);
         return(0);
     }
 
-    CABECALHO_ARVORE_B *cabecalhoArvoreB = criarCabecalhoArvB(); // Cria um cabeçalho vazio para a árvore B
+    // Posição inicial do primeiro registro no arquivo binário
+    int64_t posicaoDoRegistro = 25;
 
-    cabecalhoArvoreB->status = '0';
-    
-    escreverCabecalhoArvB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
+    int numero_registros = cabecalho->nroRegArq + cabecalho->nroRegRem;
+    int i;
 
-    int64_t posicao = 25; // Posição inicial do primeiro registro
+    for(i = 0; i < numero_registros; i++) {
+        DADOS *registro = leitura_registro_arquivoBin(posicaoDoRegistro, binFile);
 
-    int quantidade = cabecalho->nroRegArq + cabecalho->nroRegRem; // Quantidade total de registros
+        // Se o registro for removido, pulamos ele
+        if(registro->removido == '1') { 
+            posicaoDoRegistro += registro->tamanhoRegistro;
 
-    free(cabecalho);
-
-    for(int i = 0; i < quantidade; i++) {
-        DADOS *registro = leitura_registro_arquivoBin(posicao, arquivoBinario); // Lê um registro do arquivo binário
-
-        if(registro->removido == '1') { // Pula o registro removido
-            posicao += registro->tamanhoRegistro;
             continue;
         }
 
-        int chave =  registro->id; // Obtém a chave do registro
-        int64_t byteOffset = posicao; // Obtém o byteOffset do registro
+        int id_registro =  registro->id;
         
-        inserirArvoreB(arquivoArvoreB, chave, byteOffset); // Insere o registro na árvore B
+        // Registro é inserido na arvB
+        inserirArvoreB(arvBFile, id_registro, posicaoDoRegistro);
+        
+        // Atualiza a posição
+        posicaoDoRegistro += registro->tamanhoRegistro;
 
-        posicao += registro->tamanhoRegistro; // Atualiza a posição para o próximo registro
-        free_registro(registro); // Libera a memória do registro
+        free_registro(registro);
     }
 
-    free(cabecalhoArvoreB);
+    // Libera a memória alocada
+    free(cabecalhoArvB);
 
-    cabecalhoArvoreB = lerCabecalhoArvB(arquivoArvoreB); // Lê o cabeçalho atualizado da árvore B
+    // Lê cabeçalho do arquivo da árvoreB e atualiza o status
+    cabecalhoArvB = lerCabecalhoArvB(arvBFile);
+    cabecalhoArvB->status = '1';
 
-    cabecalhoArvoreB->status = '1';
+    // Cabeçalho é escrito no arquivo da árvoreB
+    escreverCabecalhoArvB(arvBFile, cabecalhoArvB);
 
-    escreverCabecalhoArvB(arquivoArvoreB, cabecalhoArvoreB); // Escreve o cabeçalho no arquivo de índices
-
-    free(cabecalhoArvoreB);
-
-    fclose(arquivoBinario); // Fecha o arquivo binário
-    fclose(arquivoArvoreB); // Fecha o arquivo de índices
+    // Libera a memória alocada
+    free(cabecalhoArvB);
+    free(cabecalho);
+    fclose(arvBFile);
+    fclose(binFile);
 
     return(1);
 }

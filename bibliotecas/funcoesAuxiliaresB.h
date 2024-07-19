@@ -39,7 +39,7 @@ INTEGRANTES DO GRUPO:
     int64_t buscarRegistroIdRec(FILE *fileArvoreB, int id, int rrnAtual);
     int buscarPosicaoRegistroIndiceLinear(LISTA_INDICE *lista, int id);
     int imprimeRegistro(DADOS *registro);
-    void imprimeRegistrosBuscados(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
+    void recuperaRegistrosCorrespondentesBusca(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
     void imprimirRegistrosPorCampos(FILE *file, CABECALHO_DADOS *cabecalho, int buscaId, char *nomeArquivoArvoreB, int i);
 
     // Funcões auxiliares para remoção árvore-B
@@ -60,7 +60,7 @@ INTEGRANTES DO GRUPO:
     int64_t getBestFitAndFreeSpace(REMOVIDOS *removidos, int tamanho, DADOS *registro, FILE *file);
     int inserirChaveRegistroArvoreB(DADOS_ARVORE_B *registro, int chave, int64_t byteOffset);
     int inserirDescendenteRegistroArvoreB(DADOS_ARVORE_B *registro, int64_t descendente, int chaveDescendente);
-    bool inserirNovoDadoArvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
+    bool insercao_arvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
     bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB);
     void inserirArvoreB(FILE *arquivo, int chave, int64_t byteOffset);
     void insercaoArvoreBRecursiva(FILE *arquivo, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, DADOS_ARVORE_B **caminho, int nivel, int *tamCaminho);
