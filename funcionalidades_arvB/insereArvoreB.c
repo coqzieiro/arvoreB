@@ -14,12 +14,24 @@ INTEGRANTES DO GRUPO:
 bool insercaoArvB(char *binFileName, char *arvBFileName, int quantidade_insercoes) {
     
     // inicialização e alocação de variáveis
-    
     FILE *arvBFile = fopen(arvBFileName, "rb+");
     FILE *binFile = fopen(binFileName, "rb+");
 
+    // faz as verificações necessárias nos ifs abaixo
+    if (binFile == NULL || arvBFile == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+
+        return false;
+    }
+
     CABECALHO_DADOS *cabecalho = lerCabecalhoDados(binFile);
     CABECALHO_ARVORE_B *cabecalhoArvB = lerCabecalhoArvB(arvBFile); 
+
+
+    if (cabecalho == NULL || cabecalhoArvB == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return false;
+    }
 
     REMOVIDOS *list_of_removed = criarListaRemovidos(binFile);
     DADOS **registros = malloc(sizeof(DADOS*) * quantidade_insercoes);
@@ -34,20 +46,6 @@ bool insercaoArvB(char *binFileName, char *arvBFileName, int quantidade_insercoe
         nacionalidade[i] = malloc(sizeof(char) * 50);
         nomeClube[i] = malloc(sizeof(char) * 50);
         nomeJogador[i] = malloc(sizeof(char) * 50);
-    }
-
-    // faz as verificações necessárias nos ifs abaixo
-    if (binFile == NULL || arvBFile == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-
-        fclose(arvBFile);
-        fclose(binFile);
-        return false;
-    }
-
-    if (cabecalho == NULL || cabecalhoArvB == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        return false;
     }
 
     if(cabecalho->status == '0' || cabecalhoArvB->status == '0') {
