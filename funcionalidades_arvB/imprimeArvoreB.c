@@ -12,7 +12,7 @@ INTEGRANTES DO GRUPO:
 #include <stdlib.h>
 
 // Função que imprime os registros com base nos campos de busca
-void recuperaRegistrosCorrespondentesBusca(char *binFileName, int buscaId, char *arvBFileName) {
+void recuperarRegistros(char *nomeArquivoBinario, int buscaId, char *nomeArquivoArvoreB) {
     int qtd_buscas;
     scanf("%d", &qtd_buscas); // Quantidade de buscas
 
@@ -21,17 +21,17 @@ void recuperaRegistrosCorrespondentesBusca(char *binFileName, int buscaId, char 
     for (i = 0; i < qtd_buscas; i++) {
 
         // Inicialização de variáveis
-        FILE *binFile = fopen(binFileName, "rb"); // modo leitura de binario
-        CABECALHO_DADOS *header = lerCabecalhoDados(binFile); // Cria um cabeçalho e atribui os valores a ele
+        FILE *fp = fopen(nomeArquivoBinario, "rb"); // modo leitura de binario
+        CABECALHO_DADOS *header = lerCabecalhoDados(fp); // Cria um cabeçalho e atribui os valores a ele
         
-        if (binFile == NULL) {
+        if (fp == NULL) {
             printf("Falha no processamento do arquivo.");
             return;
         }
          // Função que de fato imprime os registros
-        imprimirRegistrosPorCampos(binFile, header, buscaId, arvBFileName, i);
+        imprimirRegistrosCampos(fp, header, buscaId, nomeArquivoArvoreB, i);
         
-        fclose(binFile); 
+        fclose(fp); 
 
         free(header);
     }

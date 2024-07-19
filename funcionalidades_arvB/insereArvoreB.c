@@ -11,7 +11,7 @@ INTEGRANTES DO GRUPO:
 #include <stdio.h>
 
 // Função para inserir novos dados na árvore B
-bool insercao_arvoreB(char *binFileName, char *arvBFileName, int quantidade_insercoes) {
+bool insercaoArvB(char *binFileName, char *arvBFileName, int quantidade_insercoes) {
     
     // inicialização e alocação de variáveis
     
@@ -77,14 +77,14 @@ bool insercao_arvoreB(char *binFileName, char *arvBFileName, int quantidade_inse
         else
             rrn = cabecalhoArvB->noRaiz;
 
-        int64_t byteoffsetRegistro = buscarRegistroIdRec(arvBFile, id, rrn);
+        int64_t byteoffsetRegistro = buscarRegistroRecursivo(arvBFile, id, rrn);
 
         if(byteoffsetRegistro != -1) { // Registro já é existente
             nomeJogador[i] = '\0';
             nacionalidade[i] = '\0';
             nomeClube[i] = '\0';
 
-            registros[i] = atribui_valores_registro('1', 0, 0, 0, 0, 0, nomeJogador[i], 0, nomeClube[i], 0, nacionalidade[i]);
+            registros[i] = preencheRegistroDdos('1', 0, 0, 0, 0, 0, nomeJogador[i], 0, nomeClube[i], 0, nacionalidade[i]);
 
             continue;
         }
@@ -95,7 +95,7 @@ bool insercao_arvoreB(char *binFileName, char *arvBFileName, int quantidade_inse
         if(strcmp(nacionalidade[i], "NULO") == 0 || strcmp(nacionalidade[i], "") == 0) strcpy(nacionalidade[i], "");
         if(strcmp(nomeClube[i], "NULO") == 0 || strcmp(nomeClube[i], "") == 0) strcpy(nomeClube[i], "");
 
-        registros[i] = atribui_valores_registro('0', 33 + strlen(nomeJogador[i]) + strlen(nomeClube[i]) + strlen(nacionalidade[i]), -1, id, idade, strlen(nomeJogador[i]), nomeJogador[i], strlen(nacionalidade[i]), nacionalidade[i], strlen(nomeClube[i]), nomeClube[i]);
+        registros[i] = preencheRegistroDdos('0', 33 + strlen(nomeJogador[i]) + strlen(nomeClube[i]) + strlen(nacionalidade[i]), -1, id, idade, strlen(nomeJogador[i]), nomeJogador[i], strlen(nacionalidade[i]), nacionalidade[i], strlen(nomeClube[i]), nomeClube[i]);
     }
     
     free(cabecalhoArvB);
@@ -103,7 +103,7 @@ bool insercao_arvoreB(char *binFileName, char *arvBFileName, int quantidade_inse
     int tamanho_registro = 0;
 
     // Gera um array contendo o byte offset com a estratégia best-fit para cada registro    
-    int64_t *best_fit_registros = getBestFitArrayRegistros(list_of_removed, registros, quantidade_insercoes, binFile);
+    int64_t *best_fit_registros = bestFitRegistros(list_of_removed, registros, quantidade_insercoes, binFile);
     
     for(int i = 0; i < quantidade_insercoes; i++) {
         if(best_fit_registros[i] == 0) continue; // Registro já é existente
@@ -121,9 +121,9 @@ bool insercao_arvoreB(char *binFileName, char *arvBFileName, int quantidade_inse
             fwrite(&proxByteOffset, sizeof(int64_t), 1, binFile);
             
         } else {
-            DADOS *registro = leitura_registro_arquivoBin(best_fit_registros[i], binFile);
+            DADOS *registro = lerRegistroBinario(best_fit_registros[i], binFile);
             tamanho_registro = registro->tamanhoRegistro;
-            free_registro(registro);
+            liberaRegistroDados(registro);
         }
 
         registros[i]->prox = -1;
@@ -137,7 +137,7 @@ bool insercao_arvoreB(char *binFileName, char *arvBFileName, int quantidade_inse
         char statusAntes = cabecalho->status;
         fwrite(&statusAntes, sizeof(char), 1, binFile);
         
-        escreverRegistro(registros[i], best_fit_registros[i], tamanho_registro, binFile);
+        escreverRegistroDados(registros[i], best_fit_registros[i], tamanho_registro, binFile);
 
         // Escreve status depois de escrever o registro
         const int statusByteDepois = 0;
@@ -164,9 +164,9 @@ bool insercao_arvoreB(char *binFileName, char *arvBFileName, int quantidade_inse
     }
 
 
-    for(int i = 0; i < quantidade_insercoes; i++)
-        free_registro(registros[i]);
-
+    for(int i = 0; i < quantidade_insercoes; i++){
+        liberaRegistroDados(registros[i]);
+    }
 
     free(nomeJogador);
     free(nacionalidade);

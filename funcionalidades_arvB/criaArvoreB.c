@@ -50,7 +50,7 @@ int criarArvoreB(char *binFileName, char *arvBFileName) {
     int i;
 
     for(i = 0; i < numero_registros; i++) {
-        DADOS *registro = leitura_registro_arquivoBin(posicaoDoRegistro, binFile);
+        DADOS *registro = lerRegistroBinario(posicaoDoRegistro, binFile);
 
         // Se o registro for removido, pulamos ele
         if(registro->removido == '1') { 
@@ -67,7 +67,7 @@ int criarArvoreB(char *binFileName, char *arvBFileName) {
         // Atualiza a posição
         posicaoDoRegistro += registro->tamanhoRegistro;
 
-        free_registro(registro);
+        liberaRegistroDados(registro);
     }
 
     // Libera a memória alocada

@@ -36,9 +36,9 @@ INTEGRANTES DO GRUPO:
     void buscaIdArvore(int id, FILE *file, char *nomeArquivoArvoreB, int i, int buscaMinuscula);
 
     // Funcionalidade 9
-    void recuperaRegistrosCorrespondentesBusca(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
+    void recuperarRegistros(char *arquivo, int buscaId, char *nomeArquivoArvoreB);
 
     // Funcionalidade 10
-    bool insercao_arvoreB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
+    bool insercaoArvB(char *arquivoBinario, char *arquivoArvoreB, int numOperacoes);
 
 #endif

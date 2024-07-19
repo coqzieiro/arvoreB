@@ -40,45 +40,22 @@ void removerRegistroRemovidoPosicao(REMOVIDOS *removidos, int posicao) {
     }
 }
 
-// Função para remover um descendente de um registro de árvore B
-int removerDescendenteRegistroArvoreB(DADOS_ARVORE_B *registro, int64_t descendente) {
-    if (registro->nroChaves == 0) {
-        return 0; // Retorna 0 se não há chaves no registro
-    }
-
-    int i = 0;
-    // Encontra a posição do descendente a ser removido
-    while (i < registro->nroChaves && registro->descendentes[i] != descendente) {
-        i++;
-    }
-
-    if (i == ORDEM_ARVORE_B) {
-        // Se não encontrou o descendente, retorna falha
-        return 0;
-    }
-
-    // Remove o descendente marcando como -1
-    registro->descendentes[i] = -1;
-
-    return 1; // Retorna 1 para indicar sucesso na remoção do descendente
-}
-
 // Função para criar uma lista de registros removidos a partir de um arquivo binário
-REMOVIDOS *criarListaRemovidos(FILE *file) {
-    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(file); // Lê o cabeçalho do arquivo
-    REMOVIDOS *removidos = criarListaRemovidosVazia(); // Cria uma lista vazia de registros removidos
+REMOVIDOS *criarListaRemovidos(FILE *arquivoBinario) {
+    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(arquivoBinario); // Lê o cabeçalho do arquivo
+    REMOVIDOS *removidos = inicializaListaRemovidos(); // Cria uma lista vazia de registros removidos
 
-    fseek(file, 0, SEEK_END); // Move para o final do arquivo para determinar o tamanho total
-    int finalArquivo = ftell(file); // Obtém o tamanho do arquivo
+    fseek(arquivoBinario, 0, SEEK_END); // Move para o final do arquivo para determinar o tamanho total
+    int finalArquivo = ftell(arquivoBinario); // Obtém o tamanho do arquivo
 
     int proxByteOffset = cabecalho->topo; // Obtém o topo da lista de removidos
 
     // Percorre todos os registros removidos
     while(proxByteOffset != -1 && proxByteOffset < finalArquivo) {
-        DADOS *registro = leitura_registro_arquivoBin(proxByteOffset, file); // Lê o registro do arquivo
+        DADOS *registro = lerRegistroBinario(proxByteOffset, arquivoBinario); // Lê o registro do arquivo
 
         if(registro->removido == '1') {
-            DADOS_INDICE *registroIndice = inicializa_registro_index(); // Inicializa um registro de índice
+            DADOS_INDICE *registroIndice = inicializaRegistroIndex(); // Inicializa um registro de índice
             registroIndice->index = registro->id; // Define o índice do registro de índice
             registroIndice->byteOffset = proxByteOffset; // Define o byte offset do registro de índice
 
@@ -87,24 +64,24 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
 
         proxByteOffset = registro->prox; // Atualiza o próximo byte offset
 
-        free_registro(registro); // Libera a memória do registro lido
+        liberaRegistroDados(registro); // Libera a memória do registro lido
 
         // Lê o próximo registro para verificar o último registro removido
         if(proxByteOffset != -1 && proxByteOffset < finalArquivo) {
-            DADOS *proxRegistro = leitura_registro_arquivoBin(proxByteOffset, file); // Lê o próximo registro
+            DADOS *proxRegistro = lerRegistroBinario(proxByteOffset, arquivoBinario); // Lê o próximo registro
 
             // Anota o último registro removido se for o final do arquivo
             if(proxRegistro->prox == -1 && registro->removido == '1') {
-                DADOS_INDICE *registroIndice = inicializa_registro_index(); // Inicializa um registro de índice
+                DADOS_INDICE *registroIndice = inicializaRegistroIndex(); // Inicializa um registro de índice
                 registroIndice->index = registro->id; // Define o índice do registro de índice
                 registroIndice->byteOffset = proxByteOffset; // Define o byte offset do registro de índice
 
                 adicionarRegistroRemovido(removidos, registroIndice, registro->tamanhoRegistro); // Adiciona o registro removido à lista
-                free_registro(proxRegistro); // Libera a memória do próximo registro
+                liberaRegistroDados(proxRegistro); // Libera a memória do próximo registro
                 break;
             }
 
-            free_registro(proxRegistro); // Libera a memória do próximo registro
+            liberaRegistroDados(proxRegistro); // Libera a memória do próximo registro
         }
     }
 
@@ -114,9 +91,9 @@ REMOVIDOS *criarListaRemovidos(FILE *file) {
 }
 
 // Função para criar uma lista vazia de registros removidos
-REMOVIDOS *criarListaRemovidosVazia() {
+REMOVIDOS *inicializaListaRemovidos() {
     REMOVIDOS *removidos = malloc(sizeof(REMOVIDOS)); // Aloca memória para a estrutura REMOVIDOS
-    removidos->lista = criarListaIndice(); // Cria uma lista vazia de índices
+    removidos->lista = criarListaIndex(); // Cria uma lista vazia de índices
     removidos->tamanhos = malloc(sizeof(int) * 1000); // Aloca memória para os tamanhos de registros
 
     return removidos; // Retorna a estrutura REMOVIDOS criada
@@ -139,7 +116,12 @@ void adicionarRegistroRemovido(REMOVIDOS *removidos, DADOS_INDICE *registroIndic
     }
 
     // Move elementos à direita para abrir espaço para o novo registro
-    shiftElementosListaRemovidosRight(removidos, left);
+    //shiftRegistrosRemovidos(removidos, left);
+    for (int i = removidos->lista->tamanho; i > left; i--) {
+        DADOS_INDICE *registro = removidos->lista->registros[i - 1];
+        removidos->lista->registros[i] = registro;
+        removidos->tamanhos[i] = removidos->tamanhos[i - 1];
+    }
 
     // Adiciona o novo registro na posição encontrada
     removidos->lista->registros[left] = registroIndice;
@@ -150,59 +132,29 @@ void adicionarRegistroRemovido(REMOVIDOS *removidos, DADOS_INDICE *registroIndic
     removidos->lista->tamanho++;
 }
 
-// Função para remover uma chave de um registro de árvore B
-int removerChaveRegistroArvoreB(DADOS_ARVORE_B *registro, int chave) {
-    if (registro->nroChaves == 0) {
-        // Se o registro estiver vazio, não há chave para remover
-        return 0;
-    }
-    else {
-        // Encontra a posição da chave a ser removida
-        int i = 0;
-        while (i < registro->nroChaves && registro->chaves[i] != chave) {
-            i++;
-        }
-        if (i == registro->nroChaves) {
-            // Se não encontrou a chave, retorna falha
-            return 0;
-        }
-        else {
-            // Desloca as chaves e byte offsets para preencher o espaço da chave removida
-            for (int j = i; j < registro->nroChaves - 1; j++)
-            {
-                registro->chaves[j] = registro->chaves[j + 1];
-                registro->byteOffsets[j] = registro->byteOffsets[j + 1];
-            }
-            registro->nroChaves--;
-        }
-    }
-
-    return 1;
-}
-
 // Função para deslocar elementos da lista de removidos para a direita
-void shiftElementosListaRemovidosRight(REMOVIDOS *removidos, int pos) {
+/*void shiftRegistrosRemovidos(REMOVIDOS *removidos, int pos) {
     for (int i = removidos->lista->tamanho; i > pos; i--) {
         DADOS_INDICE *registro = removidos->lista->registros[i - 1];
         removidos->lista->registros[i] = registro;
         removidos->tamanhos[i] = removidos->tamanhos[i - 1];
     }
-}
+}*/
 
 // Função para liberar a memória de um registro de árvore B
-int apagarRegistroArvoreB(DADOS_ARVORE_B *registro) {
+void apagarRegistroArvB(DADOS_ARVORE_B *registro) {
     if (registro == NULL) {
-        return 0;
+        return;
     }
 
     free(registro); // Libera a memória alocada para o registro de árvore B
-    return 1; // Retorna 1 para indicar sucesso na operação de liberação de memória
+    return; // Retorna 1 para indicar sucesso na operação de liberação de memória
 }
 
 // Função para remover um registro da lista de removidos e atualizar o arquivo
-void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao, FILE *file) {
+void atualizarRegistroRemovido(REMOVIDOS *removidos, int posicao, FILE *arquivoBinario) {
     // Lê o registro a ser removido do arquivo binário
-    DADOS *registro = leitura_registro_arquivoBin(removidos->lista->registros[posicao]->byteOffset, file);
+    DADOS *registro = lerRegistroBinario(removidos->lista->registros[posicao]->byteOffset, arquivoBinario);
 
     // Se a posição for inválida, retorna
     if (posicao == -1) {
@@ -216,7 +168,7 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
     const int byteProx = 5;
 
     // Lê o cabeçalho do arquivo
-    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(file);
+    CABECALHO_DADOS *cabecalho = lerCabecalhoDados(arquivoBinario);
 
     // Define o status do cabeçalho como '0'
     cabecalho->status = '0';
@@ -226,26 +178,26 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
 
     // Escreve o número de registros de arquivo no arquivo
     const int gapNroRegArqByte = 17;
-    fseek(file, gapNroRegArqByte, SEEK_SET);
+    fseek(arquivoBinario, gapNroRegArqByte, SEEK_SET);
     int nroRegArq = cabecalho->nroRegArq;
-    fwrite(&nroRegArq, sizeof(int), 1, file);
+    fwrite(&nroRegArq, sizeof(int), 1, arquivoBinario);
 
     // Decrementa o número de registros removidos
     cabecalho->nroRegRem = cabecalho->nroRegRem - 1;
 
     // Escreve o número de registros removidos no arquivo
     const int gapNroRegRemByte = 21;
-    fseek(file, gapNroRegRemByte, SEEK_SET);
+    fseek(arquivoBinario, gapNroRegRemByte, SEEK_SET);
     int nroRem = cabecalho->nroRegRem;
-    fwrite(&nroRem, sizeof(int), 1, file);
+    fwrite(&nroRem, sizeof(int), 1, arquivoBinario);
     
     // Se a lista tiver apenas um elemento removido
     if (tamanhoLista == 1) {
         // Escreve o topo do cabeçalho no arquivo
         const int topoByte = 1;
-        fseek(file, topoByte, SEEK_SET);
+        fseek(arquivoBinario, topoByte, SEEK_SET);
         int64_t topo = cabecalho->topo;
-        fwrite(&topo, sizeof(int64_t), 1, file);
+        fwrite(&topo, sizeof(int64_t), 1, arquivoBinario);
 
     } else if (posicao == 0) { // Se estiver removendo o primeiro elemento
         
@@ -260,9 +212,9 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
 
         // Escreve o topo do cabeçalho no arquivo
         const int topoByte = 1;
-        fseek(file, topoByte, SEEK_SET);
+        fseek(arquivoBinario, topoByte, SEEK_SET);
         int64_t topo = cabecalho->topo;
-        fwrite(&topo, sizeof(int64_t), 1, file);
+        fwrite(&topo, sizeof(int64_t), 1, arquivoBinario);
 
     } else if (posicao == tamanhoLista - 1) { // Se estiver removendo o último elemento
         
@@ -276,8 +228,8 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
         
         // Calcula o byte offset do próximo campo e escreve no arquivo
         byteOffset += byteProx;
-        fseek(file, byteOffset, SEEK_SET);
-        fwrite(&prox, sizeof(int), 1, file);
+        fseek(arquivoBinario, byteOffset, SEEK_SET);
+        fwrite(&prox, sizeof(int), 1, arquivoBinario);
     } else {
         // Se estiver removendo um elemento no meio da lista
 
@@ -291,12 +243,12 @@ void removerRegistroRemovidoEAtualizarArquivo(REMOVIDOS *removidos, int posicao,
 
         // Calcula o byte offset do próximo campo e escreve no arquivo
         byteOffsetAnterior += byteProx;
-        fseek(file, byteOffsetAnterior, SEEK_SET);
-        fwrite(&byteOffsetProximo, sizeof(int), 1, file);
+        fseek(arquivoBinario, byteOffsetAnterior, SEEK_SET);
+        fwrite(&byteOffsetProximo, sizeof(int), 1, arquivoBinario);
     }
 
     // Libera a memória alocada para o registro lido
-    free_registro(registro);
+    liberaRegistroDados(registro);
 
     // Libera a memória alocada para o cabeçalho lido
     free(cabecalho);

@@ -159,7 +159,7 @@ int main(void){
         case 9: { // Busca de dados por qualquer campo usando índice
             scanf("%s %s", nomeArquivoBinario, nomeArquivoIndex); // Recebe o nome dos arquivos
 
-            recuperaRegistrosCorrespondentesBusca(nomeArquivoBinario, 1, nomeArquivoIndex); // Exibe registros buscados com a árvore B
+            recuperarRegistros(nomeArquivoBinario, 1, nomeArquivoIndex); // Exibe registros buscados com a árvore B
 
             break;
         }
@@ -168,7 +168,7 @@ int main(void){
             scanf("%s %s %d", nomeArquivoBinario, nomeArquivoIndex, &numBuscas);
 
             // Realiza as inserções nos arquivos de dados e de árvore B
-            bool inseriu = insercao_arvoreB(nomeArquivoBinario, nomeArquivoIndex, numBuscas);
+            bool inseriu = insercaoArvB(nomeArquivoBinario, nomeArquivoIndex, numBuscas);
 
             // Se inserido com sucesso
             if(inseriu) {

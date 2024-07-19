@@ -48,15 +48,15 @@ void buscaIdArvore(int id, FILE *binFile, char *arvBFileName, int i, int eh_busc
 
     if(rrn != -1) { // ArvoreB não está vazia
         // Encontra a posição do registro
-        int64_t posicao_registro = buscarRegistroIdRec(arvBFile, id, rrn);
+        int64_t posicao_registro = buscarRegistroRecursivo(arvBFile, id, rrn);
 
         // Se o registro for encontrado
         if(posicao_registro != -1) {
             // Busca o registro no arquivo binário
-            DADOS *registro = leitura_registro_arquivoBin(posicao_registro, binFile);
+            DADOS *registro = lerRegistroBinario(posicao_registro, binFile);
             
-            imprimeRegistro(registro);
-            free_registro(registro);
+            imprimirRegistrosDados(registro);
+            liberaRegistroDados(registro);
         } else
             printf("Registro inexistente.\n\n");
     } else
