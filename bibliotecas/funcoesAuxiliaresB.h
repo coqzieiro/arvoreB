@@ -57,7 +57,6 @@ INTEGRANTES DO GRUPO:
     int64_t bestFitLiberarMemoria(REMOVIDOS *removidos, int tamanho, DADOS *registro, FILE *arquivoBinario);
     int inserirChaveRegistroArvB(DADOS_ARVORE_B *registro, int chave, int64_t byteOffset);
     int inserirFilhoRegistroArvB(DADOS_ARVORE_B *registro, int64_t descendente, int chaveDescendente);
-    //bool adicionarNoArvoreB(int chave, int64_t byteOffset, FILE *arquivoArvoreB);
     void inserirArvoreB(FILE *arquivoBinario, int chave, int64_t byteOffset);
     void insercaoRecursivaArvB(FILE *arquivoBinario, CABECALHO_ARVORE_B *cabecalho, int chave, int byteOffset, int rrnAtual, DADOS_ARVORE_B **caminho, int nivel, int *tamCaminho);
 
