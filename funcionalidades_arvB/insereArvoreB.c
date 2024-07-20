@@ -17,7 +17,7 @@ bool insercaoArvB(char *binFileName, char *arvBFileName, int quantidade_insercoe
     FILE *arvBFile = fopen(arvBFileName, "rb+");
     FILE *binFile = fopen(binFileName, "rb+");
 
-    // faz as verificações necessárias nos ifs abaixo
+    // verifica a consistencia dos arquivos
     if (binFile == NULL || arvBFile == NULL) {
         printf("Falha no processamento do arquivo.\n");
 
