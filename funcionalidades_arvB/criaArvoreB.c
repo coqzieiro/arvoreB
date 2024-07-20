@@ -18,9 +18,6 @@ int criarArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
     // Verifica a consistencia do arquivo binário e de indices (arvoreB)
     if(arquivoBinario == NULL || arquivoArvB == NULL){
         printf("Falha no processamento do arquivo.\n");
-
-        //fclose(arvBFile);
-        //fclose(binFile);
         return(0);
     }
 
