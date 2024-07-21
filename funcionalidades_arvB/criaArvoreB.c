@@ -29,10 +29,6 @@ int criarArvoreB(char *nomeArquivoBinario, char *nomeArquivoIndex) {
     fseek(arquivoBinario, 0, SEEK_SET);
     cabecalho = lerCabecalhoDados(arquivoBinario);
 
-    // Escreve o cabeçalho do arquivo da arvB no arquivo da arvB
-    cabecalhoArvB->status = '0';    
-    escreverCabecalhoArvB(arquivoArvB, cabecalhoArvB);
-
     if(cabecalho->status == '0'){
         printf("Falha no processamento do arquivo.\n");
         fclose(arquivoBinario);
