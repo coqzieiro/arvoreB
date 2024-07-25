@@ -15,35 +15,38 @@ INTEGRANTES DO GRUPO:
 
 // Função listar os registros 
 void listarRegistros(const char* nomeArquivoBinario) {
+    // abertura de arquivos e inicialização de variáveis
 
-    // Abertura do arquivo binário
     FILE* arquivoBinario = fopen(nomeArquivoBinario, "rb");
-    if (arquivoBinario == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        return;
-    }
 
     CABECALHO_DADOS cabecalho;
 
     // Leitura do cabeçalho
     LeituraCabecalho(&cabecalho, arquivoBinario);
 
+    // Variável para armazenar o registro
+    DADOS_FIXOS registro;
+
+    // Abertura do arquivo binário
+    if (arquivoBinario == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
     // Se o arquivo estiver inconsistente
     if (cabecalho.status == '0') {
         printf("Falha no processamento do arquivo.\n");
+        
         fclose(arquivoBinario);
         return;
     }
 
-    // Variável para armazenar o registro
-    DADOS_FIXOS registro;
-
-    if (cabecalho.nroRegArq == 0){
+    if (cabecalho.nroRegArq == 0)
         printf("Registro inexistente.\n\n");
-    }
 
     // Loop para ler e exibir cada registro
     int i;
+
     for (i = 0; i < cabecalho.nroRegArq + cabecalho.nroRegRem; i++) {
 
         // Leitura do registro campo a campo
@@ -55,8 +58,7 @@ void listarRegistros(const char* nomeArquivoBinario) {
             // Exibição dos dados do registro
             printf("Nome do Jogador: %s\n", registro.nomeJogador[0] ? registro.nomeJogador : "SEM DADO");
             printf("Nacionalidade do Jogador: %s\n", registro.nacionalidade[0] ? registro.nacionalidade : "SEM DADO");
-            printf("Clube do Jogador: %s\n", registro.nomeClube[0] ? registro.nomeClube : "SEM DADO");
-            printf("\n");
+            printf("Clube do Jogador: %s\n", registro.nomeClube[0] ? registro.nomeClube : "SEM DADO"); printf("\n");
 
         }
 

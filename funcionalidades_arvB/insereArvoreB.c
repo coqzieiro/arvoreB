@@ -16,22 +16,9 @@ bool insercaoArvB(char *binFileName, char *arvBFileName, int quantidade_insercoe
     // inicialização e alocação de variáveis
     FILE *arvBFile = fopen(arvBFileName, "rb+");
     FILE *binFile = fopen(binFileName, "rb+");
-
-    // verifica a consistencia dos arquivos
-    if (binFile == NULL || arvBFile == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-
-        return false;
-    }
-
+    
     CABECALHO_DADOS *cabecalho = lerCabecalhoDados(binFile);
     CABECALHO_ARVORE_B *cabecalhoArvB = lerCabecalhoArvB(arvBFile); 
-
-
-    if (cabecalho == NULL || cabecalhoArvB == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        return false;
-    }
 
     REMOVIDOS *list_of_removed = criarListaRemovidos(binFile);
     DADOS **registros = malloc(sizeof(DADOS*) * quantidade_insercoes);
@@ -41,6 +28,18 @@ bool insercaoArvB(char *binFileName, char *arvBFileName, int quantidade_insercoe
     char **nacionalidade = malloc(sizeof(char*) * quantidade_insercoes);
     char **nomeClube = malloc(sizeof(char*) * quantidade_insercoes);
     int id;
+
+    // verifica a consistencia dos arquivos
+    if (binFile == NULL || arvBFile == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+
+        return false;
+    }
+
+    if (cabecalho == NULL || cabecalhoArvB == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return false;
+    }
 
     for(int i = 0; i < quantidade_insercoes; i++) {
         nacionalidade[i] = malloc(sizeof(char) * 50);
